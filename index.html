@@ -1,4 +1,225 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sand Racers</title><meta http-equiv="refresh" content="0; url=/laplog/"><link rel="canonical" href="/laplog/"></head>
-<body style="background:#f3e6cf;color:#3b2a1a;font-family:system-ui,sans-serif;padding:24px"><a href="/laplog/">Sand Racers Lap Log</a></body></html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="/laplog/img/logo.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<script>try{if(localStorage.getItem("sr-lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr"}}catch(e){}</script>
+<title>Sand Racers · ساند ريسرز</title>
+<meta name="description" content="ساند ريسرز: #96، الـBMW M2 الزرقا، ولفّاتها على الحلبة. Sand Racers: #96, a light-blue BMW M2, and its laps on track.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sand Racers">
+<meta property="og:title" content="ساند ريسرز · Sand Racers">
+<meta property="og:description" content="#96, a light-blue BMW M2, and its laps on track.">
+<meta property="og:url" content="https://sand-racers.com/">
+<meta property="og:image" content="https://sand-racers.com/img/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sand-racers.com/img/share.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+/* Layout: an arch-shaped window (the logo's own frame) holds the title and the pit board over a dune horizon; below it the checks, the chart, the sessions and the best lap per track, all on warm sand. Colours come straight from the Sand Racers logo: sky, sun, dune, road. */
+:root{
+  --sky:#73B2D5; --sun:#FDBF6A; --dune:#D48741; --dune-deep:#A65E22; --road:#291C13;
+  --bg:#FBF3E6; --panel:#FFFAF2; --raise:#F5E6CF; --line:#E6D0AE; --grid:#EEDDC3;
+  --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --on-accent:#FFFAF2; --ring:#1F3A5F;
+  --best:#2F7FB0; --avg:#9C8672; --target:#C4541A; --good:#2E7D32;
+  --display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Saira","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --arabic:"Lalezar","Noto Kufi Arabic","Geeza Pro",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13; --ring:#9CC7F0;
+  --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13; --ring:#9CC7F0;
+  --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.05;font-family:var(--display);font-weight:800}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:4px}
+html[dir="rtl"] body{font-family:"Tajawal",var(--body)}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3,html[dir="rtl"] .bar nav,html[dir="rtl"] .eyebrow{font-family:"Lalezar",var(--display);font-weight:400;letter-spacing:0}
+html[dir="rtl"] .ar{font-family:var(--display);direction:ltr}
+.chart,.laps,.n{direction:ltr}
+.lang{background:none;border:2px solid var(--line);border-radius:999px;color:var(--fg);font:inherit;font-size:.8rem;padding:2px 10px;cursor:pointer}
+.bar nav a{white-space:nowrap}
+@media (max-width:420px){.bar nav{gap:10px;font-size:.8rem}.brand b{font-size:1rem}}
+.slot b.soft{font-size:.95rem;font-weight:600;letter-spacing:0;text-align:end}
+.in{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ar{font-family:var(--arabic);direction:rtl;font-weight:400}
+.eyebrow{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--muted)}
+
+/* Top bar */
+.bar{border-bottom:1px solid var(--line)}
+.bar .in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg)}
+.brand img{width:34px;height:auto}
+.brand b{font-family:var(--display);font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
+.bar nav{display:flex;gap:18px;font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.bar nav a{color:var(--muted);text-decoration:none}
+.bar nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--dune)}
+
+.photo{margin:0;display:grid;gap:8px}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:3px solid var(--frame)}
+.photo figcaption{font-size:.85rem;color:var(--muted)}
+/* Hero: the arch window over a dune horizon */
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--sky) 0 62%,var(--sun) 62% 63%,var(--dune) 63%)}
+.hero .dunes{position:absolute;inset:auto 0 0 0;width:100%;height:58%;display:block}
+.hero .in{position:relative;padding-block:40px 36px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:28px;align-items:end}
+.arch{background:var(--panel);color:var(--fg);border:3px solid var(--frame);border-radius:50% 50% 10px 10px / 34% 34% 10px 10px;padding:64px 28px 28px;position:relative;box-shadow:0 0 0 6px var(--panel),0 0 0 9px var(--frame)}
+.arch::before{content:"";position:absolute;left:50%;top:-22px;width:22px;height:22px;transform:translateX(-50%) rotate(45deg);background:var(--sun);border:3px solid var(--road)}
+.arch h1{font-size:clamp(3rem,10vw,5.2rem);text-transform:uppercase;letter-spacing:.01em;line-height:.88}
+.arch h1 span{color:var(--warm)}
+.arch .ar{font-size:clamp(1.3rem,3.6vw,1.8rem);color:var(--warm);display:block;margin-top:8px}
+.arch .lede{margin-top:14px;max-width:46ch;color:var(--muted)}
+.board{background:var(--road);color:#F8EBD6;border-radius:12px;padding:14px;display:grid;gap:8px;box-shadow:0 10px 30px rgba(41,28,19,.35)}
+.board h2{font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sun);font-weight:700;padding:2px 6px}
+.slot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:#36261A;border-radius:6px;padding:9px 14px}
+.slot span{font-family:var(--display);font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#C9B293}
+.slot b{font-family:var(--display);font-weight:800;font-size:clamp(2rem,6vw,2.7rem);font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
+.slot.hot b{color:var(--sun)}
+.board-note{font-size:.84rem;color:#C9B293;padding:2px 6px 0}
+
+main.in{display:grid;gap:44px;padding-block:40px 56px}
+.sec{display:grid;gap:14px}
+.sec>h2{font-size:clamp(1.8rem,5.5vw,2.4rem);text-transform:uppercase;letter-spacing:.02em}
+.sub{color:var(--muted);max-width:64ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+
+/* The four checks: a real order, so numbered */
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;counter-reset:c}
+.checks li{counter-increment:c;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--dune);border-radius:10px;padding:14px;display:grid;gap:4px;align-content:start}
+.checks li::before{content:counter(c);font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1;color:var(--dune)}
+.checks b{font-weight:600}
+.checks span{font-size:.88rem;color:var(--muted)}
+
+/* Chart */
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.key{width:22px;border-top:3px solid}
+.key.dash{border-top-style:dashed}
+.chart{position:relative;margin-top:10px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);font-size:12px;fill:var(--muted)}
+.chart .tick{font-variant-numeric:tabular-nums}
+.chart .lbl{fill:var(--fg);font-weight:600;paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.chart .empty{fill:var(--fg);font-size:14px;paint-order:stroke;stroke:var(--panel);stroke-width:5px}
+.tip{position:absolute;top:0;left:0;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.82rem;width:max-content;max-width:240px;box-shadow:0 6px 18px rgba(41,28,19,.2);display:grid;gap:3px}
+.tip[hidden]{display:none}
+.tip b{font-variant-numeric:tabular-nums}
+
+/* Sessions */
+.list{display:grid;gap:12px}
+.sess{display:grid;gap:12px}
+.sess h3{font-family:var(--body);font-weight:600;font-size:1.05rem}
+.meta{font-size:.86rem;color:var(--muted)}
+.nums{display:flex;flex-wrap:wrap;gap:8px 28px}
+.num{display:grid}
+.num span{font-family:var(--display);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.num b{font-family:var(--display);font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.num b.beat{color:var(--good)}
+.laps{display:flex;flex-wrap:wrap;gap:6px}
+.lap{font-variant-numeric:tabular-nums;font-size:.86rem;background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.lap.is-best{border-color:var(--dune);font-weight:600}
+.empty-card{border:1px dashed var(--line);border-radius:14px;padding:22px;color:var(--muted);display:grid;gap:6px}
+.empty-card b{color:var(--fg);font-weight:600}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--display);color:var(--muted);font-weight:700;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+td.n{font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--line)}
+footer .in{padding-block:22px 34px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;color:var(--muted);font-size:.9rem}
+footer .ar{color:var(--warm);font-size:1.15rem}
+
+@media (max-width:860px){
+  .hero .in{grid-template-columns:minmax(0,1fr)}
+  .checks{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){
+  .checks{grid-template-columns:minmax(0,1fr)}
+  .arch{padding:52px 18px 22px}
+  .bar nav{gap:12px;font-size:.82rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .board .slot.hot b{animation:glow 2.4s ease-in-out 1}
+  @keyframes glow{0%{color:#F8EBD6}50%{color:var(--sun)}100%{color:var(--sun)}}
+}
+</style>
+<style>
+.home-hero .in{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:center;padding-block:40px 120px;position:relative;z-index:1}
+.home-hero .arch{text-align:center}
+.home-hero .arch img{width:min(200px,60%);height:auto;margin:0 auto 8px;display:block}
+.go{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:16px;padding-block:32px 48px}
+.go a{display:grid;gap:6px;text-decoration:none;color:var(--fg);background:var(--panel);border:3px solid var(--frame);border-radius:14px;padding:20px}
+.go a b{font-family:var(--display);font-size:1.4rem;color:var(--accent)}
+html[dir="rtl"] .go a b{font-family:"Lalezar",var(--display);font-weight:400}
+.go a span{color:var(--muted)}
+@media (max-width:760px){.home-hero .in{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="in">
+    <a class="brand" href="/"><img src="/laplog/img/logo.png" alt="" width="34" height="42"><b>Sand Racers</b></a>
+    <nav aria-label="Site">
+      <a href="/" aria-current="page" data-en="Home">الرئيسية</a>
+      <a href="/laplog/" data-en="Lap Log">سجل اللفات</a>
+      <a href="https://www.instagram.com/sand_racers/" data-en="Instagram">إنستقرام</a>
+      <button class="lang" type="button" id="lang">English</button>
+    </nav>
+  </div>
+</header>
+<section class="hero home-hero">
+  <svg class="dunes" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 120 C180 60 300 70 460 120 S760 170 900 90 S1120 60 1200 100 V300 H0Z" fill="#E9A24A"/>
+    <path d="M0 190 C220 130 380 150 560 200 S900 240 1200 160 V300 H0Z" fill="#D48741"/>
+    <path d="M0 260 C260 220 520 240 760 270 S1080 270 1200 240 V300 H0Z" fill="#A65E22"/>
+    <path d="M610 300 C640 250 560 225 620 190 S760 150 720 120" fill="none" stroke="#291C13" stroke-width="22" stroke-linecap="round"/>
+    <path d="M610 300 C640 250 560 225 620 190 S760 150 720 120" fill="none" stroke="#FFFAF2" stroke-width="2" stroke-dasharray="10 12"/>
+  </svg>
+  <div class="in">
+    <div class="arch">
+      <img src="/laplog/img/logo.png" width="323" height="400" alt="شعار ساند ريسرز" data-en-alt="Sand Racers logo">
+      <h1 data-en="Sand Racers">ساند ريسرز</h1>
+      <p class="lede" data-en="#96, a light-blue BMW M2, and its laps on track.">#96، الـBMW M2 الزرقا، ولفّاتها على الحلبة.</p>
+    </div>
+    <figure class="photo"><img src="/laplog/img/m2_96.jpg" width="1280" height="720" alt="الـBMW M2 الزرقا، #96، في كراج البِت رقم 12 في حلبة كورنيش جدة" data-en-alt="The light-blue BMW M2, #96, in pit garage 12 at Jeddah Corniche Circuit"></figure>
+  </div>
+</section>
+<main class="in">
+  <div class="go">
+    <a href="/laplog/"><b data-en="Lap Log">سجل اللفات</b><span data-en="Every track session of #96, against the lap to beat.">كل جلسة لـ#96 على الحلبة، قدّام اللفّة المطلوبة.</span></a>
+    <a href="https://www.instagram.com/sand_racers/"><b data-en="Follow on Instagram">تابعنا على إنستقرام</b><span>@sand_racers</span></a>
+  </div>
+</main>
+<footer>
+  <div class="in">
+    <p>ساند ريسرز · Sand Racers · @sand_racers</p>
+  </div>
+</footer>
+<script>
+(() => {
+  const EN = document.documentElement.lang === "en";
+  if (EN) {
+    document.querySelectorAll("[data-en]").forEach(n => { n.textContent = n.dataset.en; });
+    document.querySelectorAll("[data-en-alt]").forEach(n => { n.alt = n.dataset.enAlt; });
+    document.getElementById("lang").textContent = "عربي";
+  }
+  document.getElementById("lang").addEventListener("click", () => {
+    try { localStorage.setItem("sr-lang", EN ? "ar" : "en"); } catch (e) {}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>

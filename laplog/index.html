@@ -1,20 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" href="img/logo.png">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Sand Racers Lap Log</title>
-<meta name="description" content="Every track session of #96, the light-blue BMW M2 of Sand Racers, against the lap to beat.">
+<script>try{if(localStorage.getItem("sr-lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr"}}catch(e){}</script>
+<title>Sand Racers Lap Log · سجل اللفات</title>
+<meta name="description" content="سجل لفّات #96، الـBMW M2 الزرقا حق ساند ريسرز. Every track session of #96, against the lap to beat.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Sand Racers">
+<meta property="og:title" content="سجل اللفات · Sand Racers Lap Log">
+<meta property="og:description" content="Every track session of #96, timed and logged.">
+<meta property="og:url" content="https://sand-racers.com/laplog/">
+<meta property="og:image" content="https://sand-racers.com/img/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://sand-racers.com/img/share.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&family=Tajawal:wght@400;500;700&display=swap">
 <style>
 /* Layout: an arch-shaped window (the logo's own frame) holds the title and the pit board over a dune horizon; below it the checks, the chart, the sessions and the best lap per track, all on warm sand. Colours come straight from the Sand Racers logo: sky, sun, dune, road. */
 :root{
   --sky:#73B2D5; --sun:#FDBF6A; --dune:#D48741; --dune-deep:#A65E22; --road:#291C13;
   --bg:#FBF3E6; --panel:#FFFAF2; --raise:#F5E6CF; --line:#E6D0AE; --grid:#EEDDC3;
-  --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --on-accent:#FFFAF2;
+  --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --on-accent:#FFFAF2; --ring:#1F3A5F;
   --best:#2F7FB0; --avg:#9C8672; --target:#C4541A; --good:#2E7D32;
   --display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
   --body:"Saira","Segoe UI","Helvetica Neue",Arial,sans-serif;
@@ -22,18 +33,26 @@
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
-  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13; --ring:#9CC7F0;
   --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
-  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13; --ring:#9CC7F0;
   --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
 h1,h2,h3{margin:0;text-wrap:balance;line-height:1.05;font-family:var(--display);font-weight:800}
 p{margin:0}
 a{color:var(--accent)}
-:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+:focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:4px}
+html[dir="rtl"] body{font-family:"Tajawal",var(--body)}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] h3,html[dir="rtl"] .bar nav,html[dir="rtl"] .eyebrow{font-family:"Lalezar",var(--display);font-weight:400;letter-spacing:0}
+html[dir="rtl"] .ar{font-family:var(--display);direction:ltr}
+.chart,.laps,.n{direction:ltr}
+.lang{background:none;border:2px solid var(--line);border-radius:999px;color:var(--fg);font:inherit;font-size:.8rem;padding:2px 10px;cursor:pointer}
+.bar nav a{white-space:nowrap}
+@media (max-width:420px){.bar nav{gap:10px;font-size:.8rem}.brand b{font-size:1rem}}
+.slot b.soft{font-size:.95rem;font-weight:600;letter-spacing:0;text-align:end}
 .in{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .ar{font-family:var(--arabic);direction:rtl;font-weight:400}
 .eyebrow{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--muted)}
@@ -144,9 +163,10 @@ footer .ar{color:var(--warm);font-size:1.15rem}
   <div class="in">
     <a class="brand" href="/"><img src="img/logo.png" alt="" width="34" height="42"><b>Sand Racers</b></a>
     <nav aria-label="Site">
-      <a href="/">Home</a>
-      <a href="#" aria-current="page">Lap Log</a>
-      <a href="https://www.instagram.com/sand_racers/">Instagram</a>
+      <a href="/" data-en="Home">الرئيسية</a>
+      <a href="/laplog/" aria-current="page" data-en="Lap Log">سجل اللفات</a>
+      <a href="https://www.instagram.com/sand_racers/" data-en="Instagram">إنستقرام</a>
+      <button class="lang" type="button" id="lang" data-en="عربي">English</button>
     </nav>
   </div>
 </header>
@@ -161,41 +181,41 @@ footer .ar{color:var(--warm);font-size:1.15rem}
   </svg>
   <div class="in">
     <div class="arch">
-      <p class="eyebrow">#96 · BMW M2 · Jeddah</p>
-      <h1>Lap <span>Log</span></h1>
-      <span class="ar">سجل اللفات</span>
-      <p class="lede">Every track session of #96, timed and logged. One car, one clock, and the lap to beat.</p>
+      <p class="eyebrow" data-en="#96 · BMW M2 · Jeddah">#96 · BMW M2 · جدة</p>
+      <h1 id="h1"><span data-ar>سجل <span>اللفات</span></span><span data-en-only hidden>Lap <span>Log</span></span></h1>
+      <span class="ar" data-en="سجل اللفات">Lap Log</span>
+      <p class="lede" data-en="Every track session of #96, timed and logged. One car, one clock, and the lap to beat.">كل جلسة لـ#96 على الحلبة، بالتوقيت ومسجّلة. سيارة وحدة، ساعة وحدة، واللفّة اللي لازم ننزل تحتها.</p>
     </div>
     <div class="board" aria-labelledby="board-h">
-      <h2 id="board-h">Pit board</h2>
-      <div class="slot hot"><span>Lap to beat</span><b id="b-target">2:39.5</b></div>
-      <div class="slot"><span id="b-best-lbl">Best this season</span><b id="b-best">—</b></div>
-      <div class="slot"><span>Gap</span><b id="b-gap">—</b></div>
+      <h2 id="board-h" data-en="Pit board">لوحة البِت</h2>
+      <div class="slot hot"><span data-en="Lap to beat">اللفّة المطلوبة</span><b id="b-target">2:39.5</b></div>
+      <div class="slot"><span id="b-best-lbl" data-en="Best this season">أحسن لفّة هالموسم</span><b id="b-best">—</b></div>
+      <div class="slot"><span data-en="Gap">الفرق</span><b id="b-gap">—</b></div>
       <p class="board-note" id="b-note"></p>
     </div>
   </div>
 </section>
 
 <main class="in">
-  <figure class="photo sec"><img src="img/m2_96.jpg" width="1280" height="720" alt="The light-blue BMW M2, #96, parked in pit garage 12 at Jeddah Corniche Circuit with the door and bonnet open"><figcaption>#96 in pit garage 12, Jeddah Corniche Circuit.</figcaption></figure>
+  <figure class="photo sec"><img src="img/m2_96.jpg" width="1280" height="720" alt="الـBMW M2 الزرقا، #96، واقفة في كراج البِت رقم 12 في حلبة كورنيش جدة، والباب والكبوت مفتوحين" data-en-alt="The light-blue BMW M2, #96, parked in pit garage 12 at Jeddah Corniche Circuit with the door and bonnet open"><figcaption data-en="#96 in pit garage 12, Jeddah Corniche Circuit.">#96 في كراج البِت رقم 12، حلبة كورنيش جدة.</figcaption></figure>
   <section class="sec" aria-labelledby="checks-h">
-    <h2 id="checks-h">Before every session</h2>
-    <p class="sub">The routine #96 runs before a single timed lap. Every session below shows whether it was done.</p>
+    <h2 id="checks-h" data-en="Before every session">قبل كل جلسة</h2>
+    <p class="sub" data-en="The routine #96 runs before a single timed lap. Every session below shows whether it was done.">الروتين اللي يسويه #96 قبل أي لفّة بالتوقيت. كل جلسة تحت توضّح إذا انعمل ولا لا.</p>
     <ol class="checks">
-      <li><b>Tyres checked</b><span>Pressures and condition, every time the car has been to the shop.</span></li>
-      <li><b>Smooth out lap</b><span>Bring the tyres and brakes up to temperature. Smooth before fast.</span></li>
-      <li><b>Hot pressures</b><span>Check them again after the first run, while the tyres are still hot.</span></li>
-      <li><b>Cool-down lap</b><span>One easy lap before the pits, every session.</span></li>
+      <li><b data-en="Tyres checked">فحص الكفرات</b><span data-en="Pressures and condition, every time the car has been to the shop.">الضغط والحالة، كل مرة السيارة ترجع من الورشة.</span></li>
+      <li><b data-en="Smooth out lap">لفّة تسخين هادية</b><span data-en="Bring the tyres and brakes up to temperature. Smooth before fast.">نسخّن الكفرات والفرامل. بهدوء قبل السرعة.</span></li>
+      <li><b data-en="Hot pressures">الضغط وهي حارّة</b><span data-en="Check them again after the first run, while the tyres are still hot.">نفحصه مرة تانية بعد أول طلعة، والكفرات لسه حارّة.</span></li>
+      <li><b data-en="Cool-down lap">لفّة تبريد</b><span data-en="One easy lap before the pits, every session.">لفّة هادية قبل البِت، كل جلسة.</span></li>
     </ol>
   </section>
 
   <section class="sec" aria-labelledby="chart-h">
-    <h2 id="chart-h">Best lap per session</h2>
+    <h2 id="chart-h" data-en="Best lap per session">أحسن لفّة في كل جلسة</h2>
     <p class="sub" id="chart-sub"></p>
     <div class="card">
       <div class="legend" aria-hidden="true">
-        <span><i class="key" style="border-color:var(--best)"></i>Best lap</span>
-        <span><i class="key" style="border-color:var(--avg)"></i>Average lap</span>
+        <span><i class="key" style="border-color:var(--best)"></i><span data-en="Best lap">أحسن لفّة</span></span>
+        <span><i class="key" style="border-color:var(--avg)"></i><span data-en="Average lap">متوسط اللفّة</span></span>
         <span><i class="key dash" style="border-color:var(--target)"></i><span id="legend-target">Lap to beat</span></span>
       </div>
       <div class="chart" id="chart" tabindex="0" aria-label="Best and average lap per session. Use the left and right arrow keys to step through sessions.">
@@ -206,20 +226,19 @@ footer .ar{color:var(--warm);font-size:1.15rem}
   </section>
 
   <section class="sec" aria-labelledby="list-h">
-    <h2 id="list-h">Sessions</h2>
+    <h2 id="list-h" data-en="Sessions">الجلسات</h2>
     <div class="list" id="list"></div>
   </section>
 
   <section class="sec" aria-labelledby="tracks-h" id="tracks-sec" hidden>
-    <h2 id="tracks-h">Best lap at each track</h2>
+    <h2 id="tracks-h" data-en="Best lap at each track">أحسن لفّة في كل حلبة</h2>
     <div class="card tablewrap"><table id="tracks-table"></table></div>
   </section>
 </main>
 
 <footer>
   <div class="in">
-    <p>Sand Racers · @sand_racers</p>
-    <p class="ar">ساند ريسر</p>
+    <p>ساند ريسرز · Sand Racers · @sand_racers</p>
   </div>
 </footer>
 
@@ -236,9 +255,24 @@ footer .ar{color:var(--warm);font-size:1.15rem}
 (() => {
 "use strict";
 const DATA = JSON.parse(document.getElementById("lap-data").textContent);
+const EN = document.documentElement.lang === "en";
+const L = (ar, en) => EN ? en : ar;
+if (EN) {
+  document.querySelectorAll("[data-en]").forEach(n => { n.textContent = n.dataset.en; });
+  document.querySelectorAll("[data-en-alt]").forEach(n => { n.alt = n.dataset.enAlt; });
+  document.querySelectorAll("[data-ar]").forEach(n => { n.hidden = true; });
+  document.querySelectorAll("[data-en-only]").forEach(n => { n.hidden = false; });
+}
+document.getElementById("lang").addEventListener("click", () => {
+  try { localStorage.setItem("sr-lang", EN ? "ar" : "en"); } catch (e) {}
+  location.reload();
+});
+const TRACK_AR = { "jeddah corniche circuit": "حلبة كورنيش جدة" };
+const trk = t => EN ? t : (TRACK_AR[String(t || "").trim().toLowerCase()] || t);
 const T = DATA.target, sessions = (DATA.sessions || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
-const CHECKS = [["tyres","Tyres checked"],["outLap","Smooth out lap"],["hotPressures","Hot pressures"],["coolDown","Cool-down lap"]];
-const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const CHECKS = [["tyres"],["outLap"],["hotPressures"],["coolDown"]];
+const WD = EN ? ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"] : ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const MO = EN ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"] : ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const $ = id => document.getElementById(id);
 const NS = "http://www.w3.org/2000/svg";
 function el(tag, attrs, ...kids) {
@@ -266,16 +300,19 @@ for (const s of atT) if (s.date > T.setOn && (!best || s.st.best < best.st.best)
 
 /* Pit board */
 $("b-target").textContent = fmtShort(T.ms);
-$("legend-target").textContent = fmtShort(T.ms) + " to beat";
+$("legend-target").textContent = L(fmtShort(T.ms) + " المطلوبة", fmtShort(T.ms) + " to beat");
 if (best) {
   const gap = best.st.best - T.ms;
   $("b-best").textContent = fmt(best.st.best);
-  $("b-gap").textContent = gap === 0 ? "Level" : fmtGap(gap);
-  $("b-note").textContent = gap < 0 ? "Beaten on " + fmtDate(best.date) + "." : "Lap to beat set on " + fmtDate(T.setOn) + " at " + T.track + ".";
+  $("b-gap").textContent = gap === 0 ? L("متعادل", "Level") : fmtGap(gap);
+  $("b-note").textContent = gap < 0 ? L("نزلنا تحتها يوم " + fmtDate(best.date) + ".", "Beaten on " + fmtDate(best.date) + ".") : L("اللفّة المطلوبة انسجلت يوم " + fmtDate(T.setOn) + " في " + trk(T.track) + ".", "Lap to beat set on " + fmtDate(T.setOn) + " at " + T.track + ".");
 } else {
-  $("b-note").textContent = "Best lap ever, set " + fmtDate(T.setOn) + " at " + T.track + "." + (DATA.next ? " Next session: " + DATA.next.event + ", " + fmtDate(DATA.next.date, false, false) + "." : "");
+  const b = $("b-best"), g = $("b-gap");
+  b.textContent = L("لسه ما في لفّة هالموسم", "No timed lap yet this season"); b.className = "soft";
+  g.textContent = L("لسه", "Not yet"); g.className = "soft";
+  $("b-note").textContent = L("أحسن لفّة على الإطلاق، انسجلت يوم " + fmtDate(T.setOn) + " في " + trk(T.track) + ".", "Best lap ever, set " + fmtDate(T.setOn) + " at " + T.track + ".") + (DATA.next ? L(" الجلسة الجاية: " + DATA.next.event + "، " + fmtDate(DATA.next.date, false, false) + ".", " Next session: " + DATA.next.event + ", " + fmtDate(DATA.next.date, false, false) + ".") : "");
 }
-$("chart-sub").textContent = "At " + T.track + ". Lower is faster. The closer the grey line sits to the blue one, the more consistent the session.";
+$("chart-sub").textContent = L("في " + trk(T.track) + ". الأقل أسرع. كل ما قرّب الخط الرمادي من الأزرق، كانت الجلسة أثبت.", "At " + T.track + ". Lower is faster. The closer the grey line sits to the blue one, the more consistent the session.");
 
 /* Chart */
 let geo = null;
@@ -301,10 +338,10 @@ function drawChart() {
   }
   svg.append(sv("line", { x1: M.l, x2: W - M.r, y1: M.t + ph, y2: M.t + ph, stroke: "var(--line)", "stroke-width": 1 }));
   svg.append(sv("line", { x1: M.l, x2: W - M.r, y1: y(T.ms), y2: y(T.ms), stroke: "var(--target)", "stroke-width": 2, "stroke-dasharray": "6 5" }));
-  svg.append(sv("text", { x: M.l + 6, y: y(T.ms) - 8, class: "lbl" }, fmtShort(T.ms) + " to beat"));
+  svg.append(sv("text", { x: M.l + 6, y: y(T.ms) - 8, class: "lbl", direction: "ltr" }, L("المطلوبة " + fmtShort(T.ms), fmtShort(T.ms) + " to beat")));
   if (!n) {
-    const msg = DATA.next ? "The first dot lands here after " + DATA.next.event + " on " + fmtDate(DATA.next.date, false, false) + "." : "No sessions logged yet.";
-    svg.append(sv("text", { x: M.l + pw / 2, y: M.t + ph * .3, "text-anchor": "middle", class: "empty" }, msg));
+    const msg = DATA.next ? L("أول نقطة بتنزل هنا بعد " + DATA.next.event + " يوم " + fmtDate(DATA.next.date, false, false) + ".", "The first dot lands here after " + DATA.next.event + " on " + fmtDate(DATA.next.date, false, false) + ".") : L("لسه ما سجّلنا أي جلسة.", "No sessions logged yet.");
+    svg.append(sv("text", { x: M.l + pw / 2, y: M.t + ph * .3, "text-anchor": "middle", class: "empty", direction: EN ? "ltr" : "rtl" }, msg));
     box.prepend(svg); return;
   }
   const every = Math.max(1, Math.ceil(n * (narrow ? 46 : 58) / pw));
@@ -329,14 +366,14 @@ function showTip(i) {
   const gap = s.st.best - T.ms;
   tip.textContent = "";
   tip.append(el("span", { class: "meta", text: fmtDate(s.date) + (s.event ? " · " + s.event : "") }),
-    el("span", null, el("b", { text: fmt(s.st.best) }), " best"),
-    el("span", null, el("b", { text: fmt(s.st.avg) }), " average of " + s.st.n),
-    el("span", { class: "meta", text: gap < 0 ? "Beat " + fmtShort(T.ms) + " by " + (-gap / 1000).toFixed(3) : fmtGap(gap) + " to " + fmtShort(T.ms) }));
+    el("span", null, el("b", { text: fmt(s.st.best) }), L(" أحسن", " best")),
+    el("span", null, el("b", { text: fmt(s.st.avg) }), L(" متوسط " + s.st.n + " لفّات", " average of " + s.st.n)),
+    el("span", { class: "meta", text: gap < 0 ? L("تحت " + fmtShort(T.ms) + " بـ" + (-gap / 1000).toFixed(3), "Beat " + fmtShort(T.ms) + " by " + (-gap / 1000).toFixed(3)) : L(fmtGap(gap) + " عن " + fmtShort(T.ms), fmtGap(gap) + " to " + fmtShort(T.ms)) }));
   tip.hidden = false;
   const sc = box.clientWidth / geo.W, px = cx * sc, tw = tip.offsetWidth;
   let left = px + 14; if (left + tw > box.clientWidth) left = px - 14 - tw;
   tip.style.transform = "translate(" + Math.max(0, left) + "px," + geo.M.t * sc + "px)";
-  $("chart-sr").textContent = fmtDate(s.date) + ". Best " + fmt(s.st.best) + ". Average " + fmt(s.st.avg) + ".";
+  $("chart-sr").textContent = fmtDate(s.date) + L(". أحسن ", ". Best ") + fmt(s.st.best) + L(". المتوسط ", ". Average ") + fmt(s.st.avg) + ".";
 }
 let hover = -1;
 const chart = $("chart");
@@ -356,20 +393,20 @@ chart.addEventListener("keydown", e => {
 const list = $("list");
 if (!all.length) {
   list.append(el("div", { class: "empty-card" },
-    el("b", { text: "No sessions logged yet." }),
-    el("p", { text: DATA.next ? "The first one is " + DATA.next.event + " on " + fmtDate(DATA.next.date) + " at " + T.track + ". Its laps, the four checks and the gap to " + fmtShort(T.ms) + " will show up here." : "Sessions will show up here." })));
+    el("b", { text: L("لسه ما سجّلنا أي جلسة.", "No sessions logged yet.") }),
+    el("p", { text: DATA.next ? L("أول جلسة " + DATA.next.event + " يوم " + fmtDate(DATA.next.date) + " في " + trk(T.track) + ". لفّاتها والفحوصات الأربعة والفرق عن " + fmtShort(T.ms) + " بتطلع هنا.", "The first one is " + DATA.next.event + " on " + fmtDate(DATA.next.date) + " at " + T.track + ". Its laps, the four checks and the gap to " + fmtShort(T.ms) + " will show up here.") : L("الجلسات بتطلع هنا.", "Sessions will show up here.") })));
 } else for (const s of all.slice().reverse()) {
   const st = s.st, card = el("article", { class: "card sess" },
     el("div", null, el("h3", { text: fmtDate(s.date) + (s.event ? " · " + s.event : "") }),
-      el("p", { class: "meta", text: s.track + " · " + (s.conditions || "Dry") + " · " + (st ? st.n + (st.n === 1 ? " lap" : " laps") : "no laps") })));
+      el("p", { class: "meta", text: trk(s.track) + " · " + (s.conditions || L("جاف", "Dry")) + " · " + (st ? st.n + (st.n === 1 ? L(" لفّة", " lap") : L(" لفّات", " laps")) : L("بدون لفّات", "no laps")) })));
   if (st) {
-    const nums = el("div", { class: "nums" }, el("div", { class: "num" }, el("span", { text: "Best" }), el("b", { text: fmt(st.best) })));
-    if (norm(s.track) === norm(T.track)) { const g = st.best - T.ms; nums.append(el("div", { class: "num" }, el("span", { text: "To " + fmtShort(T.ms) }), el("b", { class: g < 0 ? "beat" : null, text: g === 0 ? "Level" : fmtGap(g) }))); }
-    nums.append(el("div", { class: "num" }, el("span", { text: "Average" }), el("b", { text: fmt(st.avg) })));
+    const nums = el("div", { class: "nums" }, el("div", { class: "num" }, el("span", { text: L("أحسن", "Best") }), el("b", { text: fmt(st.best) })));
+    if (norm(s.track) === norm(T.track)) { const g = st.best - T.ms; nums.append(el("div", { class: "num" }, el("span", { text: L("عن ", "To ") + fmtShort(T.ms) }), el("b", { class: g < 0 ? "beat" : null, text: g === 0 ? L("متعادل", "Level") : fmtGap(g) }))); }
+    nums.append(el("div", { class: "num" }, el("span", { text: L("المتوسط", "Average") }), el("b", { text: fmt(st.avg) })));
     card.append(nums, el("div", { class: "laps" }, ...s.laps.map((ms, i) => el("span", { class: "lap" + (i === st.bi ? " is-best" : ""), text: fmt(ms) }))));
   }
   const done = CHECKS.filter(([k]) => s.checks && s.checks[k]).length;
-  card.append(el("p", { class: "meta", text: done === 4 ? "All four checks done." : "Checks: " + done + " of 4." }));
+  card.append(el("p", { class: "meta", text: done === 4 ? L("الفحوصات الأربعة كلها انعملت.", "All four checks done.") : L("الفحوصات: " + done + " من 4.", "Checks: " + done + " of 4.") }));
   if (s.notes) card.append(el("p", { text: s.notes }));
   list.append(card);
 }
@@ -380,9 +417,9 @@ for (const s of all) { if (!s.st) continue; const k = norm(s.track), c = by.get(
 if (by.size) {
   $("tracks-sec").hidden = false;
   const t = $("tracks-table");
-  t.append(el("thead", null, el("tr", null, ...["Track", "Best lap", "Set on", "Sessions"].map(h => el("th", { scope: "col", text: h })))));
+  t.append(el("thead", null, el("tr", null, ...(EN ? ["Track", "Best lap", "Set on", "Sessions"] : ["الحلبة", "أحسن لفّة", "تاريخها", "الجلسات"]).map(h => el("th", { scope: "col", text: h })))));
   const tb = el("tbody");
-  for (const r of by.values()) tb.append(el("tr", null, el("td", { text: r.name }), el("td", { class: "n", text: fmt(r.best) }), el("td", { text: fmtDate(r.date) }), el("td", { class: "n", text: String(r.n) })));
+  for (const r of by.values()) tb.append(el("tr", null, el("td", { text: trk(r.name) }), el("td", { class: "n", text: fmt(r.best) }), el("td", { text: fmtDate(r.date) }), el("td", { class: "n", text: String(r.n) })));
   t.append(tb);
 }
 
