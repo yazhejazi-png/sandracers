@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="img/logo.png">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,-apple-system,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Sand Racers Lap Log</title>
+<meta name="description" content="Every track session of #96, the light-blue BMW M2 of Sand Racers, against the lap to beat.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&display=swap">
+<style>
+/* Layout: an arch-shaped window (the logo's own frame) holds the title and the pit board over a dune horizon; below it the checks, the chart, the sessions and the best lap per track, all on warm sand. Colours come straight from the Sand Racers logo: sky, sun, dune, road. */
+:root{
+  --sky:#73B2D5; --sun:#FDBF6A; --dune:#D48741; --dune-deep:#A65E22; --road:#291C13;
+  --bg:#FBF3E6; --panel:#FFFAF2; --raise:#F5E6CF; --line:#E6D0AE; --grid:#EEDDC3;
+  --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --on-accent:#FFFAF2;
+  --best:#2F7FB0; --avg:#9C8672; --target:#C4541A; --good:#2E7D32;
+  --display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Saira","Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --arabic:"Lalezar","Noto Kufi Arabic","Geeza Pro",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13;
+  --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#1E140D; --panel:#291C13; --raise:#36261A; --line:#4A3524; --grid:#3A2A1D;
+  --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --on-accent:#291C13;
+  --best:#73B2D5; --avg:#9C8672; --target:#F08A3E; --good:#6CC070; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55}
+h1,h2,h3{margin:0;text-wrap:balance;line-height:1.05;font-family:var(--display);font-weight:800}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.in{max-width:1040px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ar{font-family:var(--arabic);direction:rtl;font-weight:400}
+.eyebrow{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--muted)}
+
+/* Top bar */
+.bar{border-bottom:1px solid var(--line)}
+.bar .in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg)}
+.brand img{width:34px;height:auto}
+.brand b{font-family:var(--display);font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
+.bar nav{display:flex;gap:18px;font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.bar nav a{color:var(--muted);text-decoration:none}
+.bar nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--dune)}
+
+.photo{margin:0;display:grid;gap:8px}
+.photo img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:3px solid var(--frame)}
+.photo figcaption{font-size:.85rem;color:var(--muted)}
+/* Hero: the arch window over a dune horizon */
+.hero{position:relative;overflow:hidden;background:linear-gradient(180deg,var(--sky) 0 62%,var(--sun) 62% 63%,var(--dune) 63%)}
+.hero .dunes{position:absolute;inset:auto 0 0 0;width:100%;height:58%;display:block}
+.hero .in{position:relative;padding-block:40px 36px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:28px;align-items:end}
+.arch{background:var(--panel);color:var(--fg);border:3px solid var(--frame);border-radius:50% 50% 10px 10px / 34% 34% 10px 10px;padding:64px 28px 28px;position:relative;box-shadow:0 0 0 6px var(--panel),0 0 0 9px var(--frame)}
+.arch::before{content:"";position:absolute;left:50%;top:-22px;width:22px;height:22px;transform:translateX(-50%) rotate(45deg);background:var(--sun);border:3px solid var(--road)}
+.arch h1{font-size:clamp(3rem,10vw,5.2rem);text-transform:uppercase;letter-spacing:.01em;line-height:.88}
+.arch h1 span{color:var(--warm)}
+.arch .ar{font-size:clamp(1.3rem,3.6vw,1.8rem);color:var(--warm);display:block;margin-top:8px}
+.arch .lede{margin-top:14px;max-width:46ch;color:var(--muted)}
+.board{background:var(--road);color:#F8EBD6;border-radius:12px;padding:14px;display:grid;gap:8px;box-shadow:0 10px 30px rgba(41,28,19,.35)}
+.board h2{font-size:.85rem;letter-spacing:.18em;text-transform:uppercase;color:var(--sun);font-weight:700;padding:2px 6px}
+.slot{display:flex;justify-content:space-between;align-items:baseline;gap:12px;background:#36261A;border-radius:6px;padding:9px 14px}
+.slot span{font-family:var(--display);font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#C9B293}
+.slot b{font-family:var(--display);font-weight:800;font-size:clamp(2rem,6vw,2.7rem);font-variant-numeric:tabular-nums;line-height:1;white-space:nowrap}
+.slot.hot b{color:var(--sun)}
+.board-note{font-size:.84rem;color:#C9B293;padding:2px 6px 0}
+
+main.in{display:grid;gap:44px;padding-block:40px 56px}
+.sec{display:grid;gap:14px}
+.sec>h2{font-size:clamp(1.8rem,5.5vw,2.4rem);text-transform:uppercase;letter-spacing:.02em}
+.sub{color:var(--muted);max-width:64ch}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;min-width:0}
+
+/* The four checks: a real order, so numbered */
+.checks{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;counter-reset:c}
+.checks li{counter-increment:c;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--dune);border-radius:10px;padding:14px;display:grid;gap:4px;align-content:start}
+.checks li::before{content:counter(c);font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1;color:var(--dune)}
+.checks b{font-weight:600}
+.checks span{font-size:.88rem;color:var(--muted)}
+
+/* Chart */
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.86rem;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:8px}
+.key{width:22px;border-top:3px solid}
+.key.dash{border-top-style:dashed}
+.chart{position:relative;margin-top:10px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.chart text{font-family:var(--body);font-size:12px;fill:var(--muted)}
+.chart .tick{font-variant-numeric:tabular-nums}
+.chart .lbl{fill:var(--fg);font-weight:600;paint-order:stroke;stroke:var(--panel);stroke-width:4px;stroke-linejoin:round}
+.chart .empty{fill:var(--fg);font-size:14px;paint-order:stroke;stroke:var(--panel);stroke-width:5px}
+.tip{position:absolute;top:0;left:0;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:.82rem;width:max-content;max-width:240px;box-shadow:0 6px 18px rgba(41,28,19,.2);display:grid;gap:3px}
+.tip[hidden]{display:none}
+.tip b{font-variant-numeric:tabular-nums}
+
+/* Sessions */
+.list{display:grid;gap:12px}
+.sess{display:grid;gap:12px}
+.sess h3{font-family:var(--body);font-weight:600;font-size:1.05rem}
+.meta{font-size:.86rem;color:var(--muted)}
+.nums{display:flex;flex-wrap:wrap;gap:8px 28px}
+.num{display:grid}
+.num span{font-family:var(--display);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.num b{font-family:var(--display);font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.num b.beat{color:var(--good)}
+.laps{display:flex;flex-wrap:wrap;gap:6px}
+.lap{font-variant-numeric:tabular-nums;font-size:.86rem;background:var(--raise);border:1px solid var(--line);border-radius:6px;padding:2px 8px}
+.lap.is-best{border-color:var(--dune);font-weight:600}
+.empty-card{border:1px dashed var(--line);border-radius:14px;padding:22px;color:var(--muted);display:grid;gap:6px}
+.empty-card b{color:var(--fg);font-weight:600}
+.tablewrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-family:var(--display);color:var(--muted);font-weight:700;font-size:.82rem;letter-spacing:.1em;text-transform:uppercase}
+td.n{font-variant-numeric:tabular-nums}
+
+footer{border-top:1px solid var(--line)}
+footer .in{padding-block:22px 34px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 24px;color:var(--muted);font-size:.9rem}
+footer .ar{color:var(--warm);font-size:1.15rem}
+
+@media (max-width:860px){
+  .hero .in{grid-template-columns:minmax(0,1fr)}
+  .checks{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:520px){
+  .checks{grid-template-columns:minmax(0,1fr)}
+  .arch{padding:52px 18px 22px}
+  .bar nav{gap:12px;font-size:.82rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .board .slot.hot b{animation:glow 2.4s ease-in-out 1}
+  @keyframes glow{0%{color:#F8EBD6}50%{color:var(--sun)}100%{color:var(--sun)}}
+}
+</style>
+</head>
+<body>
+
+
+<header class="bar">
+  <div class="in">
+    <a class="brand" href="/"><img src="img/logo.png" alt="" width="34" height="42"><b>Sand Racers</b></a>
+    <nav aria-label="Site">
+      <a href="/">Home</a>
+      <a href="#" aria-current="page">Lap Log</a>
+      <a href="https://www.instagram.com/sand_racers/">Instagram</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <svg class="dunes" viewBox="0 0 1200 300" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 120 C180 60 300 70 460 120 S760 170 900 90 S1120 60 1200 100 V300 H0Z" fill="#E9A24A"/>
+    <path d="M0 190 C220 130 380 150 560 200 S900 240 1200 160 V300 H0Z" fill="#D48741"/>
+    <path d="M0 260 C260 220 520 240 760 270 S1080 270 1200 240 V300 H0Z" fill="#A65E22"/>
+    <path d="M610 300 C640 250 560 225 620 190 S760 150 720 120" fill="none" stroke="#291C13" stroke-width="22" stroke-linecap="round"/>
+    <path d="M610 300 C640 250 560 225 620 190 S760 150 720 120" fill="none" stroke="#FFFAF2" stroke-width="2" stroke-dasharray="10 12"/>
+  </svg>
+  <div class="in">
+    <div class="arch">
+      <p class="eyebrow">#96 · BMW M2 · Jeddah</p>
+      <h1>Lap <span>Log</span></h1>
+      <span class="ar">سجل اللفات</span>
+      <p class="lede">Every track session of #96, timed and logged. One car, one clock, and the lap to beat.</p>
+    </div>
+    <div class="board" aria-labelledby="board-h">
+      <h2 id="board-h">Pit board</h2>
+      <div class="slot hot"><span>Lap to beat</span><b id="b-target">2:39.5</b></div>
+      <div class="slot"><span id="b-best-lbl">Best this season</span><b id="b-best">—</b></div>
+      <div class="slot"><span>Gap</span><b id="b-gap">—</b></div>
+      <p class="board-note" id="b-note"></p>
+    </div>
+  </div>
+</section>
+
+<main class="in">
+  <figure class="photo sec"><img src="img/m2_96.jpg" width="1280" height="720" alt="The light-blue BMW M2, #96, parked in pit garage 12 at Jeddah Corniche Circuit with the door and bonnet open"><figcaption>#96 in pit garage 12, Jeddah Corniche Circuit.</figcaption></figure>
+  <section class="sec" aria-labelledby="checks-h">
+    <h2 id="checks-h">Before every session</h2>
+    <p class="sub">The routine #96 runs before a single timed lap. Every session below shows whether it was done.</p>
+    <ol class="checks">
+      <li><b>Tyres checked</b><span>Pressures and condition, every time the car has been to the shop.</span></li>
+      <li><b>Smooth out lap</b><span>Bring the tyres and brakes up to temperature. Smooth before fast.</span></li>
+      <li><b>Hot pressures</b><span>Check them again after the first run, while the tyres are still hot.</span></li>
+      <li><b>Cool-down lap</b><span>One easy lap before the pits, every session.</span></li>
+    </ol>
+  </section>
+
+  <section class="sec" aria-labelledby="chart-h">
+    <h2 id="chart-h">Best lap per session</h2>
+    <p class="sub" id="chart-sub"></p>
+    <div class="card">
+      <div class="legend" aria-hidden="true">
+        <span><i class="key" style="border-color:var(--best)"></i>Best lap</span>
+        <span><i class="key" style="border-color:var(--avg)"></i>Average lap</span>
+        <span><i class="key dash" style="border-color:var(--target)"></i><span id="legend-target">Lap to beat</span></span>
+      </div>
+      <div class="chart" id="chart" tabindex="0" aria-label="Best and average lap per session. Use the left and right arrow keys to step through sessions.">
+        <div class="tip" id="tip" hidden></div>
+      </div>
+      <p class="sub" id="chart-sr" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"></p>
+    </div>
+  </section>
+
+  <section class="sec" aria-labelledby="list-h">
+    <h2 id="list-h">Sessions</h2>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section class="sec" aria-labelledby="tracks-h" id="tracks-sec" hidden>
+    <h2 id="tracks-h">Best lap at each track</h2>
+    <div class="card tablewrap"><table id="tracks-table"></table></div>
+  </section>
+</main>
+
+<footer>
+  <div class="in">
+    <p>Sand Racers · @sand_racers</p>
+    <p class="ar">ساند ريسر</p>
+  </div>
+</footer>
+
+<!-- The log. To add a session, append to "sessions"; laps are in milliseconds (2:41.302 = 161302). -->
+<script id="lap-data" type="application/json">
+{
+  "target": { "ms": 159500, "track": "Jeddah Corniche Circuit", "setOn": "2026-09-25" },
+  "next": null,
+  "sessions": []
+}
+</script>
+
+<script>
+(() => {
+"use strict";
+const DATA = JSON.parse(document.getElementById("lap-data").textContent);
+const T = DATA.target, sessions = (DATA.sessions || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+const CHECKS = [["tyres","Tyres checked"],["outLap","Smooth out lap"],["hotPressures","Hot pressures"],["coolDown","Cool-down lap"]];
+const WD = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"], MO = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const $ = id => document.getElementById(id);
+const NS = "http://www.w3.org/2000/svg";
+function el(tag, attrs, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs || {})) { if (v == null) continue; if (k === "class") n.className = v; else if (k === "text") n.textContent = v; else n.setAttribute(k, v); }
+  for (const k of kids) if (k != null) n.append(k);
+  return n;
+}
+function sv(tag, attrs, text) { const n = document.createElementNS(NS, tag); for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v); if (text != null) n.textContent = text; return n; }
+function fmt(ms) { ms = Math.round(ms); const m = Math.floor(ms / 60000), r = ms - m * 60000, s = Math.floor(r / 1000); return m + ":" + String(s).padStart(2, "0") + "." + String(r - s * 1000).padStart(3, "0"); }
+const fmtShort = ms => fmt(ms).replace(/0+$/, "").replace(/\.$/, "");
+const fmtGap = ms => (ms > 0 ? "+" : ms < 0 ? "−" : "") + (Math.abs(ms) / 1000).toFixed(3);
+function fmtDate(iso, day = true, year = true) { const d = new Date(iso + "T00:00:00Z"); return (day ? WD[d.getUTCDay()] + " " : "") + d.getUTCDate() + " " + MO[d.getUTCMonth()] + (year ? " " + d.getUTCFullYear() : ""); }
+const norm = s => String(s || "").trim().toLowerCase();
+function stats(laps) {
+  if (!laps || !laps.length) return null;
+  let best = Infinity, bi = 0, sum = 0;
+  laps.forEach((x, i) => { sum += x; if (x < best) { best = x; bi = i; } });
+  return { best, bi, avg: sum / laps.length, n: laps.length };
+}
+const all = sessions.map(s => Object.assign({}, s, { st: stats(s.laps) }));
+const atT = all.filter(s => s.st && norm(s.track) === norm(T.track));
+let best = null;
+for (const s of atT) if (s.date > T.setOn && (!best || s.st.best < best.st.best)) best = s;
+
+/* Pit board */
+$("b-target").textContent = fmtShort(T.ms);
+$("legend-target").textContent = fmtShort(T.ms) + " to beat";
+if (best) {
+  const gap = best.st.best - T.ms;
+  $("b-best").textContent = fmt(best.st.best);
+  $("b-gap").textContent = gap === 0 ? "Level" : fmtGap(gap);
+  $("b-note").textContent = gap < 0 ? "Beaten on " + fmtDate(best.date) + "." : "Lap to beat set on " + fmtDate(T.setOn) + " at " + T.track + ".";
+} else {
+  $("b-note").textContent = "Best lap ever, set " + fmtDate(T.setOn) + " at " + T.track + "." + (DATA.next ? " Next session: " + DATA.next.event + ", " + fmtDate(DATA.next.date, false, false) + "." : "");
+}
+$("chart-sub").textContent = "At " + T.track + ". Lower is faster. The closer the grey line sits to the blue one, the more consistent the session.";
+
+/* Chart */
+let geo = null;
+function drawChart() {
+  const box = $("chart");
+  box.querySelectorAll("svg").forEach(n => n.remove());
+  $("tip").hidden = true;
+  const W = Math.max(280, Math.round(box.clientWidth || 640)), narrow = W < 520, H = narrow ? 240 : 290;
+  const M = { t: 18, r: narrow ? 12 : 20, b: 34, l: narrow ? 50 : 58 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
+  let lo = T.ms, hi = T.ms;
+  for (const s of atT) { lo = Math.min(lo, s.st.best); hi = Math.max(hi, s.st.avg); }
+  if (!atT.length) { lo = T.ms - 2000; hi = T.ms + 4000; }
+  const pad = Math.max((hi - lo) * .14, 600); lo -= pad; hi += pad;
+  const step = [500, 1000, 2000, 5000, 10000, 15000, 30000, 60000].find(s => (hi - lo) / s <= (narrow ? 4.5 : 5.5)) || 60000;
+  const y = v => M.t + (hi - v) / (hi - lo) * ph, n = atT.length, inset = narrow ? 14 : 22;
+  const x = i => n <= 1 ? M.l + pw / 2 : M.l + inset + i * (pw - 2 * inset) / (n - 1);
+  geo = { W, M, x, n };
+  const svg = sv("svg", { viewBox: "0 0 " + W + " " + H, width: W, height: H, "aria-hidden": "true" });
+  for (let v = Math.ceil(lo / step) * step; v <= hi; v += step) {
+    svg.append(sv("line", { x1: M.l, x2: W - M.r, y1: y(v), y2: y(v), stroke: "var(--grid)", "stroke-width": 1 }));
+    const m = Math.floor(v / 60000), s = (v - m * 60000) / 1000;
+    svg.append(sv("text", { x: M.l - 8, y: y(v), dy: "0.32em", "text-anchor": "end", class: "tick" }, m + ":" + (step < 1000 ? s.toFixed(1).padStart(4, "0") : String(Math.round(s)).padStart(2, "0"))));
+  }
+  svg.append(sv("line", { x1: M.l, x2: W - M.r, y1: M.t + ph, y2: M.t + ph, stroke: "var(--line)", "stroke-width": 1 }));
+  svg.append(sv("line", { x1: M.l, x2: W - M.r, y1: y(T.ms), y2: y(T.ms), stroke: "var(--target)", "stroke-width": 2, "stroke-dasharray": "6 5" }));
+  svg.append(sv("text", { x: M.l + 6, y: y(T.ms) - 8, class: "lbl" }, fmtShort(T.ms) + " to beat"));
+  if (!n) {
+    const msg = DATA.next ? "The first dot lands here after " + DATA.next.event + " on " + fmtDate(DATA.next.date, false, false) + "." : "No sessions logged yet.";
+    svg.append(sv("text", { x: M.l + pw / 2, y: M.t + ph * .3, "text-anchor": "middle", class: "empty" }, msg));
+    box.prepend(svg); return;
+  }
+  const every = Math.max(1, Math.ceil(n * (narrow ? 46 : 58) / pw));
+  atT.forEach((s, i) => { if ((n - 1 - i) % every === 0) svg.append(sv("text", { x: x(i), y: M.t + ph + 21, "text-anchor": "middle", class: "tick" }, fmtDate(s.date, false, false))); });
+  const path = k => atT.map((s, i) => (i ? "L" : "M") + x(i).toFixed(1) + " " + y(s.st[k]).toFixed(1)).join(" ");
+  if (n > 1) {
+    svg.append(sv("path", { d: path("avg"), fill: "none", stroke: "var(--avg)", "stroke-width": 2, "stroke-linejoin": "round" }));
+    svg.append(sv("path", { d: path("best"), fill: "none", stroke: "var(--best)", "stroke-width": 2.5, "stroke-linejoin": "round" }));
+  }
+  svg.append(sv("line", { id: "cross", x1: 0, x2: 0, y1: M.t, y2: M.t + ph, stroke: "var(--muted)", "stroke-width": 1, visibility: "hidden" }));
+  atT.forEach((s, i) => svg.append(sv("circle", { cx: x(i), cy: y(s.st.avg), r: 4, fill: "var(--avg)", stroke: "var(--panel)", "stroke-width": 2 })));
+  atT.forEach((s, i) => svg.append(sv("circle", { cx: x(i), cy: y(s.st.best), r: 5, fill: "var(--best)", stroke: "var(--panel)", "stroke-width": 2 })));
+  const last = atT[n - 1], lx = x(n - 1), end = lx > M.l + pw * .6;
+  svg.append(sv("text", { x: lx + (end ? -10 : 10), y: y(last.st.best) + 18, "text-anchor": end ? "end" : "start", class: "lbl" }, fmt(last.st.best)));
+  box.prepend(svg);
+}
+function showTip(i) {
+  if (!geo || !geo.n) return;
+  i = Math.max(0, Math.min(geo.n - 1, i)); hover = i;
+  const s = atT[i], box = $("chart"), tip = $("tip"), cx = geo.x(i), cross = box.querySelector("#cross");
+  cross.setAttribute("x1", cx); cross.setAttribute("x2", cx); cross.setAttribute("visibility", "visible");
+  const gap = s.st.best - T.ms;
+  tip.textContent = "";
+  tip.append(el("span", { class: "meta", text: fmtDate(s.date) + (s.event ? " · " + s.event : "") }),
+    el("span", null, el("b", { text: fmt(s.st.best) }), " best"),
+    el("span", null, el("b", { text: fmt(s.st.avg) }), " average of " + s.st.n),
+    el("span", { class: "meta", text: gap < 0 ? "Beat " + fmtShort(T.ms) + " by " + (-gap / 1000).toFixed(3) : fmtGap(gap) + " to " + fmtShort(T.ms) }));
+  tip.hidden = false;
+  const sc = box.clientWidth / geo.W, px = cx * sc, tw = tip.offsetWidth;
+  let left = px + 14; if (left + tw > box.clientWidth) left = px - 14 - tw;
+  tip.style.transform = "translate(" + Math.max(0, left) + "px," + geo.M.t * sc + "px)";
+  $("chart-sr").textContent = fmtDate(s.date) + ". Best " + fmt(s.st.best) + ". Average " + fmt(s.st.avg) + ".";
+}
+let hover = -1;
+const chart = $("chart");
+chart.addEventListener("pointermove", e => {
+  if (!geo || !geo.n) return;
+  const r = chart.getBoundingClientRect(), px = (e.clientX - r.left) * geo.W / r.width;
+  let bi = 0, bd = Infinity; for (let i = 0; i < geo.n; i++) { const d = Math.abs(geo.x(i) - px); if (d < bd) { bd = d; bi = i; } }
+  showTip(bi);
+});
+chart.addEventListener("pointerleave", () => { $("tip").hidden = true; const c = chart.querySelector("#cross"); if (c) c.setAttribute("visibility", "hidden"); });
+chart.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") { showTip(hover < 0 ? 0 : hover + 1); e.preventDefault(); }
+  if (e.key === "ArrowLeft") { showTip(hover < 0 ? geo.n - 1 : hover - 1); e.preventDefault(); }
+});
+
+/* Sessions */
+const list = $("list");
+if (!all.length) {
+  list.append(el("div", { class: "empty-card" },
+    el("b", { text: "No sessions logged yet." }),
+    el("p", { text: DATA.next ? "The first one is " + DATA.next.event + " on " + fmtDate(DATA.next.date) + " at " + T.track + ". Its laps, the four checks and the gap to " + fmtShort(T.ms) + " will show up here." : "Sessions will show up here." })));
+} else for (const s of all.slice().reverse()) {
+  const st = s.st, card = el("article", { class: "card sess" },
+    el("div", null, el("h3", { text: fmtDate(s.date) + (s.event ? " · " + s.event : "") }),
+      el("p", { class: "meta", text: s.track + " · " + (s.conditions || "Dry") + " · " + (st ? st.n + (st.n === 1 ? " lap" : " laps") : "no laps") })));
+  if (st) {
+    const nums = el("div", { class: "nums" }, el("div", { class: "num" }, el("span", { text: "Best" }), el("b", { text: fmt(st.best) })));
+    if (norm(s.track) === norm(T.track)) { const g = st.best - T.ms; nums.append(el("div", { class: "num" }, el("span", { text: "To " + fmtShort(T.ms) }), el("b", { class: g < 0 ? "beat" : null, text: g === 0 ? "Level" : fmtGap(g) }))); }
+    nums.append(el("div", { class: "num" }, el("span", { text: "Average" }), el("b", { text: fmt(st.avg) })));
+    card.append(nums, el("div", { class: "laps" }, ...s.laps.map((ms, i) => el("span", { class: "lap" + (i === st.bi ? " is-best" : ""), text: fmt(ms) }))));
+  }
+  const done = CHECKS.filter(([k]) => s.checks && s.checks[k]).length;
+  card.append(el("p", { class: "meta", text: done === 4 ? "All four checks done." : "Checks: " + done + " of 4." }));
+  if (s.notes) card.append(el("p", { text: s.notes }));
+  list.append(card);
+}
+
+/* Best per track */
+const by = new Map();
+for (const s of all) { if (!s.st) continue; const k = norm(s.track), c = by.get(k) || { name: s.track, best: Infinity, date: "", n: 0 }; c.n++; if (s.st.best < c.best) { c.best = s.st.best; c.date = s.date; } by.set(k, c); }
+if (by.size) {
+  $("tracks-sec").hidden = false;
+  const t = $("tracks-table");
+  t.append(el("thead", null, el("tr", null, ...["Track", "Best lap", "Set on", "Sessions"].map(h => el("th", { scope: "col", text: h })))));
+  const tb = el("tbody");
+  for (const r of by.values()) tb.append(el("tr", null, el("td", { text: r.name }), el("td", { class: "n", text: fmt(r.best) }), el("td", { text: fmtDate(r.date) }), el("td", { class: "n", text: String(r.n) })));
+  t.append(tb);
+}
+
+drawChart();
+let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(drawChart, 120); });
+})();
+</script>
+
+</body>
+</html>
