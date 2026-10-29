@@ -189,7 +189,7 @@ footer .ar{color:var(--warm);font-size:1.15rem}
     <div class="board" aria-labelledby="board-h">
       <h2 id="board-h" data-en="Pit board">لوحة البِت</h2>
       <div class="slot hot"><span data-en="Lap to beat">اللفّة المطلوبة</span><b id="b-target">2:39.5</b></div>
-      <div class="slot"><span id="b-best-lbl" data-en="Best this season">أحسن لفّة هالموسم</span><b id="b-best">—</b></div>
+      <div class="slot"><span id="b-best-lbl" data-en="Best this season">أحسن لفّة هذا الموسم</span><b id="b-best">—</b></div>
       <div class="slot"><span data-en="Gap">الفرق</span><b id="b-gap">—</b></div>
       <p class="board-note" id="b-note"></p>
     </div>
@@ -308,7 +308,7 @@ if (best) {
   $("b-note").textContent = gap < 0 ? L("نزلنا تحتها يوم " + fmtDate(best.date) + ".", "Beaten on " + fmtDate(best.date) + ".") : L("اللفّة المطلوبة انسجلت يوم " + fmtDate(T.setOn) + " في " + trk(T.track) + ".", "Lap to beat set on " + fmtDate(T.setOn) + " at " + T.track + ".");
 } else {
   const b = $("b-best"), g = $("b-gap");
-  b.textContent = L("لسه ما في لفّة هالموسم", "No timed lap yet this season"); b.className = "soft";
+  b.textContent = L("لسه ما في لفّة هذا الموسم", "No timed lap yet this season"); b.className = "soft";
   g.textContent = L("لسه", "Not yet"); g.className = "soft";
   $("b-note").textContent = L("أحسن لفّة على الإطلاق، انسجلت يوم " + fmtDate(T.setOn) + " في " + trk(T.track) + ".", "Best lap ever, set " + fmtDate(T.setOn) + " at " + T.track + ".") + (DATA.next ? L(" الجلسة الجاية: " + DATA.next.event + "، " + fmtDate(DATA.next.date, false, false) + ".", " Next session: " + DATA.next.event + ", " + fmtDate(DATA.next.date, false, false) + ".") : "");
 }
