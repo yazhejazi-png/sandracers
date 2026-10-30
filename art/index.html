@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<script>try{if(localStorage.getItem("sr-lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr"}}catch(e){}</script>
+<title>Sand Racers Art · فن ساند ريسرز</title>
+<meta name="description" content="أعمال فنية من ساند ريسرز: أماكن وخرائط بستايلات مختلفة. Sand Racers artwork: places and maps in different styles.">
+<meta property="og:title" content="فن ساند ريسرز · Sand Racers Art">
+<meta property="og:url" content="https://sand-racers.com/art/">
+<meta property="og:image" content="https://sand-racers.com/img/share.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+/* Layout: same top bar and footer as the home page; a hero line, then one section per group with a responsive picture grid on warm sand. */
+:root{
+  --sky:#73B2D5; --sun:#FDBF6A; --dune:#D48741; --dune-deep:#A65E22; --road:#291C13;
+  --bg:#FBF3E6; --panel:#FFFAF2; --line:#E6D0AE; --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --ring:#1F3A5F;
+  --display:"Saira Condensed","Arial Narrow",Arial,sans-serif; --body:"Saira","Segoe UI",Arial,sans-serif; --arabic:"Lalezar","Geeza Pro",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E140D; --panel:#291C13; --line:#4A3524; --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --ring:#9CC7F0; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;padding-top:env(safe-area-inset-top,0)}
+html[dir="rtl"] body{font-family:"Tajawal",var(--body)}
+img{max-width:100%}
+h1,h2{margin:0;line-height:1.1;font-family:var(--display);font-weight:800;text-wrap:balance}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] .bar nav{font-family:"Lalezar",var(--display);font-weight:400;letter-spacing:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:4px}
+.in{max-width:1040px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.lang{background:none;border:2px solid var(--line);border-radius:999px;color:var(--fg);font:inherit;font-size:.8rem;padding:2px 10px;cursor:pointer}
+.bar{border-bottom:1px solid var(--line)}
+.bar .in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg)}
+.brand img{width:34px;height:auto}
+.brand b{font-family:var(--display);font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
+.bar nav{display:flex;gap:18px;font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.bar nav a{color:var(--muted);text-decoration:none;white-space:nowrap}
+.bar nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--dune)}
+@media (max-width:420px){.bar nav{gap:10px;font-size:.8rem}.brand b{display:none}}
+.hero{background:linear-gradient(180deg,var(--sky) 0 62%,var(--sun) 62% 63%,var(--dune) 63%);padding:40px 0 34px;color:var(--road)}
+.hero h1{font-size:clamp(2rem,7vw,3.4rem)}
+.hero p{margin-top:8px;max-width:48ch;font-weight:500}
+.sec{padding:30px 0 8px}
+.sec h2{font-size:1.7rem;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+figure{margin:0;display:grid;gap:6px;align-content:start}
+figure img{display:block;width:100%;height:auto;border-radius:12px;border:3px solid var(--frame);background:var(--panel)}
+figcaption{font-size:.9rem;color:var(--muted)}
+.how{padding:30px 0}
+.how ol{margin:12px 0 0;padding-inline-start:1.3em;max-width:60ch}
+.how li{margin-bottom:6px}
+footer{border-top:1px solid var(--line)}
+footer .in{padding-block:22px 34px;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="in">
+    <a class="brand" href="/"><img src="/laplog/img/logo.png" alt="" width="34" height="42"><b>Sand Racers</b></a>
+    <nav aria-label="Site">
+      <a href="/" data-en="Home">الرئيسية</a>
+      <a href="/laplog/" data-en="Lap Log">سجل اللفات</a>
+      <a href="/art/" aria-current="page" data-en="Art">الفن</a>
+      <button class="lang" type="button" id="lang">English</button>
+    </nav>
+  </div>
+</header>
+<section class="hero"><div class="in">
+  <h1 data-en="Sand Racers Art">فن ساند ريسرز</h1>
+  <p data-en="Places and maps, each drawn in a different style. Tap a picture to see it full size.">أماكن وخرائط، كل وحدة مرسومة بستايل مختلف. اضغط على الصورة تشوفها كبيرة.</p>
+</div></section>
+<main>
+<section class="sec" id="places"><div class="in"><h2 data-en="Places, each in its own style">الأماكن بستايلاتها</h2><div class="grid">
+<figure><a href="img/majlis.webp"><img src="img/majlis.webp" width="900" height="1125" loading="lazy" alt="ركن مجلس وشباك روشان" data-en-alt="A majlis corner with a roshan window"></a><figcaption data-en="A majlis corner with a roshan window">ركن مجلس وشباك روشان</figcaption></figure>
+<figure><a href="img/balad.webp"><img src="img/balad.webp" width="900" height="1125" loading="lazy" alt="البلد القديمة" data-en-alt="Old Jeddah, a lane of roshan houses"></a><figcaption data-en="Old Jeddah, a lane of roshan houses">البلد القديمة</figcaption></figure>
+<figure><a href="img/madinah.webp"><img src="img/madinah.webp" width="900" height="1117" loading="lazy" alt="المدينة" data-en-alt="Madinah, palms and Uhud on a marked wall"></a><figcaption data-en="Madinah, palms and Uhud on a marked wall">المدينة</figcaption></figure>
+<figure><a href="img/abha.webp"><img src="img/abha.webp" width="900" height="1125" loading="lazy" alt="أبها" data-en-alt="Abha, an Asiri wall with a window on the mountains"></a><figcaption data-en="Abha, an Asiri wall with a window on the mountains">أبها</figcaption></figure>
+<figure><a href="img/shafa.webp"><img src="img/shafa.webp" width="900" height="1125" loading="lazy" alt="الشفا" data-en-alt="Al Shafa, mountains and sun in flat blocks"></a><figcaption data-en="Al Shafa, mountains and sun in flat blocks">الشفا</figcaption></figure>
+<figure><a href="img/stencil.webp"><img src="img/stencil.webp" width="900" height="1117" loading="lazy" alt="المجهول" data-en-alt="The Unknown, a street stencil"></a><figcaption data-en="The Unknown, a street stencil">المجهول</figcaption></figure>
+</div></div></section>
+<section class="sec" id="guide"><div class="in"><h2 data-en="The next-on-the-map guide">دليل الأماكن</h2><div class="grid">
+<figure><a href="img/g1.webp"><img src="img/g1.webp" width="900" height="1125" loading="lazy" alt="قرية الرخام، ذي عين" data-en-alt="The Marble Village, Dhee Ain"></a><figcaption data-en="The Marble Village, Dhee Ain">قرية الرخام، ذي عين</figcaption></figure>
+<figure><a href="img/g2.webp"><img src="img/g2.webp" width="900" height="1125" loading="lazy" alt="الجبل البارد، قارة" data-en-alt="The Cold Mountain, Qarah"></a><figcaption data-en="The Cold Mountain, Qarah">الجبل البارد، قارة</figcaption></figure>
+<figure><a href="img/g3.webp"><img src="img/g3.webp" width="900" height="1125" loading="lazy" alt="الربع الخالي" data-en-alt="The Empty Quarter"></a><figcaption data-en="The Empty Quarter">الربع الخالي</figcaption></figure>
+<figure><a href="img/g4.webp"><img src="img/g4.webp" width="900" height="1125" loading="lazy" alt="قلعة مارد، دومة الجندل" data-en-alt="Marid Castle, Dumat Al Jandal"></a><figcaption data-en="Marid Castle, Dumat Al Jandal">قلعة مارد، دومة الجندل</figcaption></figure>
+<figure><a href="img/g5.webp"><img src="img/g5.webp" width="900" height="1125" loading="lazy" alt="مضيق باطارا" data-en-alt="Baatara Gorge"></a><figcaption data-en="Baatara Gorge">مضيق باطارا</figcaption></figure>
+<figure><a href="img/g6.webp"><img src="img/g6.webp" width="900" height="1125" loading="lazy" alt="طريق الأفعى" data-en-alt="Snake Pass"></a><figcaption data-en="Snake Pass">طريق الأفعى</figcaption></figure>
+</div></div></section>
+<section class="sec" id="maps"><div class="in"><h2 data-en="Maps">الخرائط</h2><div class="grid">
+<figure><a href="img/m1.webp"><img src="img/m1.webp" width="900" height="506" loading="lazy" alt="طريق الشفا، نهار" data-en-alt="The Al Shafa road, day"></a><figcaption data-en="The Al Shafa road, day">طريق الشفا، نهار</figcaption></figure>
+<figure><a href="img/m2.webp"><img src="img/m2.webp" width="900" height="506" loading="lazy" alt="طريق الشفا، حبر" data-en-alt="The Al Shafa road, ink"></a><figcaption data-en="The Al Shafa road, ink">طريق الشفا، حبر</figcaption></figure>
+<figure><a href="img/m3.webp"><img src="img/m3.webp" width="900" height="506" loading="lazy" alt="طريق الشفا، ليل" data-en-alt="The Al Shafa road, night"></a><figcaption data-en="The Al Shafa road, night">طريق الشفا، ليل</figcaption></figure>
+<figure><a href="img/m4.webp"><img src="img/m4.webp" width="900" height="506" loading="lazy" alt="بستايل ماينكرافت" data-en-alt="In a blocky voxel style"></a><figcaption data-en="In a blocky voxel style">بستايل ماينكرافت</figcaption></figure>
+<figure><a href="img/m5.webp"><img src="img/m5.webp" width="900" height="506" loading="lazy" alt="بستايل ماريو" data-en-alt="In a platform-game style"></a><figcaption data-en="In a platform-game style">بستايل ماريو</figcaption></figure>
+<figure><a href="img/m6.webp"><img src="img/m6.webp" width="900" height="506" loading="lazy" alt="بستايل بوكيمون" data-en-alt="In a handheld-RPG style"></a><figcaption data-en="In a handheld-RPG style">بستايل بوكيمون</figcaption></figure>
+<figure><a href="img/m7.webp"><img src="img/m7.webp" width="900" height="506" loading="lazy" alt="العلا بالسيارة، 2022" data-en-alt="AlUla by road, 2022"></a><figcaption data-en="AlUla by road, 2022">العلا بالسيارة، 2022</figcaption></figure>
+</div></div></section>
+
+<section class="how" id="photo-to-art"><div class="in">
+  <h2 data-en="Photo to artwork">من الصورة إلى لوحة</h2>
+  <ol>
+    <li data-en="Start from a real photo of a place.">نبدأ من صورة حقيقية للمكان.</li>
+    <li data-en="Pick one style from the library. Each style has its own rules for line, colour and paper.">نختار ستايل من المكتبة، ولكل ستايل قواعده في الخط واللون والورق.</li>
+    <li data-en="Redraw the place in that style, then check every detail by hand: no stray writing, plates or logos.">نعيد رسم المكان بالستايل، وبعدين نراجع كل تفصيلة بإيدينا: بدون كتابات أو لوحات أو شعارات زايدة.</li>
+  </ol>
+</div></section>
+</main>
+<footer><div class="in">ساند ريسرز · Sand Racers</div></footer>
+<script>
+(() => {
+  const EN = document.documentElement.lang === "en";
+  if (EN) {
+    document.querySelectorAll("[data-en]").forEach(n => { n.textContent = n.dataset.en; });
+    document.querySelectorAll("[data-en-alt]").forEach(n => { n.alt = n.dataset.enAlt; });
+    document.getElementById("lang").textContent = "عربي";
+  }
+  document.getElementById("lang").addEventListener("click", () => {
+    try { localStorage.setItem("sr-lang", EN ? "ar" : "en"); } catch (e) {}
+    location.reload();
+  });
+})();
+</script>
+</body>
+</html>
