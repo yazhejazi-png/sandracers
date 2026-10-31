@@ -172,6 +172,7 @@ footer .ar{color:var(--warm);font-size:1.15rem}
     <nav aria-label="Site">
       <a href="/" data-en="Home">الرئيسية</a>
       <a href="/laplog/" aria-current="page" data-en="Lap Log">سجل اللفات</a>
+      <a href="/art/" data-en="Art">الفن</a>
       <a href="https://www.instagram.com/sand_racers/" data-en="Instagram">إنستقرام</a>
       <button class="lang" type="button" id="lang" data-en="عربي">English</button>
     </nav>
@@ -277,7 +278,9 @@ document.getElementById("lang").addEventListener("click", () => {
 });
 const TRACK_AR = { "jeddah corniche circuit": "حلبة كورنيش جدة" };
 const trk = t => EN ? t : (TRACK_AR[String(t || "").trim().toLowerCase()] || t);
-const T = DATA.target, sessions = (DATA.sessions || []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
+window.srTimesChanged = true;
+let SAVED = []; try { SAVED = JSON.parse(localStorage.getItem("sr-times")) || []; } catch (e) {}
+const T = DATA.target, sessions = (DATA.sessions || []).concat(Array.isArray(SAVED) ? SAVED : []).slice().sort((a, b) => a.date < b.date ? -1 : 1);
 const CHECKS = [["tyres"],["outLap"],["hotPressures"],["coolDown"]];
 const WD = EN ? ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"] : ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
 const MO = EN ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"] : ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
@@ -437,5 +440,6 @@ let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(dra
 </script>
 
 <script src="/theme/picker.js" defer></script>
+<script src="/theme/addtime.js"></script>
 </body>
 </html>
