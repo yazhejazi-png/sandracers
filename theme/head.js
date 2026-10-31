@@ -1,0 +1,1 @@
+(function(){var r=document.documentElement,T={"beige":"light","red":"dark","blue":"dark","lightblue":"light","night":"dark","brown":"dark","blackred":"dark","redblue":"light","blacksky":"dark","blueblue":"dark"};try{var s=localStorage.getItem('sr-skin');if(s&&T[s]){r.setAttribute('data-skin',s);r.setAttribute('data-theme',T[s]);}}catch(e){}})();

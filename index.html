@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script src="/theme/head.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
@@ -167,8 +168,14 @@ footer .ar{color:var(--warm);font-size:1.15rem}
 .go a b{font-family:var(--display);font-size:1.4rem;color:var(--accent)}
 html[dir="rtl"] .go a b{font-family:"Lalezar",var(--display);font-weight:400}
 .go a span{color:var(--muted)}
+.go a{position:relative;padding-inline-start:98px;min-height:96px;align-content:center}
+.go a .ic{position:absolute;inset-inline-start:16px;top:50%;transform:translateY(-50%);width:64px;height:64px}
+.go a .ic.art{border-radius:12px;border:3px solid var(--frame);object-fit:cover;width:64px;height:64px}
+
 @media (max-width:760px){.home-hero .in{grid-template-columns:minmax(0,1fr)}}
 </style>
+<link rel="stylesheet" href="/theme/skins.css">
+<link rel="stylesheet" href="/theme/picker.css">
 </head>
 <body>
 <header class="bar">
@@ -202,13 +209,13 @@ html[dir="rtl"] .go a b{font-family:"Lalezar",var(--display);font-weight:400}
 </section>
 <main class="in">
   <div class="go">
-    <a href="/laplog/"><b data-en="Lap Log">سجل اللفات</b><span data-en="Every track session of #96, against the lap to beat.">كل جلسة لـ#96 على الحلبة، قدّام اللفّة المطلوبة.</span></a>
-    <a href="/games/zarqa-wide/"><b data-en="Play Al-Zarqa and the Patrols">العب «الزرقا والدوريات»</b><span data-en="4 stages in Jeddah and Tokyo. Arabic only for now.">4 مراحل في جدة وطوكيو. على الجوال أو الكمبيوتر.</span></a>
-    <a href="/games/dune/"><b data-en="Play First Time Stuck">العب «أول مرة أغرز»</b><span data-en="A dune stage in 3D. Arabic only for now.">مرحلة طعوس 3D، اختار سيارتك ولا تغرز.</span></a>
-    <a href="/art/"><b data-en="Art">الفن</b><span data-en="Artist styles, places, maps and the atlas.">ستايلات فنانين وأماكن وخرائط والأطلس.</span></a>
-    <a href="https://www.instagram.com/sand_racers/"><b data-en="Follow on Instagram">تابعنا على إنستقرام</b><span>@sand_racers</span></a>
-    <a href="https://www.tiktok.com/@sand_racers"><b data-en="Follow on TikTok">تابعنا على تيك توك</b><span>@sand_racers</span></a>
-    <a href="https://www.youtube.com/@Sand_Racer"><b data-en="Watch on YouTube">شوفنا على يوتيوب</b><span>@Sand_Racer</span></a>
+    <a href="/laplog/"><img class="ic" src="/img/stickers/flag.webp" width="64" height="64" alt=""><b data-en="Lap Log">سجل اللفات</b><span data-en="Every track session of #96, against the lap to beat.">كل جلسة لـ#96 على الحلبة، قدّام اللفّة المطلوبة.</span></a>
+    <a href="/games/zarqa-wide/"><img class="ic" src="/img/stickers/wheel.webp" width="64" height="64" alt=""><b data-en="Play Al-Zarqa and the Patrols">العب «الزرقا والدوريات»</b><span data-en="4 stages in Jeddah and Tokyo. Arabic only for now.">4 مراحل في جدة وطوكيو. على الجوال أو الكمبيوتر.</span></a>
+    <a href="/games/dune/"><img class="ic" src="/img/stickers/wheels.webp" width="64" height="64" alt=""><b data-en="Play First Time Stuck">العب «أول مرة أغرز»</b><span data-en="A dune stage in 3D. Arabic only for now.">مرحلة طعوس 3D، اختار سيارتك ولا تغرز.</span></a>
+    <a href="/art/"><img class="ic art" src="/img/stickers/art.webp" width="64" height="64" alt=""><b data-en="Art">الفن</b><span data-en="Artist styles, places, maps and the atlas.">ستايلات فنانين وأماكن وخرائط والأطلس.</span></a>
+    <a href="https://www.instagram.com/sand_racers/"><img class="ic" src="/img/stickers/heart.webp" width="64" height="64" alt=""><b data-en="Follow on Instagram">تابعنا على إنستقرام</b><span>@sand_racers</span></a>
+    <a href="https://www.tiktok.com/@sand_racers"><img class="ic" src="/img/stickers/fire.webp" width="64" height="64" alt=""><b data-en="Follow on TikTok">تابعنا على تيك توك</b><span>@sand_racers</span></a>
+    <a href="https://www.youtube.com/@Sand_Racer"><img class="ic" src="/img/stickers/helmet.webp" width="64" height="64" alt=""><b data-en="Watch on YouTube">شوفنا على يوتيوب</b><span>@Sand_Racer</span></a>
   </div>
 </main>
 <footer>
@@ -231,5 +238,6 @@ html[dir="rtl"] .go a b{font-family:"Lalezar",var(--display);font-weight:400}
   });
 })();
 </script>
+<script src="/theme/picker.js" defer></script>
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
+<script src="/theme/head.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
@@ -159,6 +160,8 @@ footer .ar{color:var(--warm);font-size:1.15rem}
   @keyframes glow{0%{color:#F8EBD6}50%{color:var(--sun)}100%{color:var(--sun)}}
 }
 </style>
+<link rel="stylesheet" href="/theme/skins.css">
+<link rel="stylesheet" href="/theme/picker.css">
 </head>
 <body>
 
@@ -433,5 +436,6 @@ let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(dra
 })();
 </script>
 
+<script src="/theme/picker.js" defer></script>
 </body>
 </html>
