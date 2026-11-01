@@ -104,6 +104,7 @@ aside{display:flex;flex-direction:column;gap:12px;min-width:0}
 .kaaba-ring circle{fill:#fff;stroke:#291C13;stroke-width:.6}
 @media (prefers-reduced-motion:no-preference){.kaaba-ring{animation:tawaf 9s linear infinite}}
 @keyframes tawaf{to{transform:rotate(360deg)}}
+.pic{margin:6px 0 10px}.pic img{display:block;width:100%;max-height:300px;object-fit:contain;border-radius:8px;border:1px solid var(--line);background:var(--paper)}.pic figcaption{font-size:12px;color:var(--muted);margin-top:4px}
 </style>
 
 <div class="wrap">
@@ -164,6 +165,8 @@ const D=JSON.parse(document.getElementById('data').textContent);
 const NS='http://www.w3.org/2000/svg';
 const el=(t,a={},p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const PICS={"sa_hegra": ["img/e1_03.jpg", "من مانجا شاطر وأوس"], "sa_mecca": ["img/e1_06.jpg", "من مانجا شاطر وأوس"], "iq_judi": ["img/e2_01.jpg", "من مانجا شاطر وأوس"], "iq_ur": ["img/e2_04.jpg", "من مانجا شاطر وأوس"], "iq_nineveh": ["img/e2_06.jpg", "من مانجا شاطر وأوس"], "eg_nile": ["img/e3_03.jpg", "من مانجا شاطر وأوس"], "eg_suez": ["img/e3_05.jpg", "من مانجا شاطر وأوس"], "ps_jerusalem": ["img/e4_04.jpg", "من مانجا شاطر وأوس"], "ps_bethlehem": ["img/e4_04.jpg", "من مانجا شاطر وأوس"], "ps_nazareth": ["img/e4_04.jpg", "من مانجا شاطر وأوس"], "ps_hebron": ["img/e4_01.jpg", "من مانجا شاطر وأوس"], "jo_deadsea": ["img/e5_02.jpg", "من مانجا شاطر وأوس"], "sa_madyan": ["img/e5_04.jpg", "من مانجا شاطر وأوس"], "eg_tur": ["img/e5_06.jpg", "من مانجا شاطر وأوس"], "sy_baalbek": ["img/e6_01.jpg", "من مانجا شاطر وأوس"], "sy_hauran": ["img/e6_03.jpg", "من مانجا شاطر وأوس"], "tr_antioch": ["img/e6_05.jpg", "من مانجا شاطر وأوس"], "jo_ayla": ["img/e6_06.jpg", "من مانجا شاطر وأوس"], "om_ahqaf": ["img/e7_02.jpg", "من مانجا شاطر وأوس"], "ye_marib": ["img/e7_04.jpg", "من مانجا شاطر وأوس"], "sa_najran": ["img/e7_05.jpg", "من مانجا شاطر وأوس"], "ye_garden": ["img/e7_06.jpg", "من مانجا شاطر وأوس"], "tr_ephesus": ["img/e8_03.jpg", "من مانجا شاطر وأوس"], "balad": ["img/balad.webp", "البلد القديمة، بستايل المكان"], "med": ["img/madinah.webp", "المدينة، بستايل المكان"], "sa2": ["img/madinah.webp", "المدينة، بستايل المكان"], "abha": ["img/abha.webp", "أبها، بستايل المكان"], "sa8": ["img/abha.webp", "أبها، بستايل المكان"], "shafa": ["img/shafa.webp", "الشفا، بستايل المكان"], "ula": ["img/c4.webp", "العلا بخطوط الضو"], "sa13": ["img/c4.webp", "العلا بخطوط الضو"], "hegra": ["img/c4.webp", "العلا بخطوط الضو"]};
+const pic=id=>PICS[id]?`<figure class="pic"><img src="${PICS[id][0]}" alt="${PICS[id][1]}" loading="lazy"><figcaption dir="rtl">${PICS[id][1]}</figcaption></figure>`:'';
 const gmaps=(lat,lon)=>`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
 document.getElementById('built').textContent='Built '+D.built+'. Background countries and regional roads: Natural Earth.';
 
@@ -259,7 +262,7 @@ function showIx(d,g){clearSel();g.classList.add('sel');const keys=D.roads.filter
   card1.innerHTML=`<div class="k">Intersection #${d.n}${d.major?' · two named highways':''}</div><h3>${d.roads.map(esc).join(' × ')}</h3><p><a href="${gmaps(d.lat,d.lon)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>`;
   pz1.focus(d.x,d.y,Math.min(D.W/4,D.W*k1));}
 function showSpot(s,g){clearSel();highlight(null);g&&g.classList.add('sel');const it=document.querySelector(`#L3 [data-id="${s.id}"]`);it&&it.classList.add('on');
-  card1.innerHTML=`<div class="k">Story spot</div><h3>${esc(s.name)}</h3><div class="arn" dir="rtl">${esc(s.ar)}</div><p>${esc(s.note)}</p>
+  card1.innerHTML=`<div class="k">Story spot</div><h3>${esc(s.name)}</h3><div class="arn" dir="rtl">${esc(s.ar)}</div>${pic(s.id)}<p>${esc(s.note)}</p>
   <p><span class="chip ${s.conf==='guess'?'guess':''}">${s.conf==='sure'?'location checked':s.conf==='guess'?'guess, please confirm':'approximate'}</span></p>${s.kind!=='exit'?`<p><a href="${gmaps(s.lat,s.lon)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>`:''}`;
   if(s.kind!=='exit')pz1.focus(s.x,s.y,Math.min(D.W/4,D.W*k1));}
 const L1=document.getElementById('L1');
@@ -317,7 +320,7 @@ function showTrip(t,item){clearSel();hlTrip(t.id);item&&item.classList.add('on')
   pz2.focus((Math.max(...xs)+Math.min(...xs))/2,(Math.max(...ys)+Math.min(...ys))/2,Math.min(D.RW,w));}
 function showPlace(p,g){clearSel();hlTrip(null);g&&g.classList.add('sel');const it=document.querySelector(`#L5 [data-id="${p.id}"]`);it&&it.classList.add('on');
   const trips=D.trips.filter(t=>t.stops.includes(p.id)).map(t=>t.name);
-  card2.innerHTML=`<div class="k">${trips.length?esc(trips.join(' · ')):'Place'}</div><h3>${esc(p.name)}</h3><div class="arn" dir="rtl">${esc(p.ar)}</div><p>${esc(p.note)}</p><p><a href="${gmaps(p.lat,p.lon)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>`;
+  card2.innerHTML=`<div class="k">${trips.length?esc(trips.join(' · ')):'Place'}</div><h3>${esc(p.name)}</h3><div class="arn" dir="rtl">${esc(p.ar)}</div>${pic(p.id)}<p>${esc(p.note)}</p><p><a href="${gmaps(p.lat,p.lon)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>`;
   pz2.focus(p.x,p.y,Math.min(D.RW*k2,D.RW/3));}
 const L4=document.getElementById('L4');
 D.trips.forEach(t=>{const b=document.createElement('button');b.className='item';
@@ -366,7 +369,7 @@ WD.forEach(c=>{
   const clear=()=>{sec.querySelectorAll('.sel,.item.on').forEach(e=>e.classList.remove('sel','on'))};
   function showS(s,g){clear();hl(null);g.classList.add('sel');const it=sec.querySelector(`.ls [data-id="${s.id}"]`);it&&it.classList.add('on');
     const link=s.id==='jtokyo'?'tokyo':s.id==='ulondon'?'london':s.id==='unotts'?'notts':s.id==='lbeirut'?'beirut':null;
-    card.innerHTML=`<div class="k">${s.ep?'Shater & Aws · episode '+s.ep:s.kind==='visited'?'Saudi city · story stop':s.kind==='notyet'?'Saudi city · not in the story yet':s.kind==='home'?'Your place':s.kind==='track'?'Driving spot':s.kind==='city'?'City':'Place'}</div><h3>${esc(s.name)}</h3>${s.ar?`<div class="arn">${esc(s.ar)}</div>`:''}${s.note?`<p>${esc(s.note)}</p>`:''}
+    card.innerHTML=`<div class="k">${s.ep?'Shater & Aws · episode '+s.ep:s.kind==='visited'?'Saudi city · story stop':s.kind==='notyet'?'Saudi city · not in the story yet':s.kind==='home'?'Your place':s.kind==='track'?'Driving spot':s.kind==='city'?'City':'Place'}</div><h3>${esc(s.name)}</h3>${s.ar?`<div class="arn">${esc(s.ar)}</div>`:''}${pic(s.id)}${s.note?`<p>${esc(s.note)}</p>`:''}
       <p>${s.visited?'<span class="chip" style="border-color:#5E8C3A;color:#5E8C3A">✓ visited</span>':''}${s.conf!=='sure'?'<span class="chip">approximate</span>':''}</p>${link?`<p><a href="#" data-go="${link}">Open the ${link==='notts'?'Nottingham':link[0].toUpperCase()+link.slice(1)} map</a></p>`:''}${s.kind!=='exit'?`<p><a href="${gmaps(s.lat,s.lon)}" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>`:''}`;
     const go=card.querySelector('[data-go]');if(go)go.onclick=e=>{e.preventDefault();tab(go.dataset.go)};
     if(s.kind!=='exit')pz.focus(s.x,s.y,Math.min(c.W/(c.country?3:4),c.W*kk));}
