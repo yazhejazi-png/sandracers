@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/theme/head.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/art/apple-touch-icon.png">
+<script>try{if(localStorage.getItem("sr-lang")==="en"){document.documentElement.lang="en";document.documentElement.dir="ltr"}}catch(e){}</script>
+<title>صورتك بستايل ساند ريسرز · Your photo, Sand Racers style</title>
+<meta name="description" content="ارفع صورتك واختر ستايل وتتحول لوحة، كل شيء يصير في جوالك وما ينرفع شيء. Pick a photo and a style; it all happens on your device and nothing is uploaded.">
+<meta property="og:title" content="صورتك بستايل ساند ريسرز">
+<meta property="og:url" content="https://sand-racers.com/art/convert/">
+<meta property="og:image" content="https://sand-racers.com/img/share.jpg">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@600;700;800&family=Saira:wght@400;500;600&family=Lalezar&family=Tajawal:wght@400;500;700&display=swap">
+<style>
+/* Layout: same top bar and footer as the home page; a hero line, then one section per group with a responsive picture grid on warm sand. */
+:root{
+  --sky:#73B2D5; --sun:#FDBF6A; --dune:#D48741; --dune-deep:#A65E22; --road:#291C13;
+  --bg:#FBF3E6; --panel:#FFFAF2; --line:#E6D0AE; --fg:#291C13; --muted:#6E5644; --frame:#291C13; --warm:#A65E22; --accent:#B4621F; --ring:#1F3A5F;
+  --display:"Saira Condensed","Arial Narrow",Arial,sans-serif; --body:"Saira","Segoe UI",Arial,sans-serif; --arabic:"Lalezar","Geeza Pro",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#1E140D; --panel:#291C13; --line:#4A3524; --fg:#F8EBD6; --muted:#C9B293; --frame:#FDBF6A; --warm:#F0A55A; --accent:#FDBF6A; --ring:#9CC7F0; color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;padding-top:env(safe-area-inset-top,0)}
+html[dir="rtl"] body{font-family:"Tajawal",var(--body)}
+img{max-width:100%}
+h1,h2{margin:0;line-height:1.1;font-family:var(--display);font-weight:800;text-wrap:balance}
+html[dir="rtl"] h1,html[dir="rtl"] h2,html[dir="rtl"] .bar nav{font-family:"Lalezar",var(--display);font-weight:400;letter-spacing:0}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:4px}
+.in{max-width:1040px;margin:0 auto;padding-inline:max(16px,env(safe-area-inset-left,0px))}
+.lang{background:none;border:2px solid var(--line);border-radius:999px;color:var(--fg);font:inherit;font-size:.8rem;padding:2px 10px;cursor:pointer}
+.bar{border-bottom:1px solid var(--line)}
+.bar .in{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--fg)}
+.brand img{width:34px;height:auto}
+.brand b{font-family:var(--display);font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
+.bar nav{display:flex;gap:18px;font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:.9rem}
+.bar nav a{color:var(--muted);text-decoration:none;white-space:nowrap}
+.bar nav a[aria-current]{color:var(--fg);border-bottom:2px solid var(--dune)}
+@media (max-width:420px){.bar nav{gap:10px;font-size:.8rem}.brand b{display:none}}
+.hero{background:linear-gradient(180deg,var(--sky) 0 62%,var(--sun) 62% 63%,var(--dune) 63%);padding:40px 0 34px;color:var(--road)}
+.hero h1{font-size:clamp(2rem,7vw,3.4rem)}
+.hero p{margin-top:8px;max-width:48ch;font-weight:500}
+.sec{padding:30px 0 8px}
+.sec h2{font-size:1.7rem;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+figure{margin:0;display:grid;gap:6px;align-content:start}
+figure img{display:block;width:100%;height:auto;border-radius:12px;border:3px solid var(--frame);background:var(--panel)}
+figcaption{font-size:.9rem;color:var(--muted)}
+.how{padding:30px 0}
+.how ol{margin:12px 0 0;padding-inline-start:1.3em;max-width:60ch}
+.how li{margin-bottom:6px}
+footer{border-top:1px solid var(--line)}
+footer .in{padding-block:22px 34px;color:var(--muted);font-size:.9rem}
+.tool{padding:20px 0 40px}
+.drop{display:block;border:2px dashed var(--line);border-radius:14px;background:var(--panel);padding:28px 16px;text-align:center;cursor:pointer}
+.drop:hover,.drop:focus-within{border-color:var(--dune)}
+.drop input{position:absolute;opacity:0;width:1px;height:1px}
+.drop b{font-family:var(--arabic);font-weight:400;font-size:1.2rem}
+.styles{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.styles button{border:2px solid var(--line);background:var(--panel);color:var(--fg);border-radius:999px;padding:6px 14px;font:inherit;cursor:pointer}
+.styles button[aria-pressed="true"]{background:var(--dune);border-color:var(--dune-deep);color:#fff}
+.stage{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:10px;text-align:center;min-height:120px}
+.stage canvas{max-width:100%;height:auto;border-radius:8px}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.actions button{border:2px solid var(--dune-deep);background:var(--dune);color:#fff;border-radius:10px;padding:8px 16px;font:inherit;cursor:pointer}
+.actions button[disabled]{opacity:.45;cursor:default}
+.note{color:var(--muted);font-size:.92rem;border-inline-start:4px solid var(--sun);padding:4px 12px;margin:14px 0}
+.busy{opacity:.5}
+</style>
+<link rel="stylesheet" href="/theme/skins.css">
+<link rel="stylesheet" href="/theme/picker.css">
+</head>
+<body>
+<header class="bar">
+  <div class="in">
+    <a class="brand" href="/"><img src="/laplog/img/logo.png" alt="" width="34" height="42"><b>Sand Racers</b></a>
+    <nav aria-label="Site">
+      <a href="/" data-en="Home">الرئيسية</a>
+      <a href="/laplog/" data-en="Lap Log">سجل اللفات</a>
+      <a href="/art/" aria-current="page" data-en="Art">الفن</a>
+      <a href="https://www.instagram.com/sand_racers/" data-en="Instagram">إنستقرام</a>
+      <button class="lang" type="button" id="lang">English</button>
+    </nav>
+  </div>
+</header>
+<section class="hero"><div class="in">
+  <h1 data-en="Your photo, in our styles">صورتك بستايلاتنا</h1>
+  <p data-en="Pick a photo, pick a style, and it turns into artwork. It all happens on your own device: nothing is uploaded and nothing is saved.">اختار صورة، واختار ستايل، وتتحول لوحة. كل شيء يصير في جوالك أنت: ما ينرفع شيء وما ينحفظ شيء.</p>
+</div></section>
+<main><div class="in tool">
+  <label class="drop" id="drop"><input type="file" id="file" accept="image/*"><b data-en="Choose a photo (or drop it here)">اختار صورة (أو اسحبها هنا)</b></label>
+  <div class="styles" id="styles" role="group" aria-label="Styles"></div>
+  <div class="stage" id="stage"><canvas id="out" width="0" height="0" aria-label=""></canvas><p id="hint" data-en="Your artwork shows here.">لوحتك تطلع هنا.</p></div>
+  <div class="actions"><button type="button" id="dl" disabled data-en="Save picture">احفظ الصورة</button></div>
+  <p class="note" data-en="These are quick filters inspired by our styles, not the hand-redrawn pictures in the Art page. Please do not use photos of children, number plates or ID cards." >هذي فلاتر سريعة مستوحاة من ستايلاتنا، مو نفس اللوحات المرسومة باليد في صفحة الفن. نرجوك لا تستخدم صور أطفال أو لوحات سيارات أو بطاقات هوية.</p>
+</div></main>
+<footer><div class="in">ساند ريسرز · Sand Racers</div></footer>
+<script src="convert.js"></script>
+<script src="/theme/picker.js" defer></script>
+<script src="/theme/addtime.js"></script>
+</body>
+</html>
