@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl" data-lang="ar">
-<head>
+<head><script>(function(){try{var o=navigator.getGamepads&&navigator.getGamepads.bind(navigator),dead=0;if(o)navigator.getGamepads=function(){if(dead)return [];try{return o()}catch(e){dead=1;return []}}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
@@ -1301,6 +1301,7 @@ if (typeof module !== 'undefined')
         intro(); });
     function finish(won) {
         var b = best(), rec = G.score > b, lastLv = lv === LEVELS.length - 1;
+        SRLB.submit('zarqa:s' + (lv + 1), G.score);
         if (rec)
             best(G.score);
         SND.bedOff();
@@ -1835,4 +1836,5 @@ var ty=Math.min(0,Math.max(H-SH,H/2-cy));svg.style.transform='translateY('+ty+'p
 txt('zgg-lvl','sr-lvl');txt('zgg-score','sr-score');txt('zgg-best','sr-best');
 var f=document.getElementById('zgg-fuel'),g=document.querySelector('#sr-fuel i');if(f&&g){var t=f.parentNode.querySelector('rect');var w=+f.getAttribute('width'),mx=t?+t.getAttribute('width')-3:82;g.style.width=Math.max(0,Math.min(100,w/mx*100))+'%';g.style.background=getComputedStyle(f).fill||'#3c3';}}
 requestAnimationFrame(tick);})();</script>
+<script src="../lb/lb.js"></script><script>SRLB.init("zarqa")</script>
 </body></html>
