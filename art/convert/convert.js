@@ -93,9 +93,49 @@
       const r = Math.max(3, Math.round(img.width / 220)), o = kuwahara(img.data, img.width, img.height, r), d = img.data;
       for (let i = 0; i < d.length; i += 4) { const c = sat(o[i], o[i + 1], o[i + 2], 1.35); d[i] = contrast(c[0], 1.1); d[i + 1] = contrast(c[1], 1.1); d[i + 2] = contrast(c[2], 1.1); } } },
     { id: "anime", ar: "أنمي", en: "Anime", run(img) {
-      const w = img.width, h = img.height, n = w * h, o = kuwahara(img.data, w, h, 2), d = img.data, g = boxBlur(lumaOf(o, n), w, h, 1), e = edges(g, w, h);
-      for (let k = 0; k < n; k++) { const i = k * 4, c = sat(o[i], o[i + 1], o[i + 2], 1.25);
-        if (e[k] > 0.2) { d[i] = 30; d[i + 1] = 22; d[i + 2] = 18; } else { d[i] = Math.round(c[0] / 52) * 52; d[i + 1] = Math.round(c[1] / 52) * 52; d[i + 2] = Math.round(c[2] / 52) * 52; } } } },
+      // cel shading: flat smoothed colour, 4 light bands that keep the hue, thin clean ink lines
+      const w = img.width, h = img.height, n = w * h, o = kuwahara(img.data, w, h, 3), d = img.data, L = lumaOf(o, n);
+      const lines = edges(boxBlur(L, w, h, 1), w, h), bands = [0.2, 0.42, 0.68, 0.9];
+      for (let k = 0; k < n; k++) { const i = k * 4, l = Math.max(8, L[k]) / 255;
+        let q = bands[3]; for (let b = 0; b < 3; b++) if (l < (bands[b] + bands[b + 1]) / 2) { q = bands[b]; break; }
+        const f = q / l, c = sat(o[i] * f, o[i + 1] * f, o[i + 2] * f, 1.3);
+        if (lines[k] > 0.16) { d[i] = 38; d[i + 1] = 26; d[i + 2] = 30; }
+        else { d[i] = Math.min(255, c[0] + 10); d[i + 1] = Math.min(255, c[1] + 8); d[i + 2] = Math.min(255, c[2] + 6); } } } },
+    { id: "vangogh", ar: "فان غوخ (ضربات دوّامة)", en: "Van Gogh swirls", run(img) {
+      const w = img.width, h = img.height, n = w * h, src = new Uint8ClampedArray(img.data), g = boxBlur(lumaOf(src, n), w, h, 5);
+      const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const c = cv.getContext("2d");
+      const base = kuwahara(src, w, h, 4); c.putImageData(new ImageData(base, w, h), 0, 0);
+      let seed = 7; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      const len = Math.max(10, Math.round(w / 60)), lw = Math.max(3, Math.round(w / 220)), count = Math.round(n / (len * lw) * 2.2);
+      c.lineCap = "round";
+      for (let s = 0; s < count; s++) { const x = (rnd() * w) | 0, y = (rnd() * h) | 0, k = y * w + x;
+        const gx = g[Math.min(n - 1, k + 1)] - g[Math.max(0, k - 1)], gy = g[Math.min(n - 1, k + w)] - g[Math.max(0, k - w)];
+        const a = (Math.abs(gx) + Math.abs(gy) > 1.5 ? Math.atan2(gy, gx) + Math.PI / 2 : 0) + 0.9 * Math.sin(x / (w / 9)) * Math.cos(y / (w / 9));
+        const i = k * 4, cc = sat(src[i], src[i + 1], src[i + 2], 1.5), j = (rnd() - 0.5) * 26;
+        c.strokeStyle = `rgb(${Math.max(0, Math.min(255, contrast(cc[0], 1.15) + j))|0},${Math.max(0, Math.min(255, contrast(cc[1], 1.15) + j))|0},${Math.max(0, Math.min(255, contrast(cc[2], 1.15) + j))|0})`;
+        c.lineWidth = lw * (0.7 + rnd() * 0.8); c.beginPath(); c.moveTo(x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2); c.lineTo(x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2); c.stroke(); }
+      img.data.set(c.getImageData(0, 0, w, h).data); } },
+    { id: "street", ar: "ستنسل الشارع", en: "Street stencil", run(img) {
+      const w = img.width, h = img.height, n = w * h, d = img.data, g = boxBlur(lumaOf(d, n), w, h, 1), loc = boxBlur(g, w, h, Math.max(12, w >> 5));
+      const paper = hex("#EDE6D6"), grey = hex("#8E8A82"), blk = hex("#14110F"), red = hex("#D6322B"); let seed = 3; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+      for (let k = 0; k < n; k++) { const i = k * 4, r = d[i], gg = d[i + 1], b = d[i + 2], t = g[k] - loc[k] * 0.55 - 40;
+        let c = t < -18 ? blk : t < 30 ? grey : paper;
+        if (c === grey && r > gg * 1.35 && r > b * 1.35) c = red;
+        const sp = rnd() < 0.012 ? 28 : 0; d[i] = Math.max(0, c[0] - sp); d[i + 1] = Math.max(0, c[1] - sp); d[i + 2] = Math.max(0, c[2] - sp); } } },
+    { id: "hokusai", ar: "هوكوساي (موجة)", en: "Hokusai wave print", run(img) {
+      const w = img.width, h = img.height, n = w * h, g = boxBlur(lumaOf(img.data, n), w, h, 2), e = edges(g, w, h), T = Math.max(7, Math.round(w / 90));
+      const pal = ["#0E2447", "#1B4A82", "#4A86B8", "#A9CBDD", "#F1E7CC"].map(hex);
+      paint(img, k => { const x = k % w, y = (k / w) | 0; let l = levels(g[k] / 255, 5);
+        if (l === 2 || l === 3) { const wv = Math.sin((x + 2 * Math.sin(y / T)) / T * 1.4 + y / (T * 3)); if (wv > 0.55) l -= 1; }
+        return e[k] > 0.2 ? pal[0] : pal[l]; }); } },
+    { id: "klimt", ar: "كليمت (ذهب)", en: "Klimt gold", run(img) {
+      const w = img.width, h = img.height, n = w * h, d = img.data, T = Math.max(8, Math.round(w / 70)), gold = ["#2A1B08", "#8A5F14", "#D4A72C", "#F4D77A"].map(hex), L = lumaOf(d, n);
+      for (let ty = 0; ty < h; ty += T) for (let tx = 0; tx < w; tx += T) { let r = 0, g = 0, b = 0, c = 0, l = 0;
+        for (let y = ty; y < Math.min(h, ty + T); y++) for (let x = tx; x < Math.min(w, tx + T); x++) { const i = (y * w + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; l += L[y * w + x]; c++; }
+        r /= c; g /= c; b /= c; l /= c * 255; const sc = sat(r * 1.15, g * 1.1, b * 1.0, 1.6), gc = gradMap(l, gold), kind = Math.floor(((Math.sin(tx * 12.9 + ty * 78.2) * 43758.5) % 1 + 1) % 1 * 6), mix = kind < 2 ? 0.35 : 0.8;
+        for (let y = ty; y < Math.min(h, ty + T); y++) for (let x = tx; x < Math.min(w, tx + T); x++) { const i = (y * w + x) * 4, ux = x - tx - T / 2, uy = y - ty - T / 2, rr = Math.hypot(ux, uy), ring = kind === 0 ? Math.abs(rr - T * 0.32) < T * 0.09 : kind === 1 ? rr < T * 0.2 : false;
+          const edge = (x - tx === 0 || y - ty === 0) ? 0.7 : 1;
+          for (let ch = 0; ch < 3; ch++) d[i + ch] = (ring ? gold[3][ch] : gc[ch] * (1 - mix) + sc[ch] * mix) * edge; } } } },
     { id: "blocks", ar: "مكعبات", en: "Blocks", run(img) {
       const w = img.width, h = img.height, B = Math.max(8, Math.round(w / 64)), d = img.data;
       for (let ty = 0; ty < h; ty += B) for (let tx = 0; tx < w; tx += B) { let r = 0, g = 0, b = 0, c = 0;
