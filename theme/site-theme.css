@@ -10,7 +10,7 @@
 :where(:root[data-skin]:not([data-skin="beige"]):not([data-skin="brown"])) .bar nav a[aria-current]{border-bottom-color:var(--accent)}
 
 /* 4. Games: the «النسخة N» pill */
-:where(:root[data-skin]:not([data-skin="beige"]):not([data-skin="brown"])) .go a i.ver{background:var(--accent);color:var(--on-accent)}
+:where(:root[data-skin]:not([data-skin="beige"]):not([data-skin="brown"])) :is(.go a,.ep) i.ver{background:var(--accent);color:var(--on-accent)}
 
 /* 5. Lap Log: the numbered cards and the best lap (the chart's three line colours stay as they are: they are data colours) */
 :where(:root[data-skin]:not([data-skin="beige"]):not([data-skin="brown"])) .checks li{border-top-color:var(--cardtop)}
