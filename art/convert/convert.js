@@ -101,7 +101,14 @@
         const f = q / l, c = sat(o[i] * f, o[i + 1] * f, o[i + 2] * f, 1.3);
         if (lines[k] > 0.16) { d[i] = 38; d[i + 1] = 26; d[i + 2] = 30; }
         else { d[i] = Math.min(255, c[0] + 10); d[i + 1] = Math.min(255, c[1] + 8); d[i + 2] = Math.min(255, c[2] + 6); } } } },
-    { id: "vangogh", ar: "فان غوخ (ضربات دوّامة)", en: "Van Gogh swirls", run(img) {
+    { id: "davinci", ar: "دافنشي (دفتر الرسم)", en: "Da Vinci notebook", run(img) {
+      const w = img.width, h = img.height, n = w * h, g = boxBlur(lumaOf(img.data, n), w, h, 1), e = edges(g, w, h), paper = hex("#E8D5AA"), ink = hex("#5E2F1B");
+      paint(img, k => { const x = k % w, y = (k / w) | 0, T = Math.max(3, Math.round(w / 260)); let t = Math.min(1, e[k] * 3.5);
+        if (g[k] < 185 && ((x + y) % (T * 2)) < T * 0.7) t = Math.max(t, 0.55 * (1 - g[k] / 185) + 0.25);
+        if (g[k] < 115 && ((x - y + 4000) % (T * 2)) < T * 0.7) t = Math.max(t, 0.8);
+        const v = 1 - 0.12 * Math.hypot(x / w - 0.5, y / h - 0.5) * 2;
+        return [(paper[0] + (ink[0] - paper[0]) * t) * v, (paper[1] + (ink[1] - paper[1]) * t) * v, (paper[2] + (ink[2] - paper[2]) * t) * v]; }); } },
+    { id: "vangogh", ar: "فان غوخ", en: "Van Gogh", run(img) {
       const w = img.width, h = img.height, n = w * h, src = new Uint8ClampedArray(img.data), g = boxBlur(lumaOf(src, n), w, h, 5);
       const cv = document.createElement("canvas"); cv.width = w; cv.height = h; const c = cv.getContext("2d");
       const base = kuwahara(src, w, h, 4); c.putImageData(new ImageData(base, w, h), 0, 0);
@@ -115,20 +122,20 @@
         c.strokeStyle = `rgb(${Math.max(0, Math.min(255, contrast(cc[0], 1.15) + j))|0},${Math.max(0, Math.min(255, contrast(cc[1], 1.15) + j))|0},${Math.max(0, Math.min(255, contrast(cc[2], 1.15) + j))|0})`;
         c.lineWidth = lw * (0.7 + rnd() * 0.8); c.beginPath(); c.moveTo(x - Math.cos(a) * len / 2, y - Math.sin(a) * len / 2); c.lineTo(x + Math.cos(a) * len / 2, y + Math.sin(a) * len / 2); c.stroke(); }
       img.data.set(c.getImageData(0, 0, w, h).data); } },
-    { id: "street", ar: "ستنسل الشارع", en: "Street stencil", run(img) {
+    { id: "street", ar: "بانكسي (ستنسل)", en: "Banksy stencil", run(img) {
       const w = img.width, h = img.height, n = w * h, d = img.data, g = boxBlur(lumaOf(d, n), w, h, 1), loc = boxBlur(g, w, h, Math.max(12, w >> 5));
       const paper = hex("#EDE6D6"), grey = hex("#8E8A82"), blk = hex("#14110F"), red = hex("#D6322B"); let seed = 3; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
       for (let k = 0; k < n; k++) { const i = k * 4, r = d[i], gg = d[i + 1], b = d[i + 2], t = g[k] - loc[k] * 0.55 - 40;
         let c = t < -18 ? blk : t < 30 ? grey : paper;
         if (c === grey && r > gg * 1.35 && r > b * 1.35) c = red;
         const sp = rnd() < 0.012 ? 28 : 0; d[i] = Math.max(0, c[0] - sp); d[i + 1] = Math.max(0, c[1] - sp); d[i + 2] = Math.max(0, c[2] - sp); } } },
-    { id: "hokusai", ar: "هوكوساي (موجة)", en: "Hokusai wave print", run(img) {
+    { id: "hokusai", ar: "الموجة العظيمة", en: "The Great Wave", run(img) {
       const w = img.width, h = img.height, n = w * h, g = boxBlur(lumaOf(img.data, n), w, h, 2), e = edges(g, w, h), T = Math.max(7, Math.round(w / 90));
       const pal = ["#0E2447", "#1B4A82", "#4A86B8", "#A9CBDD", "#F1E7CC"].map(hex);
       paint(img, k => { const x = k % w, y = (k / w) | 0; let l = levels(g[k] / 255, 5);
         if (l === 2 || l === 3) { const wv = Math.sin((x + 2 * Math.sin(y / T)) / T * 1.4 + y / (T * 3)); if (wv > 0.55) l -= 1; }
         return e[k] > 0.2 ? pal[0] : pal[l]; }); } },
-    { id: "klimt", ar: "كليمت (ذهب)", en: "Klimt gold", run(img) {
+    { id: "klimt", ar: "كليمت", en: "Klimt", run(img) {
       const w = img.width, h = img.height, n = w * h, d = img.data, T = Math.max(8, Math.round(w / 70)), gold = ["#2A1B08", "#8A5F14", "#D4A72C", "#F4D77A"].map(hex), L = lumaOf(d, n);
       for (let ty = 0; ty < h; ty += T) for (let tx = 0; tx < w; tx += T) { let r = 0, g = 0, b = 0, c = 0, l = 0;
         for (let y = ty; y < Math.min(h, ty + T); y++) for (let x = tx; x < Math.min(w, tx + T); x++) { const i = (y * w + x) * 4; r += d[i]; g += d[i + 1]; b += d[i + 2]; l += L[y * w + x]; c++; }
