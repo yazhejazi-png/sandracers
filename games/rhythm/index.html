@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<script src="/theme/head.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<title>إيقاع الطريق · Road Rhythm</title>
+<meta name="description" content="لعبة إيقاع من ساند ريسرز: وجّه الكامري يمين ويسار على الخط السريع وجمّع النوتات مع الموسيقى. A Sand Racers rhythm game: steer the Camry across the lanes and collect the notes in time with the music.">
+<meta name="theme-color" content="#FBF3E6">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@700;800&family=Tajawal:wght@500;700;800&display=swap">
+<style>
+:root{--sky:#73B2D5;--sun:#FDBF6A;--dune:#D48741;--road:#291C13;--bg:#FBF3E6;--panel:#FFFAF2;--fg:#291C13;--accent:#B4621F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1E140D;--panel:#291C13;--fg:#F8EBD6;--accent:#FDBF6A}}
+:root[data-theme="dark"]{--bg:#1E140D;--panel:#291C13;--fg:#F8EBD6;--accent:#FDBF6A}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Tajawal",system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none}
+#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+canvas{display:block;width:100%;height:100%;max-width:560px;background:#73B2D5}
+.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(30,20,13,.55);z-index:5;padding:16px}
+.ov.hide{display:none}
+.card{background:var(--panel);color:var(--fg);border:3px solid var(--road);border-radius:18px;padding:20px 22px;max-width:380px;width:100%;text-align:center}
+.card h1{margin:0 0 2px;font:800 30px/1.1 "Tajawal"}
+.card h2{margin:0 0 12px;font:800 20px/1.1 "Saira Condensed",sans-serif;letter-spacing:.04em;opacity:.8}
+.card p{margin:6px 0;font-size:15px;line-height:1.5}
+.card p.en{font-size:13px;opacity:.75;margin-top:0}
+button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color:#FFFAF2;border:3px solid var(--road);border-radius:14px;padding:10px 26px;cursor:pointer}
+.row{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px;font-size:13px}
+.row button{font:700 16px system-ui;width:34px;height:34px;border-radius:50%;border:2px solid var(--road);background:var(--panel);color:var(--fg)}
+.stars{font-size:34px;letter-spacing:6px;color:#D48741}
+#mute{position:fixed;left:10px;bottom:10px;z-index:6;width:36px;height:36px;border-radius:50%;border:2px solid #291C13;background:#FFFAF2;color:#291C13;font:700 18px/1 system-ui;opacity:.85;padding:0}
+</style>
+</head>
+<body>
+<div id="wrap"><canvas id="c" aria-label="Road Rhythm"></canvas></div>
+<button id="mute" type="button" aria-label="Music">♪</button>
+<div class="ov" id="start"><div class="card">
+  <h1>إيقاع الطريق</h1><h2>ROAD RHYTHM</h2>
+  <p>وجّه الكامري يمين ويسار على الخط السريع، وجمّع النوتات الذهبية مع الإيقاع. تفادى الصخور!</p>
+  <p class="en">Steer the Camry across the lanes and collect the golden notes on the beat. Dodge the rocks!</p>
+  <p>اللمس: اضغط يمين أو يسار الشاشة، أو اسحب · الكيبورد: ← → أو A D</p>
+  <p class="en">Touch: tap the left or right side, or swipe · Keys: ← → or A D</p>
+  <button class="go" id="goBtn">يلا نبدأ · Start</button>
+  <div class="row"><span>مزامنة الصوت · Audio sync</span><button id="offM" type="button">−</button><b id="offV">0</b><button id="offP" type="button">+</button></div>
+</div></div>
+<div class="ov hide" id="end"><div class="card">
+  <h1 id="endT">خلصت!</h1><h2>RESULTS</h2>
+  <div class="stars" id="stars"></div>
+  <p id="endS"></p><p class="en" id="endE"></p>
+  <button class="go" id="again">مرة ثانية · Again</button>
+</div></div>
+<script>
+(function(){
+"use strict";
+var TRACK="../audio/mood-city-neon-120.mp3",BPM=120,BEAT=60/BPM,DUR=50;
+var LEAD=1.9,HIT_Y=.80,WIN_GOOD=.13,SLIDE=.12;
+var cv=document.getElementById("c"),g=cv.getContext("2d"),W=0,H=0,DPR=1;
+function fit(){DPR=Math.min(window.devicePixelRatio||1,2);var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;g.setTransform(DPR,0,0,DPR,0,0)}
+addEventListener("resize",fit);fit();
+
+/* ---- chart: deterministic, on the beat grid, always reachable ---- */
+function rng(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
+function makeChart(){
+  var R=rng(2026),notes=[],rocks=[],lane=1,last=-9,t0=4*BEAT*2; /* 4 bars of intro */
+  for(var b=t0/BEAT;b*BEAT<DUR-3;b+=1){
+    var t=b*BEAT,bar=Math.floor(b/4),dense=bar>=12&&bar<20||bar>=22; /* two busier sections */
+    var steps=dense?[0,.5]:[0];
+    for(var k=0;k<steps.length;k++){
+      var tt=t+steps[k]*BEAT;if(tt>=DUR-3)break;
+      if(R()<(dense?.8:.7)){
+        var gap=tt-last,maxStep=Math.min(2,Math.floor(gap/.26)); /* one lane per ~0.26 s */
+        var nl=lane;if(R()<.62){var d=R()<.5?-1:1;nl=lane+d*(1+(maxStep>=2&&R()<.3?1:0));}
+        nl=Math.max(0,Math.min(2,nl));if(Math.abs(nl-lane)>maxStep)nl=lane;
+        notes.push({t:tt,l:nl,done:0});lane=nl;last=tt;
+      }
+    }
+  }
+  /* rocks: a lane with no note within +-0.7 s, from bar 6 on */
+  for(var rt=12*BEAT;rt<DUR-4;rt+=2*BEAT){
+    if(R()<.45){var rl=Math.floor(R()*3),ok=1;
+      for(var i=0;i<notes.length;i++)if(notes[i].l===rl&&Math.abs(notes[i].t-rt)<.7){ok=0;break}
+      if(ok)rocks.push({t:rt,l:rl,done:0});}
+  }
+  return {notes:notes,rocks:rocks};
+}
+
+/* ---- state ---- */
+var audio=new Audio(TRACK);audio.preload="auto";
+var off=0;try{off=parseInt(localStorage.getItem("sr-rhythm-off")||"0",10)||0}catch(e){}
+var muted=false;try{muted=localStorage.getItem("sr-music")==="off"}catch(e){}
+var S={run:0,chart:null,lane:1,x:1,score:0,combo:0,best:0,perf:0,good:0,miss:0,hit:0,fx:[],clock0:0,usingAudio:0,flash:0,shake:0};
+function now(){ /* song time in seconds */
+  if(S.usingAudio&&!audio.paused)return audio.currentTime+off/1000;
+  return (performance.now()-S.clock0)/1000+off/1000;
+}
+function start(){
+  S.chart=makeChart();S.lane=1;S.x=1;S.score=0;S.combo=0;S.best=0;S.perf=S.good=S.miss=S.hit=0;S.fx=[];S.run=1;
+  document.getElementById("start").classList.add("hide");document.getElementById("end").classList.add("hide");
+  audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;
+  S.clock0=performance.now();
+  if(!muted){var p=audio.play();if(p&&p.then)p.then(function(){S.usingAudio=1}).catch(function(){S.usingAudio=0});else S.usingAudio=1}
+}
+function end(){
+  S.run=0;audio.pause();
+  var tot=S.chart.notes.length,pct=tot?(S.perf*1+S.good*.6)/tot:0,st=pct>.85?3:pct>.6?2:pct>.3?1:0;
+  document.getElementById("stars").textContent=("★".repeat(st)+"☆".repeat(3-st));
+  document.getElementById("endS").textContent="النقاط: "+S.score+" · أفضل كومبو: "+S.best+" · مثالي "+S.perf+" · زين "+S.good+" · فاتت "+S.miss;
+  document.getElementById("endE").textContent="Score "+S.score+" · Best combo "+S.best+" · Perfect "+S.perf+" · Good "+S.good+" · Missed "+S.miss;
+  document.getElementById("endT").textContent=st>=3?"أسطورة الخط!":st>=1?"حلو!":"جرّب مرة ثانية";
+  document.getElementById("end").classList.remove("hide");
+}
+
+/* ---- input ---- */
+function steer(d){if(!S.run)return;S.lane=Math.max(0,Math.min(2,S.lane+d))}
+addEventListener("keydown",function(e){var k=e.key;
+  if(k==="ArrowLeft"||k==="a"||k==="A")steer(-1);else if(k==="ArrowRight"||k==="d"||k==="D")steer(1);
+  else if((k==="Enter"||k===" ")&&!S.run){start()}});
+var tx=null,swiped=false;
+cv.addEventListener("pointerdown",function(e){tx=e.clientX;swiped=false;});
+cv.addEventListener("pointermove",function(e){if(tx===null)return;var dx=e.clientX-tx;if(Math.abs(dx)>28){steer(dx>0?1:-1);tx=e.clientX;swiped=true;}});
+cv.addEventListener("pointerup",function(e){
+  if(tx!==null&&!swiped){var r=cv.getBoundingClientRect();steer(e.clientX<r.left+r.width/2?-1:1);}tx=null;});
+cv.addEventListener("pointercancel",function(){tx=null});
+document.getElementById("goBtn").onclick=start;document.getElementById("again").onclick=start;
+function paintOff(){document.getElementById("offV").textContent=off+" ms"}
+document.getElementById("offM").onclick=function(){off-=20;sv()};document.getElementById("offP").onclick=function(){off+=20;sv()};
+function sv(){try{localStorage.setItem("sr-rhythm-off",String(off))}catch(e){}paintOff()}paintOff();
+var mb=document.getElementById("mute");
+function paintM(){mb.textContent=muted?"♪̸":"♪"}paintM();
+mb.onclick=function(e){e.stopPropagation();muted=!muted;try{localStorage.setItem("sr-music",muted?"off":"on")}catch(x){}
+  paintM();if(S.run){if(muted)audio.pause();else{audio.currentTime=Math.max(0,now()-off/1000);audio.play().then(function(){S.usingAudio=1}).catch(function(){})}}};
+document.addEventListener("visibilitychange",function(){if(document.hidden&&S.run)end()});
+
+/* ---- geometry: 3 lanes in perspective ---- */
+var HZ=.30; /* horizon y fraction */
+function ry(p){ /* p 0 (horizon) .. 1 (bottom) perspective depth -> y */ return (HZ+(1-HZ)*p)*H}
+function roadHalf(p){return W*(.07+.40*p)}           /* road half width at depth p */
+function laneX(l,p){var hw=roadHalf(p);return W/2+(l-1)*(2*hw/3)}
+function depth(dt){ /* dt = seconds until the note reaches the hit line -> p */
+  var u=1-dt/LEAD*1; /* 0 far .. 1 at hit */
+  var pHit=(HIT_Y-HZ)/(1-HZ);
+  var s=Math.max(0,u);return pHit*s*s*(3-2*s)*.35+pHit*s*.65;
+}
+function judge(t){
+  var c=S.chart,x=S.x;
+  c.notes.forEach(function(n){
+    if(n.done)return;var dt=t-n.t;
+    if(dt<0)return; /* the note reaches the car's line: judge where the car is right now */
+    if(Math.abs(x-n.l)<.62){
+      var near=Math.abs(x-n.l)<.3;
+      n.done=near?1:2;if(near)S.perf++;else S.good++;
+      S.combo++;S.best=Math.max(S.best,S.combo);
+      var mult=1+Math.min(3,Math.floor(S.combo/8));
+      S.score+=(near?100:60)*mult;S.flash=1;fx(n.l,near?"perfect":"good");
+    }else{n.done=3;S.miss++;S.combo=0;fx(n.l,"miss")}
+  });
+  c.rocks.forEach(function(r){
+    if(r.done)return;var dt=t-r.t;
+    if(dt>.12){r.done=2;return}
+    if(dt>=-.1&&Math.abs(x-r.l)<.55){r.done=1;S.combo=0;S.score=Math.max(0,S.score-50);S.shake=1;fx(r.l,"ouch")}
+  });
+}
+function fx(l,kind){S.fx.push({l:l,k:kind,t:performance.now()})}
+
+/* ---- drawing ---- */
+function drawSky(t){
+  var gr=g.createLinearGradient(0,0,0,ry(0));gr.addColorStop(0,"#73B2D5");gr.addColorStop(1,"#F3BC81");
+  g.fillStyle=gr;g.fillRect(0,0,W,ry(0)+2);
+  var pulse=.5+.5*Math.cos(2*Math.PI*(t/BEAT));
+  g.fillStyle="#FDBF6A";g.beginPath();g.arc(W*.5,ry(0)-2,W*(.11+.012*pulse),Math.PI,0);g.fill();
+  /* dunes */
+  g.fillStyle="#D48741";g.beginPath();g.moveTo(0,ry(0));
+  for(var i=0;i<=8;i++)g.lineTo(W*i/8,ry(0)-H*(.03+.025*Math.sin(i*1.7+1)));
+  g.lineTo(W,ry(0));g.fill();
+  g.fillStyle="#E9A24A";g.fillRect(0,ry(0),W,H);
+}
+function drawRoad(t){
+  /* road */
+  g.fillStyle="#3a2a1d";g.beginPath();
+  g.moveTo(W/2-roadHalf(0),ry(0));g.lineTo(W/2+roadHalf(0),ry(0));g.lineTo(W/2+roadHalf(1),H);g.lineTo(W/2-roadHalf(1),H);g.fill();
+  /* edge lines */
+  g.strokeStyle="#FFFAF2";g.lineWidth=3;
+  [-1,1].forEach(function(s){g.beginPath();g.moveTo(W/2+s*roadHalf(0),ry(0));g.lineTo(W/2+s*roadHalf(1),H);g.stroke()});
+  /* dashed lane lines scrolling with the beat */
+  var ph=(t/BEAT)%1;
+  g.strokeStyle="#FDBF6A";
+  [-1,1].forEach(function(s){
+    for(var k=0;k<14;k++){var a=(k+ph)/14,b=(k+ph+.45)/14;if(b>1)b=1;if(a>1)continue;
+      var p0=a*a,p1=b*b;g.lineWidth=1+3*p1;
+      var x0=W/2+s*roadHalf(p0)/3,x1=W/2+s*roadHalf(p1)/3;
+      g.beginPath();g.moveTo(x0,ry(p0));g.lineTo(x1,ry(p1));g.stroke();}
+  });
+  /* hit line */
+  var pH=(HIT_Y-HZ)/(1-HZ);
+  g.strokeStyle="rgba(253,191,106,.9)";g.lineWidth=3;g.beginPath();g.moveTo(W/2-roadHalf(pH),ry(pH));g.lineTo(W/2+roadHalf(pH),ry(pH));g.stroke();
+  /* highway gantry sign (Highway 40) passing on the right every few seconds */
+  var sp=((t/ (BEAT*16))%1);var sy=sp*sp,sx=W/2+roadHalf(sy)*1.25;
+  var sw=4+22*sy;g.fillStyle="#2f6b3a";g.fillRect(sx,ry(sy)-sw*3,sw*3,sw*1.6);g.fillStyle="#FFFAF2";g.font="800 "+Math.max(6,sw*.9)+"px Saira Condensed,sans-serif";g.textAlign="center";g.fillText("40",sx+sw*1.5,ry(sy)-sw*1.9);
+  g.fillStyle="#6b5a4a";g.fillRect(sx+sw*1.3,ry(sy)-sw*1.4,sw*.3,sw*1.4);
+}
+function drawNote(l,p,kind,a){
+  var x=laneX(l,p),y=ry(p),r=Math.max(4,W*.055*(.25+.9*p));
+  g.globalAlpha=a==null?1:a;
+  if(kind==="rock"){
+    g.fillStyle="#6E5644";g.beginPath();g.moveTo(x-r,y);g.lineTo(x-r*.6,y-r*.9);g.lineTo(x+r*.5,y-r);g.lineTo(x+r,y);g.closePath();g.fill();
+    g.strokeStyle="#291C13";g.lineWidth=2;g.stroke();
+  }else{
+    g.fillStyle="#FDBF6A";g.beginPath();g.arc(x,y-r*.6,r,0,7);g.fill();
+    g.strokeStyle="#291C13";g.lineWidth=Math.max(1.5,r*.18);g.stroke();
+    g.fillStyle="#291C13";g.font="800 "+(r*1.3)+"px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText("♪",x,y-r*.55);
+  }
+  g.globalAlpha=1;
+}
+function drawCar(){
+  var pH=(HIT_Y-HZ)/(1-HZ),x=laneX(0,pH)+(S.x)*(laneX(1,pH)-laneX(0,pH)),y=ry(pH)+H*.045;
+  var w=W*.17,h=w*1.45; /* Camry XV20, rear view, blue */
+  g.save();g.translate(x,y);
+  g.fillStyle="rgba(0,0,0,.28)";g.beginPath();g.ellipse(0,h*.08,w*.62,h*.1,0,0,7);g.fill();
+  g.fillStyle="#1a1a1a";g.fillRect(-w*.58,-h*.28,w*.2,h*.3);g.fillRect(w*.38,-h*.28,w*.2,h*.3);
+  g.fillStyle="#2D5B8A";rr(-w*.5,-h*.62,w,h*.66,w*.12);g.fill();
+  g.fillStyle="#244a70";rr(-w*.42,-h*.98,w*.84,h*.46,w*.14);g.fill();
+  g.fillStyle="#9CC7F0";rr(-w*.34,-h*.92,w*.68,h*.26,w*.08);g.fill();
+  g.fillStyle="#E34A33";g.fillRect(-w*.46,-h*.5,w*.2,h*.1);g.fillRect(w*.26,-h*.5,w*.2,h*.1);
+  g.fillStyle="#FFFAF2";g.fillRect(-w*.14,-h*.3,w*.28,h*.1);
+  g.strokeStyle="#291C13";g.lineWidth=2;rr(-w*.5,-h*.62,w,h*.66,w*.12);g.stroke();
+  g.restore();
+}
+function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
+function hud(t){
+  g.textAlign="center";g.textBaseline="alphabetic";
+  g.fillStyle="rgba(255,250,242,.9)";g.font="800 "+Math.round(W*.07)+"px Saira Condensed,sans-serif";
+  g.fillText(String(S.score),W/2,H*.06);
+  if(S.combo>=3){g.font="800 "+Math.round(W*.05)+"px Saira Condensed,sans-serif";g.fillText("COMBO "+S.combo+"  x"+(1+Math.min(3,Math.floor(S.combo/8))),W/2,H*.10)}
+  g.fillStyle="rgba(41,28,19,.35)";g.fillRect(W*.1,H*.115,W*.8,4);g.fillStyle="#FDBF6A";g.fillRect(W*.1,H*.115,W*.8*Math.min(1,Math.max(0,t/DUR)),4);
+  var T=performance.now();
+  S.fx=S.fx.filter(function(f){return T-f.t<600});
+  S.fx.forEach(function(f){var k=(T-f.t)/600,pH=(HIT_Y-HZ)/(1-HZ);
+    g.globalAlpha=1-k;g.font="800 "+Math.round(W*.06)+"px Tajawal,system-ui";g.textAlign="center";
+    g.fillStyle=f.k==="perfect"?"#FDBF6A":f.k==="good"?"#FFFAF2":"#E34A33";
+    var txt={perfect:"مثالي!",good:"زين",miss:"فاتت",ouch:"صخرة!"}[f.k];
+    g.fillText(txt,laneX(f.l,pH),ry(pH)-H*.07-k*H*.06);g.globalAlpha=1});
+}
+function frame(){
+  requestAnimationFrame(frame);
+  var t=S.run?now():0;
+  if(S.run){
+    if(t>=DUR)return end();
+    S.x+=(S.lane-S.x)*Math.min(1,(1/60)/SLIDE*1.0*(S.x===S.lane?1:1));
+    if(Math.abs(S.lane-S.x)<.001)S.x=S.lane;
+    judge(t);
+  }else{S.x+=(1-S.x)*.2}
+  g.save();
+  if(S.shake>0){g.translate((Math.random()-.5)*8*S.shake,(Math.random()-.5)*8*S.shake);S.shake-=.08}
+  drawSky(t);drawRoad(t);
+  if(S.run&&S.chart){
+    var items=[];
+    S.chart.notes.forEach(function(n){if(!n.done||n.done===3)items.push([n.t,n,"note"])});
+    S.chart.rocks.forEach(function(r){items.push([r.t,r,"rock"])});
+    items.sort(function(a,b){return b[0]-a[0]});
+    items.forEach(function(it){var dt=it[0]-t;if(dt>LEAD||dt<-.5)return;
+      if(it[2]==="rock"&&it[1].done===1)return;
+      var p=depth(dt);if(dt<0){p=(HIT_Y-HZ)/(1-HZ)+(-dt)*.5}
+      drawNote(it[1].l,p,it[2],it[1].done===3?.35:1)});
+  }
+  drawCar();hud(t);
+  g.restore();
+}
+window.srRhythm=S;frame();
+})();
+</script>
+</body>
+</html>
