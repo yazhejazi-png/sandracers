@@ -152,7 +152,7 @@ button.go{min-height:48px;padding:0 24px;border:0;border-radius:999px;background
   function frame(ts) {
     const dt = Math.min(.05, (ts - last) / 1000 || 0); last = ts;
     if (running) { R.step(dt); t = G.t; }
-    if (G.won && running) { running = false; show('كملت المرحلة! ' + fmt(t) + ' · اضغط للمرحلة التالية'); msg.onclick = () => { location.href = '../beirut-4/'; }; }
+    if (G.won && running) { running = false; show('كملت المرحلة! ' + fmt(t) + ' · اضغط للمرحلة التالية'); msg.onclick = () => { location.href = '../beirut-4-open/'; }; }
     if (G.lost && running) { running = false; show('خلصت المحاولات · النقاط ' + G.score + ' · اضغط من جديد'); }
     const sc = Math.min(W, H) / 300 * dpr, vw = cv.width / sc, vh = cv.height / sc, [cx, cy] = R.pos(G.car);
     cam[0] += (cx - cam[0]) * Math.min(1, dt * 6); cam[1] += (cy - cam[1]) * Math.min(1, dt * 6);
