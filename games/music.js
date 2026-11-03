@@ -17,5 +17,13 @@
   document.addEventListener('visibilitychange',function(){if(document.hidden)a.pause();else go();});
   /* optional: a game can switch the track (e.g. window.srMusic.set('mood-final-lap-160')) */
   window.srMusic={set:function(n){if(!n||n===cur)return;var was=!a.paused;a.pause();cur=n;a=mk(n);if(was||started)go();}};
+  /* the stage pages keep pill buttons in this same corner (full screen, and on the SUV pages the car button): if the note would sit on one, it goes just above them; every other page is unchanged */
+  function place(){try{b.style.bottom='10px';var H=document.documentElement.clientHeight;
+    for(var k=0;k<4;k++){var r=b.getBoundingClientRect(),hit=null,els=document.querySelectorAll('#game button,#fs');
+      for(var i=0;i<els.length;i++){var q=els[i].getBoundingClientRect();
+        if(q.height>0&&q.width>q.height*1.3){var ix=Math.min(r.right,q.right)-Math.max(r.left,q.left),iy=Math.min(r.bottom,q.bottom)-Math.max(r.top,q.top);
+          if(ix>0&&iy>0&&ix*iy>=.15*r.width*r.height&&(!hit||q.top<hit.top))hit=q;}}
+      if(!hit)return;b.style.bottom=(H-hit.top+8)+'px';}}catch(e){}}
   paint();(document.body||document.documentElement).appendChild(b);
+  place();addEventListener('resize',place);addEventListener('load',place);
 })();
