@@ -954,6 +954,21 @@ body{touch-action:manipulation}
   let state = 'load', carId = IDS.indexOf(store.get('car', 'zarqa')) >= 0 ? store.get('car', 'zarqa') : 'zarqa', race = null;
   const best = {}; IDS.forEach(k => { best[k] = store.get('best-' + k, null); });
   const bestDrift = {}; IDS.forEach(k => { bestDrift[k] = store.get('bestd-' + k, null); });
+  // Records to beat (his own laps, 3 Nov 2026): t = seconds, d = drift points. A player's own better score replaces them.
+  const RECORDS = {
+    zarqa:     { t: 93.7,  stars: 3, d: 88,  ds: 2 },
+    sawda:     { t: 73.4,  stars: 3, d: 113, ds: 2 },
+    banafsaji: { t: 85.7,  stars: 3, d: 146, ds: 3 },
+    burtuqali: { t: 83.5,  stars: 3, d: 156, ds: 3 },
+    habtain:   { t: 109.6, stars: 3, d: 145, ds: 4 },
+    habba:     { t: 93.2,  stars: 3, d: 92,  ds: 2 },
+    jeep:      { t: 87.4,  stars: 3, d: 86,  ds: 2 },
+  };
+  IDS.forEach(k => {
+    const r = RECORDS[k]; if (!r) return;
+    if (!best[k] || best[k].t > r.t) best[k] = { t: r.t, splits: null, stars: r.stars, seed: true };
+    if (!bestDrift[k] || bestDrift[k].score < r.d) bestDrift[k] = { score: r.d, stars: r.ds, seed: true };
+  });
   const inp = { gas: 0, brake: 0, steer: 0, boost: false, bleed: false };
   const keys = {}, touch = { G: 0, B: 0, A: 0 }, stick = { id: null, x0: 0, steer: 0 };
   let acc = 0, countT = 0, stats = null, menuCar = null, orbit = 0;
@@ -2504,7 +2519,7 @@ body{touch-action:manipulation}
   function bestLines() {
     document.querySelectorAll('[data-best]').forEach(el => {
       const b = best[el.dataset.best], d = bestDrift[el.dataset.best];
-      el.textContent = (b ? 'أحسن وقت ' + fmt(b.t) + ' · ' + '★'.repeat(b.stars) : '') + (d ? (b ? '\n' : '') + 'أحسن تفحيط ' + d.score + ' · ' + '★'.repeat(d.stars) : '');
+      el.textContent = (b ? (b.seed ? 'الرقم القياسي ' : 'أحسن وقت ') + fmt(b.t) + ' · ' + '★'.repeat(b.stars) : '') + (d ? (b ? '\n' : '') + (d.seed ? 'الرقم القياسي تفحيط ' : 'أحسن تفحيط ') + d.score + ' · ' + '★'.repeat(d.stars) : '');
     });
   }
   function showMenu() {
@@ -2563,7 +2578,7 @@ body{touch-action:manipulation}
         store.set('best-' + carId, best[carId]);
       }
       $('#dBest').className = 'dbest' + (isBest ? ' new' : '');
-      $('#dBest').textContent = isBest ? (b ? 'رقم جديد! أحسن من ' + fmt(b.t) : 'أول وقت لك ب' + NAMES[carId].name) : 'أحسن وقت لك ' + fmt(b.t);
+      $('#dBest').textContent = isBest ? (b ? 'رقم قياسي جديد! أحسن من ' + fmt(b.t) : 'أول وقت لك ب' + NAMES[carId].name) : (b.seed ? 'الرقم القياسي ' : 'أحسن وقت لك ') + fmt(b.t);
       if (stars < 3) fact('عشان 3 نجوم وقت: ' + fmt(C.STARS[carId][0]) + ' أو أقل');
     }
     const sc = Math.floor(race.score), dst = C.driftRank(sc, carId), bd = bestDrift[carId], isBestD = sc > 0 && (!bd || sc > bd.score);
@@ -2571,7 +2586,7 @@ body{touch-action:manipulation}
     $('#dScore').textContent = sc;
     if (isBestD) { bestDrift[carId] = { score: sc, stars: dst }; store.set('bestd-' + carId, bestDrift[carId]); }
     $('#dDBest').className = 'dbest' + (isBestD ? ' new' : '');
-    $('#dDBest').textContent = sc === 0 ? 'ما اتحسبت لك فحطة' : isBestD ? (bd ? 'رقم جديد! أحسن من ' + bd.score : 'أول رقم تفحيط لك ب' + NAMES[carId].name) : 'أحسن رقم لك ' + bd.score;
+    $('#dDBest').textContent = sc === 0 ? 'ما اتحسبت لك فحطة' : isBestD ? (bd ? 'رقم قياسي جديد! أحسن من ' + bd.score : 'أول رقم تفحيط لك ب' + NAMES[carId].name) : (bd.seed ? 'الرقم القياسي ' : 'أحسن رقم لك ') + bd.score;
     if (dst < 5) fact('عشان ' + cnt(dst + 1, 'نجمة', 'نجمتين', 'نجوم', 'نجمة') + ' تفحيط: ' + C.DSTARS[carId][dst] + ' نقطة أو أكتر');
     const bdr = race.bestDrift;
     fact(bdr ? 'أحسن فحطة ' + starTxt(bdr.stars) + ' · ' + bdr.dur.toFixed(1) + ' ث · ' + Math.round(bdr.dist) + ' م · ' + Math.round(bdr.ang * 57.3) + '°' : 'ما فحّطت ولا فحطة');
@@ -2768,7 +2783,7 @@ body{touch-action:manipulation}
         const i = e.n - 1;
         ringBurst(RINGS[i]); chime(); paintRings(race.next, 0);
         const b = best[carId];
-        if (b && b.splits[i] != null) {
+        if (b && b.splits && b.splits[i] != null) {
           const d = race.splits[i] - b.splits[i], el = $('#hDelta');
           el.textContent = (d > 0 ? '+' : '−') + Math.abs(d).toFixed(1);
           el.className = 'sys-delta num ' + (d > 0 ? 'up' : 'down');
