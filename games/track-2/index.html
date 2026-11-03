@@ -91,7 +91,7 @@ h1{margin:0 0 4px;font-size:30px}h2{margin:0 0 8px}
   </div>
   <div id="step2" hidden>
     <p class="sub">الحلبة: <b id="trkName"></b></p>
-    <p class="sub" style="margin-top:-6px">الحين اختر سيارتك.</p>
+    <p class="sub" style="margin-top:-6px">دحين اختر سيارتك.</p>
     <div class="cars" id="cars" role="radiogroup" aria-label="السيارة"></div>
     <button class="btn" id="go">يلا نبدأ</button>
     <button class="btn alt" id="back">غيّر الحلبة</button>
@@ -758,7 +758,7 @@ function hudIcon(){
   const n=nextCorner(); if(!n){ hudSign.style.opacity=0; return; } hudSign.style.opacity=1;
   drawGlyph(hsg,w/2,h*0.42,Math.min(w,h)*0.62,n.c.kind,n.c.dir);
   hsg.fillStyle='rgba(41,28,19,.85)'; hsg.beginPath(); hsg.roundRect(w/2-30,h-26,60,22,8); hsg.fill();
-  hsg.fillStyle='#FDBF6A'; hsg.font='800 15px Almarai,sans-serif'; hsg.textAlign='center'; hsg.textBaseline='middle'; hsg.fillText(n.m>0?(Math.round(n.m/10)*10)+' م':'الحين',w/2,h-15);
+  hsg.fillStyle='#FDBF6A'; hsg.font='800 15px Almarai,sans-serif'; hsg.textAlign='center'; hsg.textBaseline='middle'; hsg.fillText(n.m>0?(Math.round(n.m/10)*10)+' م':'دحين',w/2,h-15);
 }
 
 /* ---------- cockpit (driver's-eye 3D) view ---------- */
