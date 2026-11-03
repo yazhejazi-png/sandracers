@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head>
+<head><script>(function(){try{var o=navigator.getGamepads&&navigator.getGamepads.bind(navigator),dead=0;if(o)navigator.getGamepads=function(){if(dead)return [];try{return o()}catch(e){dead=1;return []}}}catch(e){}})();</script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>أول مرة أغرز</title>
@@ -1872,6 +1872,7 @@ body{touch-action:manipulation}
         best[carId] = { t, splits: race.splits.slice(), stars };
         store.set('best-' + carId, best[carId]); store.set('ghost-' + carId, rec);
       }
+      SRLB.submit('dune:' + carId, t);
       $('#dBest').className = 'dbest' + (isBest ? ' new' : '');
       $('#dBest').textContent = isBest ? (b ? 'رقم جديد! أحسن من ' + fmt(b.t) : 'أول وقت لك ب' + NAMES[carId].name) : 'أحسن وقت لك ' + fmt(b.t);
       if (stars < 3) fact('عشان 3 نجوم: ' + fmt(C.STARS[carId][0]) + ' أو أقل');
@@ -2198,5 +2199,7 @@ body{touch-action:manipulation}
   sync();
 })();
 </script>
+<script src="../lb/lb.js"></script><script>SRLB.init("dune")</script>
+<script src="../music.js" data-track="mood-oud-132"></script>
 </body>
 </html>
