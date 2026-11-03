@@ -104,7 +104,7 @@ function end(){
   S.run=0;audio.pause();
   var tot=S.chart.notes.length,pct=tot?(S.perf*1+S.good*.6)/tot:0,st=pct>.85?3:pct>.6?2:pct>.3?1:0;
   document.getElementById("stars").textContent=("★".repeat(st)+"☆".repeat(3-st));
-  document.getElementById("endS").textContent="النقاط: "+S.score+" · أفضل كومبو: "+S.best+" · مثالي "+S.perf+" · زين "+S.good+" · فاتت "+S.miss;
+  document.getElementById("endS").textContent="النقاط: "+S.score+" · أفضل كومبو: "+S.best+" · أصلي "+S.perf+" · زين "+S.good+" · وأفا "+S.miss;
   document.getElementById("endE").textContent="Score "+S.score+" · Best combo "+S.best+" · Perfect "+S.perf+" · Good "+S.good+" · Missed "+S.miss;
   document.getElementById("endT").textContent=st>=3?"أسطورة الخط!":st>=1?"حلو!":"جرّب مرة ثانية";
   document.getElementById("end").classList.remove("hide");
@@ -237,7 +237,7 @@ function hud(t){
   S.fx.forEach(function(f){var k=(T-f.t)/600,pH=(HIT_Y-HZ)/(1-HZ);
     g.globalAlpha=1-k;g.font="800 "+Math.round(W*.06)+"px Tajawal,system-ui";g.textAlign="center";
     g.fillStyle=f.k==="perfect"?"#FDBF6A":f.k==="good"?"#FFFAF2":"#E34A33";
-    var txt={perfect:"مثالي!",good:"زين",miss:"فاتت",ouch:"صخرة!"}[f.k];
+    var txt={perfect:"أصلي!",good:"زين",miss:"وأفا",ouch:"صخرة!"}[f.k];
     g.fillText(txt,laneX(f.l,pH),ry(pH)-H*.07-k*H*.06);g.globalAlpha=1});
 }
 function frame(){
