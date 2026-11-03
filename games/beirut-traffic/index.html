@@ -1,0 +1,237 @@
+<!doctype html><html lang="ar" dir="rtl"><head><script>(function(){try{var o=navigator.getGamepads&&navigator.getGamepads.bind(navigator),dead=0;if(o)navigator.getGamepads=function(){if(dead)return [];try{return o()}catch(e){dead=1;return []}}}catch(e){}})();</script>
+<script src="/theme/head.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><link rel="icon" type="image/png" sizes="32x32" href="/img/favicon-32.png">
+<meta name="description" content="زحمة بيروت: شوارع بيروت الحقيقية. Real streets, a heavy jam, fuel orbs, one exit with more than one way to it, no police. Beirut Traffic.">
+<meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="زحمة بيروت"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="apple-touch-icon.png"><title>زحمة بيروت</title>
+<style>
+:root{--bg:#0F1226;--panel:#1A1E3A;--line:#3A4170;--ink:#F3EEDC;--mut:#B9B7CF;--accent:#F2B84B;--on-accent:#1B1B2B}
+:root[data-theme="light"]{--bg:#F6F0E2;--panel:#FFFBF1;--line:#D9C7AC;--ink:#1F1B2E;--mut:#5C5870}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#F6F0E2;--panel:#FFFBF1;--line:#D9C7AC;--ink:#1F1B2E;--mut:#5C5870}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,"Segoe UI",Tahoma,sans-serif;direction:rtl;line-height:1.55}
+main{max-width:640px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:8px 0 4px}p{margin:6px 0}.mut{color:var(--mut);font-size:.92rem}.en{direction:ltr;text-align:left}
+.back{margin:2px 0 10px;font-size:.95rem}.back a{color:var(--ink);font-weight:700}
+.credit a{color:inherit}.credit{font-size:.8rem;color:var(--mut);text-align:center;margin:6px 0 18px}
+#game{position:relative;width:100%;height:100vh;height:100dvh;background:#0F1226;overflow:hidden;touch-action:none;user-select:none;color:#fff}
+#game canvas#cv{width:100%;height:100%;display:block}
+#top{position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:6px;font-weight:800;font-size:.85rem;direction:rtl;white-space:nowrap}
+#top span{background:rgba(15,18,38,.72);border-radius:10px;padding:4px 9px}
+#mini{position:absolute;top:8px;left:8px;width:30vmin;height:30vmin;max-width:170px;max-height:170px;border:2px solid #F2B84B;border-radius:10px;background:#0F1226;opacity:.95}
+#stick{position:absolute;right:3%;bottom:8%;width:26vmin;height:26vmin;max-width:190px;max-height:190px;border-radius:50%;background:rgba(20,24,50,.28);border:2px solid rgba(255,255,255,.28);touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:40%;height:40%;margin:-20% 0 0 -20%;border-radius:50%;background:rgba(255,255,255,.4)}
+#horn{position:absolute;left:3%;bottom:8%;width:17vmin;height:17vmin;max-width:110px;max-height:110px;border-radius:50%;border:2px solid rgba(255,255,255,.5);background:rgba(242,184,75,.85);color:#1B1B2B;font:800 .8rem system-ui;cursor:pointer;line-height:1.2}
+#fs{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);min-height:36px;padding:0 14px;border:0;border-radius:999px;background:rgba(242,184,75,.92);color:#1B1B2B;font:inherit;font-weight:800;cursor:pointer}
+#rot{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;background:#0F1226;color:#F2B84B;font-size:1.3rem;font-weight:800;z-index:8;padding:10%}
+@media (orientation:portrait){#rot{display:flex}}
+#ov{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;background:rgba(15,18,38,.9);z-index:5;overflow:auto;padding:14px 10px;text-align:center}
+#ov h2{margin:4px 0;font-size:1.4rem}#ov p{margin:2px 0 8px;font-size:.9rem;color:#D8D5EA}
+#cars{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;width:100%;max-width:760px;margin:6px 0}
+.car{background:#1A1E3A;border:2px solid #3A4170;border-radius:12px;color:#fff;padding:8px;cursor:pointer;font:inherit}
+.car[aria-checked=true]{border-color:#F2B84B;background:#232850}
+.car b{display:block}.car small{display:block;color:#B9B7CF;font-size:.72rem}.car i{display:block;height:5px;border-radius:3px;background:#3A4170;margin:3px 0;position:relative;overflow:hidden}.car i:after{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--v)*100%);background:#F2B84B}
+.car canvas{width:64px;height:30px}
+button.go,a.go{color:#1B1B2B;min-height:48px;padding:0 28px;border:0;border-radius:999px;background:#F2B84B;color:#1B1B2B;font:inherit;font-weight:800;cursor:pointer;margin:8px 0}
+</style></head><body>
+<div id="game"><canvas id="cv"></canvas><canvas id="mini" width="170" height="170"></canvas>
+<div id="top"><span id="tm">0:00</span><span id="fuelb">⛽ <b id="fv"></b></span><span id="orbs"></span><span id="dist"></span><span id="jam"></span></div>
+<button id="fs" type="button">شاشة كاملة · Fullscreen</button>
+<button id="horn" type="button">كلاكس<br>Horn</button><div id="stick"><div id="knob"></div></div><div id="rot">لف جهازك بالعرض عشان تلعب<br><small>Rotate your device to landscape</small></div>
+<div id="ov"><h2>زحمة بيروت</h2><p>Beirut Traffic</p>
+<p>بيروت واقفة! لك مخرج واحد بس، لكن له أكثر من طريق: لو علقت بالزحمة غيّر طريقك. بدون شرطة، بس زحمة. اختار سيارتك. عبّي من كل كور البنزين (الكور الذهبية) قبل لا يخلص بنزينك، ولو خلص قبل ما تاخذها كلها تخسر. بعدها يفتح المخرج وتنقل للمرحلة اللي بعدها.<br><span class="en" style="display:block;text-align:center">One exit, more than one way to it, no police. Pick your car and beat the jam. Collect every fuel orb before your tank runs dry: run out first and you lose. Then the exit opens and you move on to the next stage.</span></p>
+<div id="cars" role="radiogroup" aria-label="السيارة"></div><div id="best" class="mut"></div><button class="go" id="gob" type="button">يلا · Go</button></div>
+</div>
+<main>
+<p class="back"><a href="/games/">‹ كل الألعاب</a> · <a href="/">الرئيسية</a></p>
+<h1>زحمة بيروت</h1>
+<p class="mut">شوارع بيروت الحقيقية من الخريطة وزحمة خانقة: السيارات قدامك توقف وما تقدر تتخطاها. لازم تاخذ كل كور البنزين (النقاط الذهبية على الخريطة الصغيرة): لو خلص بنزينك قبل ما تاخذها كلها تخسر، ولو أخذتها كلها يفتح «المخرج» (السهم الذهبي يدلّك) وتنقل للمرحلة اللي بعدها. فيه مخرج واحد بس وأكثر من طريق له، وما فيه شرطة. الدراع على اليمين (أو الأسهم أو دراع الجهاز)، وزر الكلاكس يحرّك اللي قدامك.</p>
+<p class="mut en">Real Beirut streets and a heavy jam: cars ahead stop and you can't pass them. Collect every fuel orb (gold dots on the mini-map): run dry first and you lose; get them all and the Exit opens (the gold arrow points to it) and you move on to the next stage. One exit, several routes to it, no police. Stick on the right (or arrow keys or gamepad); the horn nudges the cars ahead.</p>
+<p class="credit">Map data © <a href="https://www.openstreetmap.org/copyright" rel="noopener">OpenStreetMap contributors</a></p>
+</main>
+<script>(function () {
+  const GR = {"nodes":[[204.6,233.7],[210.4,194.9],[162.3,235.3],[202.7,257.0],[241.5,198.8],[171.6,188.1],[237.6,559.5],[232.7,549.8],[245.3,573.1],[232.7,538.2],[257.0,544.0],[221.1,532.4],[251.2,584.7],[186.2,509.1],[174.5,526.5],[191.0,498.4],[155.2,531.4],[181.3,526.5],[166.8,522.7],[177.5,563.4],[177.5,583.8],[174.5,592.5],[169.7,605.1],[180.4,585.7],[555.6,333.6],[568.2,332.6],[544.0,332.6],[549.8,336.5],[578.9,327.8],[590.5,320.0],[222.1,313.2],[218.2,324.8],[225.0,303.5],[217.2,351.0],[221.1,354.9],[227.9,351.0],[223.0,379.2],[239.5,321.0],[225.9,361.7],[217.2,364.6],[616.7,567.3],[609.9,573.1],[610.9,563.4],[268.6,547.9],[61.1,506.2],[103.8,517.8],[55.3,507.2],[71.8,479.0],[118.3,523.6],[123.2,530.4],[118.3,535.3],[327.8,311.3],[321.9,305.5],[323.9,332.6],[342.3,305.5],[304.5,299.6],[276.4,291.9],[497.5,500.4],[494.5,477.1],[512.0,512.0],[496.5,450.9],[523.6,451.9],[474.2,450.9],[449.0,443.2],[461.6,443.2],[447.0,447.0],[430.5,441.2],[467.4,444.1],[353.0,582.8],[369.5,581.8],[339.4,578.9],[317.1,355.9],[305.5,565.3],[291.9,561.5],[308.4,524.6],[309.3,577.9],[312.2,402.4],[312.2,376.2],[307.4,409.2],[319.0,408.2],[317.1,367.5],[310.3,373.3],[318.1,371.4],[220.1,388.8],[365.6,367.5],[365.6,339.4],[370.4,385.0],[389.8,369.5],[324.8,374.3],[371.4,319.0],[371.4,304.5],[374.3,321.9],[621.6,350.1],[619.6,339.4],[616.7,359.8],[378.2,592.5],[371.4,589.6],[400.5,593.5],[189.1,407.3],[194.9,414.1],[196.8,412.1],[171.6,397.6],[190.1,433.5],[190.1,445.1],[193.0,446.1],[209.5,447.0],[191.0,455.8],[611.9,464.5],[614.8,464.5],[613.8,448.0],[577.9,466.4],[545.0,521.7],[545.5,492.1],[559.5,536.2],[534.3,521.7],[209.5,459.6],[210.4,424.7],[504.2,349.1],[546.9,352.0],[456.7,342.3],[551.8,350.1],[549.8,347.2],[244.4,296.7],[75.6,269.6],[77.6,238.5],[77.6,277.3],[224.0,290.9],[233.7,281.2],[248.2,284.1],[228.8,289.0],[225.0,286.1],[323.9,542.1],[319.0,530.4],[336.5,566.3],[205.6,464.5],[264.7,201.7],[309.3,478.1],[578.9,575.0],[580.8,547.9],[525.6,580.8],[609.0,552.7],[577.9,544.0],[609.0,312.2],[613.8,317.1],[598.3,314.2],[327.8,578.9],[145.5,186.2],[119.9,236.9],[74.7,233.7],[130.9,381.1],[115.4,377.2],[141.6,385.9],[119.3,370.4],[95.0,378.2],[210.4,465.5],[201.7,458.7],[214.3,471.3],[217.7,501.8],[80.5,304.5],[81.5,278.3],[84.4,307.4],[102.8,304.5],[214.3,412.1],[216.2,399.5],[217.2,418.9],[112.5,448.0],[101.8,468.4],[116.4,425.7],[85.3,468.4],[83.4,426.7],[123.6,275.9],[165.8,273.5],[173.6,276.4],[200.7,275.4],[166.8,287.0],[146.4,568.2],[151.3,552.7],[142.5,577.0],[611.9,519.8],[614.8,486.8],[251.2,597.3],[239.5,598.3],[595.4,369.5],[600.2,362.7],[586.7,373.3],[597.3,361.7],[283.2,206.5],[284.1,222.1],[280.2,203.6],[287.0,225.0],[317.1,238.5],[95.0,326.8],[84.4,325.8],[103.8,334.5],[82.4,351.0],[528.5,449.0],[545.9,449.9],[526.5,454.8],[406.3,584.7],[403.4,583.8],[417.9,582.8],[421.8,585.7],[431.5,568.2],[313.2,429.6],[306.4,423.8],[319.0,422.8],[305.5,438.3],[306.4,444.1],[313.2,437.3],[609.0,446.1],[85.3,369.5],[590.5,354.9],[556.6,354.9],[373.3,578.9],[233.7,293.8],[125.1,630.3],[127.0,616.7],[140.6,633.2],[545.9,462.5],[546.9,465.5],[530.4,460.6],[391.8,305.5],[378.2,302.5],[429.6,317.1],[376.2,298.7],[102.8,535.3],[55.3,524.6],[54.3,521.7],[579.9,391.8],[582.8,368.5],[110.5,348.1],[114.4,356.8],[577.5,448.0],[552.7,447.0],[177.5,487.8],[182.3,476.1],[168.7,508.1],[227.9,363.6],[258.9,374.3],[450.9,453.8],[455.8,456.7],[377.2,417.9],[573.1,407.3],[435.4,318.1],[423.8,330.7],[544.2,368.7],[505.6,368.9],[467.0,369.1],[428.4,369.3],[436.4,322.9],[433.5,334.5],[433.5,302.5],[443.2,319.0],[164.8,619.6],[158.1,637.1],[220.1,278.3],[75.6,213.3],[105.7,211.4],[515.9,327.8],[193.0,588.6],[340.4,249.2],[347.2,252.1],[380.1,266.7],[137.7,395.6],[143.5,386.9],[122.2,414.1],[165.8,385.9],[189.1,371.4],[166.8,393.7],[383.0,270.5],[404.4,275.4],[379.2,282.2],[559.5,428.6],[508.1,326.8],[493.6,325.8],[419.9,284.1],[556.6,543.0],[567.3,531.4],[525.6,543.0],[563.4,539.2],[264.7,433.5],[278.3,437.3],[230.8,420.8],[87.3,384.0],[89.2,374.3],[87.3,407.3],[429.6,297.7],[417.9,438.3],[378.2,437.3],[376.2,432.5],[343.3,437.3],[129.9,198.8],[140.6,189.1],[432.5,585.7],[460.6,580.8],[493.1,580.8],[400.5,580.8],[109.6,297.7],[114.4,291.9],[575.0,481.9],[145.5,637.1],[437.3,566.3],[481.5,554.7],[472.2,449.9],[468.4,456.7],[450.9,320.0],[122.2,289.0]],"edges":[[0,1],[0,2],[0,3],[1,4],[1,5],[2,147],[3,173],[4,135],[5,146],[6,7],[6,8],[7,9],[8,12],[9,10],[9,11],[10,43],[11,157],[11,17],[12,180],[13,14],[13,15],[13,16],[13,17],[13,18],[14,19],[15,134],[16,49],[16,176],[18,236],[19,20],[20,21],[21,22],[21,23],[22,253],[23,259],[24,25],[24,26],[24,27],[25,28],[26,258],[27,121],[28,29],[29,144],[30,31],[30,32],[31,33],[32,126],[33,34],[34,35],[35,36],[35,37],[35,38],[35,39],[36,83],[37,122],[38,237],[39,267],[40,41],[40,42],[41,137],[42,140],[43,73],[44,45],[44,46],[44,47],[45,48],[46,227],[47,168],[48,49],[49,50],[50,225],[51,52],[51,53],[51,54],[52,55],[53,71],[54,90],[55,56],[56,128],[57,58],[57,59],[58,60],[59,114],[60,61],[60,62],[61,195],[62,304],[63,64],[63,65],[63,66],[64,67],[65,239],[66,287],[67,303],[68,69],[68,70],[69,96],[69,213],[70,145],[70,133],[71,80],[72,73],[72,74],[72,75],[74,132],[74,136],[75,145],[76,77],[76,78],[76,79],[77,80],[77,81],[77,82],[78,204],[79,205],[81,238],[82,88],[83,163],[84,85],[84,86],[84,87],[84,88],[85,89],[86,241],[87,248],[89,90],[89,91],[90,222],[90,224],[91,244],[92,93],[92,94],[93,143],[94,183],[95,96],[95,97],[97,198],[97,199],[98,99],[98,100],[98,101],[99,102],[100,162],[101,268],[102,103],[103,104],[104,105],[104,106],[105,115],[105,116],[106,235],[106,155],[107,108],[107,109],[107,110],[108,179],[109,209],[110,299],[110,219],[111,112],[111,113],[111,114],[112,218],[113,276],[115,134],[116,162],[117,118],[117,119],[118,120],[118,121],[119,250],[120,212],[122,128],[122,214],[123,124],[123,125],[124,147],[124,148],[125,159],[126,127],[127,128],[127,129],[127,130],[129,214],[130,255],[131,132],[131,133],[134,154],[134,155],[135,188],[136,207],[137,138],[137,139],[138,140],[138,141],[139,295],[140,178],[141,279],[142,143],[142,144],[146,292],[148,256],[149,150],[149,151],[150,152],[150,153],[151,263],[152,231],[153,283],[154,156],[156,157],[158,159],[158,160],[158,161],[159,170],[160,192],[161,297],[162,163],[162,164],[164,282],[165,166],[165,167],[166,168],[167,265],[168,169],[169,285],[170,171],[171,172],[172,173],[172,174],[173,255],[174,306],[175,176],[175,177],[177,216],[178,179],[180,181],[181,259],[182,183],[182,184],[182,185],[184,228],[184,229],[185,211],[186,187],[186,188],[187,189],[189,190],[190,260],[191,192],[191,193],[192,194],[193,230],[194,210],[195,196],[195,197],[196,218],[196,232],[196,233],[197,220],[198,200],[199,296],[200,201],[200,202],[201,293],[202,301],[203,204],[203,205],[203,206],[203,207],[203,208],[206,281],[208,290],[209,232],[210,284],[211,212],[213,296],[215,216],[215,217],[217,300],[218,219],[218,220],[221,222],[221,223],[223,243],[223,244],[224,271],[225,226],[226,227],[228,242],[229,245],[230,231],[233,272],[234,235],[234,236],[237,238],[239,240],[240,304],[241,289],[242,272],[243,249],[244,250],[245,246],[246,247],[247,248],[249,250],[249,251],[249,252],[251,286],[252,305],[253,254],[254,300],[256,257],[257,291],[258,273],[260,261],[261,262],[262,269],[263,264],[263,265],[264,266],[266,267],[266,268],[269,270],[269,271],[270,275],[273,274],[274,305],[275,286],[276,277],[276,278],[276,279],[277,299],[278,302],[280,281],[280,282],[283,284],[283,285],[287,288],[288,289],[289,290],[291,292],[293,294],[294,295],[297,298],[298,306],[301,302],[303,304]],"start":40,"exit":256,"orbs":[254,305,131,39,246,63,227,186],"tour":2996}, CFG = {"drain": 0.075, "key": "sr-beirut-traffic", "next": "", "nextLabel": ""};
+  const N = GR.nodes.map(n => ({ x: n[0], y: n[1], adj: [] }));
+  for (const [a, b] of GR.edges) { N[a].adj.push(b); N[b].adj.push(a); }
+  const $ = id => document.getElementById(id);
+  const cv = $('cv'), x = cv.getContext('2d'), mini = $('mini'), mx = mini.getContext('2d'), game = $('game');
+  const EXIT = GR.exit, START = GR.start, ORBS = GR.orbs, TANK = 100, DRAIN = CFG.drain, ORB_FUEL = 45;
+  // cars: speed (px/s), grip (how fast it recovers after a bump). Neutral names, no brands.
+  const CARS = [
+    ['zarqa', 'الزرقا', 'Blue Coupe', '#BFE6F5', 1, .8],
+    ['sawda', 'السودا', 'Black Coupe', '#23262B', .95, .85],
+    ['banafsaji', 'البنفسجية', 'Purple Muscle', '#8B4BB8', .9, .6],
+    ['burtuqali', 'البرتقالية', 'Papaya Supercar', '#F08A24', 1, 1],
+    ['habtain', 'حبتين', 'Double-cab Pickup', '#C9B58A', .65, .9],
+    ['habba', 'حبة ونص', 'Red Pickup', '#C0342F', .75, .75],
+    ['jeep', 'الجيب', 'Land Cruiser', '#E3E0D4', .7, .95],
+    ['kabira', 'الكبيرة', 'Big Family SUV', '#3E5C8A', .6, .7],
+    ['classic', 'الكلاسيك', 'Classic Coupe', '#D8D2C2', .8, .8]
+  ];
+  let car = CARS[0], running = false, over = false, tmr = 0, best = {};
+  try { best = JSON.parse(localStorage.getItem(CFG.key) || '{}'); } catch (e) {}
+  const dist = (a, b) => Math.hypot(N[a].x - N[b].x, N[a].y - N[b].y);
+  const vec = (a, b) => { const d = dist(a, b) || 1; return [(N[b].x - N[a].x) / d, (N[b].y - N[a].y) / d]; };
+  const pos = e => e.b == null ? [N[e.a].x, N[e.a].y] : [N[e.a].x + (N[e.b].x - N[e.a].x) * e.t, N[e.a].y + (N[e.b].y - N[e.a].y) * e.t];
+  const rnd = (() => { let s = 12345; return () => (s = (s * 1664525 + 1013904223) % 4294967296) / 4294967296; })();
+  // traffic: wandering agents on the road graph
+  const COLS = ['#c9c4b4', '#6f7a8a', '#9b3b35', '#3d5a80', '#d9a441', '#4b6b4b', '#8a8f98', '#b8b2a0', '#5a4a6a'];
+  let P, T, fuel = TANK, got = new Set(), lost = false;
+  function reset() {
+    P = { a: START, b: null, t: 0, bump: 0, hold: 0 }; fuel = TANK; got = new Set(); lost = false;
+    T = []; const EN = 70;
+    for (let i = 0; i < EN; i++) {
+      const a = Math.floor(rnd() * N.length); if (a === START || a === EXIT) { i--; continue; }
+      const b = N[a].adj[Math.floor(rnd() * N[a].adj.length)];
+      T.push({ a, b, t: rnd() * .9, v: 22 + rnd() * 26, col: COLS[i % COLS.length], big: rnd() < .2, wait: 0, push: 0 });
+    }
+    tmr = 0; over = false; running = false; W = null;
+  }
+  let W = null;
+  function stepAgent(e, dt, speed, isP, decide) {
+    if (e.b == null) { decide(e); if (e.b == null) return; }
+    const L = dist(e.a, e.b) || 1; e.t += speed * dt / L;
+    if (e.t >= 1) { e.a = e.b; e.b = null; e.t = 0; decide(e); }
+  }
+  // position along edge as a signed key so cars on the same edge in the same direction can queue
+  function blocked(e, dist0) {
+    if (e.b == null) return false;
+    const [ex, ey] = pos(e), h = vec(e.a, e.b);
+    const all = e === P ? T : T.concat([P]);
+    for (const o of all) { if (o === e || o.b == null) continue;
+      const [ox, oy] = pos(o), dx = ox - ex, dy = oy - ey, d = Math.hypot(dx, dy);
+      if (d < dist0 && (dx * h[0] + dy * h[1]) / (d || 1) > .8) { const oh = vec(o.a, o.b); if (oh[0] * h[0] + oh[1] * h[1] > .2) return o; }
+    }
+    return false;
+  }
+  function tdecide(e) {
+    const prev = e.last; let opts = N[e.a].adj.filter(n => n !== prev); if (!opts.length) opts = N[e.a].adj;
+    e.last = e.a; e.b = opts[Math.floor(rnd() * opts.length)]; e.t = 0;
+  }
+  function pdecide(e) {
+    if (got.size < ORBS.length && ORBS.includes(e.a) && !got.has(e.a)) { got.add(e.a); fuel = Math.min(TANK, fuel + ORB_FUEL); }
+    if (e.a === EXIT && !over && got.size === ORBS.length) { win(); return; }
+    const w = W; if (!w) return;
+    let bestN = null, bs = .35; for (const n of N[e.a].adj) { const v = vec(e.a, n), s = v[0] * w[0] + v[1] * w[1]; if (s > bs) { bs = s; bestN = n; } }
+    if (bestN != null) { e.b = bestN; e.t = 0; }
+  }
+  let bumps = 0, hornT = 0;
+  function update(dt) {
+    if (!running || over) return; tmr += dt;
+    // player
+    if (P.b != null && W) { const h = vec(P.a, P.b); if (W[0] * h[0] + W[1] * h[1] < -.8) { const t = P.a; P.a = P.b; P.b = t; P.t = 1 - P.t; } }
+    if (P.b == null) pdecide(P);
+    if (P.b != null) {
+      const ob = blocked(P, 15); let sp = 62 * car[4];
+      if (P.bump > 0) { sp *= .5; P.bump -= dt; }
+      if (ob) { sp = Math.min(sp, 5); if (!P.hold || P.hold < 0) { P.hold = .5; bumps++; } }
+      P.hold -= dt; const b0 = P.b != null ? pos(P) : null; stepAgent(P, dt, sp, true, pdecide); if (b0) { const c1 = pos(P); fuel -= Math.hypot(c1[0] - b0[0], c1[1] - b0[1]) * DRAIN; }
+    }
+    if (got.size < ORBS.length) { fuel -= dt * .9; if (fuel <= 0) { fuel = 0; lose(); return; } }
+    // traffic: queue behind each other; random stalls make the jam; horn wakes the ones ahead
+    hornT -= dt;
+    for (const e of T) {
+      if (e.wait > 0) { e.wait -= dt; continue; }
+      let sp = e.v * (e.big ? .8 : 1);
+      if (blocked(e, 14)) sp = 0;
+      else if (rnd() < dt * .05 && e.b != null) e.wait = 1 + rnd() * 3;
+      if (hornT > 0 && P.b != null) { const [px, py] = pos(P), [ex, ey] = pos(e); if (Math.hypot(px - ex, py - ey) < 60) { sp = Math.max(sp, 50); e.wait = 0; } }
+      stepAgent(e, dt, sp, false, tdecide);
+    }
+  }
+  function lose() {
+    over = true; running = false; lost = true;
+    $('ov').style.display = 'flex'; $('ov').scrollTop = 0; $('ov').querySelector('h2').textContent = 'خلص البنزين! · Out of fuel';
+    $('ov').querySelector('p').textContent = 'أخذت ' + got.size + ' من ' + ORBS.length + ' كور · ' + got.size + ' of ' + ORBS.length + ' orbs';
+    $('gob').textContent = 'مرة ثانية · Again'; showBest();
+  }
+  function win() {
+    over = true; running = false; const k = car[0]; const prevB = best[k]; const nb = !prevB || tmr < prevB;
+    if (nb) { best[k] = Math.round(tmr * 10) / 10; try { localStorage.setItem(CFG.key, JSON.stringify(best)); } catch (e) {} }
+    $('ov').style.display = 'flex'; $('ov').scrollTop = 0; $('ov').querySelector('h2').textContent = 'وصلت المخرج! · You made it';
+    $('ov').querySelector('p').textContent = fmt(tmr) + (nb ? ' · رقم جديد · New best' : '');
+    $('gob').textContent = 'مرة ثانية · Again'; showBest();
+    if (CFG.next) { const a = document.createElement('a'); a.id = 'nx'; a.className = 'go'; a.href = CFG.next; a.style.cssText = 'display:inline-flex;align-items:center;text-decoration:none;margin:0 6px'; a.innerHTML = CFG.nextLabel; $('ov').insertBefore(a, $('cars')); }
+  }
+  const fmt = s => Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  function showBest() { const b = best[car[0]]; $('best').textContent = b ? 'أفضل وقت · Best: ' + fmt(b) : ''; }
+  // drawing
+  let dpr = 1, ZOOM = 2.4;
+  function fit() { dpr = Math.min(devicePixelRatio || 1, 2); cv.width = game.clientWidth * dpr; cv.height = game.clientHeight * dpr; mini.width = mini.height = Math.round(mini.clientWidth * dpr) || 170; }
+  addEventListener('resize', fit); fit();
+  function carBody(c, col, len, wid, lights) {
+    c.fillStyle = col; c.strokeStyle = 'rgba(0,0,0,.55)'; c.lineWidth = 1.2; c.beginPath(); c.roundRect(-len / 2, -wid / 2, len, wid, 4); c.fill(); c.stroke();
+    c.fillStyle = 'rgba(20,24,40,.65)'; c.beginPath(); c.roundRect(-len * .12, -wid * .36, len * .34, wid * .72, 2); c.fill();
+    if (lights) { c.fillStyle = '#FFF3C4'; c.fillRect(len / 2 - 2, -wid / 2 + 1, 2, 3); c.fillRect(len / 2 - 2, wid / 2 - 4, 2, 3); }
+  }
+  function drawAgent(c, e, col, len, wid, lights) {
+    const [px, py] = pos(e); let h = e.b != null ? vec(e.a, e.b) : (e.hd || [1, 0]); e.hd = h;
+    c.save(); c.translate(px, py); c.rotate(Math.atan2(h[1], h[0])); carBody(c, col, len, wid, lights); c.restore();
+  }
+  function frame(ts) {
+    const dt = Math.min(.05, (ts - (frame.l || ts)) / 1000); frame.l = ts; update(dt);
+    const sc = Math.min(cv.width, cv.height) / 300 * ZOOM / 2.4 * 1.0, vw = cv.width / sc, vh = cv.height / sc, [cx, cy] = pos(P);
+    x.fillStyle = '#17203A'; x.fillRect(0, 0, cv.width, cv.height);
+    x.save(); x.scale(sc, sc); x.translate(-cx + vw / 2, -cy + vh / 2);
+    x.lineCap = 'round'; x.strokeStyle = '#2F3A5F'; x.lineWidth = 15; x.beginPath(); for (const [a, b] of GR.edges) { x.moveTo(N[a].x, N[a].y); x.lineTo(N[b].x, N[b].y); } x.stroke();
+    x.strokeStyle = '#3D4A78'; x.lineWidth = 11; x.beginPath(); for (const [a, b] of GR.edges) { x.moveTo(N[a].x, N[a].y); x.lineTo(N[b].x, N[b].y); } x.stroke();
+    for (const o of ORBS) if (!got.has(o)) { const q = N[o]; x.fillStyle = '#FFD45E'; x.strokeStyle = '#FFF3C4'; x.lineWidth = 2; x.beginPath(); x.arc(q.x, q.y, 6 + Math.sin(performance.now() / 200 + o), 0, 7); x.fill(); x.stroke(); x.fillStyle = '#1B1B2B'; x.font = '700 7px system-ui'; x.textAlign = 'center'; x.fillText('⛽', q.x, q.y + 2.5); }
+    // exit gate
+    const E = N[EXIT]; const open = got.size === ORBS.length; x.globalAlpha = open ? 1 : .35; x.fillStyle = '#F2B84B'; x.beginPath(); x.arc(E.x, E.y, 15 + 3 * Math.sin(performance.now() / 250), 0, 7); x.fill();
+    x.fillStyle = '#1B1B2B'; x.font = '700 9px system-ui'; x.textAlign = 'center'; x.fillText(open ? 'EXIT' : '🔒', E.x, E.y + 3); x.globalAlpha = 1;
+    for (const e of T) drawAgent(x, e, e.col, e.big ? 20 : 15, 8, false);
+    drawAgent(x, P, car[3], 17, 9, true);
+    if (P.bump > 0 || (blocked(P, 15))) { const [px, py] = pos(P); x.fillStyle = '#E0614E'; x.beginPath(); x.arc(px, py - 11, 2.5, 0, 7); x.fill(); }
+    x.restore();
+    // arrow to exit when off screen
+    const [px, py] = pos(P), TG = got.size < ORBS.length ? N[ORBS.filter(o => !got.has(o)).sort((p, q) => Math.hypot(N[p].x - px, N[p].y - py) - Math.hypot(N[q].x - px, N[q].y - py))[0]] : E, dxs = TG.x - px, dys = TG.y - py, d = Math.hypot(dxs, dys);
+    if (d * sc > Math.min(cv.width, cv.height) * .35) { const ang = Math.atan2(dys, dxs), r = Math.min(cv.width, cv.height) * .32; x.save(); x.translate(cv.width / 2 + Math.cos(ang) * r, cv.height / 2 + Math.sin(ang) * r); x.rotate(ang); x.fillStyle = '#F2B84B'; x.beginPath(); x.moveTo(16, 0); x.lineTo(-10, -11); x.lineTo(-10, 11); x.closePath(); x.fill(); x.restore(); }
+    drawMini();
+    $('tm').textContent = fmt(tmr); $('dist').textContent = (got.size < ORBS.length ? 'أقرب كور · Next orb ' : 'المخرج · Exit ') + Math.round(d / 4) + 'm'; $('fv').textContent = Math.round(fuel) + '%'; $('fuelb').style.background = fuel < 25 ? 'rgba(181,83,42,.9)' : ''; $('orbs').textContent = 'كور · Orbs ' + got.size + '/' + ORBS.length;
+    const near = T.filter(e => { const [ex, ey] = pos(e); return Math.hypot(ex - px, ey - py) < 70; }).length;
+    $('jam').textContent = 'زحمة · Jam ' + (near > 7 ? '●●●' : near > 3 ? '●●○' : '●○○');
+    requestAnimationFrame(frame);
+  }
+  function drawMini() {
+    const s = mini.width; mx.fillStyle = '#0F1226'; mx.fillRect(0, 0, s, s); let X0 = 1e9, X1 = -1e9, Y0 = 1e9, Y1 = -1e9;
+    for (const n of N) { X0 = Math.min(X0, n.x); X1 = Math.max(X1, n.x); Y0 = Math.min(Y0, n.y); Y1 = Math.max(Y1, n.y); }
+    const k = (s - 10) / Math.max(X1 - X0, Y1 - Y0), f = (px, py) => [5 + (px - X0) * k, 5 + (py - Y0) * k];
+    mx.strokeStyle = '#4C5A93'; mx.lineWidth = 1; mx.beginPath(); for (const [a, b] of GR.edges) { const A = f(N[a].x, N[a].y), B = f(N[b].x, N[b].y); mx.moveTo(A[0], A[1]); mx.lineTo(B[0], B[1]); } mx.stroke();
+    mx.fillStyle = '#9aa0b8'; for (const e of T) { const [a, b] = pos(e), q = f(a, b); mx.fillRect(q[0] - 1, q[1] - 1, 2, 2); }
+    for (const o of ORBS) if (!got.has(o)) { const q = f(N[o].x, N[o].y); mx.fillStyle = '#FFD45E'; mx.beginPath(); mx.arc(q[0], q[1], 3, 0, 7); mx.fill(); }
+    const E = f(N[EXIT].x, N[EXIT].y); mx.fillStyle = got.size === ORBS.length ? '#F2B84B' : '#6b5a2a'; mx.beginPath(); mx.arc(E[0], E[1], 5, 0, 7); mx.fill();
+    const [a, b] = pos(P), q = f(a, b); mx.fillStyle = '#7CE0FF'; mx.beginPath(); mx.arc(q[0], q[1], 4, 0, 7); mx.fill();
+  }
+  // input
+  const K = { ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0], w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0] };
+  function go() { if (running) return; reset(); $('ov').style.display = 'none'; running = true; }
+  addEventListener('keydown', e => { if (e.key === ' ') { hornT = 1.2; e.preventDefault(); return; } const v = K[e.key]; if (v) { W = v; if (!running && $('ov').style.display === 'none') go(); e.preventDefault(); } });
+  $('horn').addEventListener('pointerdown', e => { e.stopPropagation(); hornT = 1.2; });
+  $('gob').onclick = () => { const nx = $('nx'); if (nx) nx.remove(); over = false; $('ov').querySelector('h2').textContent = 'زحمة بيروت'; $('ov').querySelector('p').textContent = 'Beirut Traffic'; reset(); $('ov').style.display = 'none'; running = true; };
+  $('fs').onclick = e => { e.stopPropagation(); try { if (document.fullscreenElement) document.exitFullscreen(); else { (game.requestFullscreen || game.webkitRequestFullscreen).call(game); if (screen.orientation && screen.orientation.lock) screen.orientation.lock('landscape').catch(() => {}); } } catch (x) {} };
+  const stick = $('stick'), knob = $('knob'); let sid = null;
+  function steer(e) { const b = stick.getBoundingClientRect(), dx = e.clientX - (b.left + b.width / 2), dy = e.clientY - (b.top + b.height / 2), m = Math.hypot(dx, dy), lim = b.width / 2, k = m > lim ? lim / m : 1; knob.style.transform = `translate(${dx * k}px,${dy * k}px)`; if (m > b.width * .12) W = [dx / m, dy / m]; }
+  stick.addEventListener('pointerdown', e => { sid = e.pointerId; stick.setPointerCapture(sid); steer(e); });
+  stick.addEventListener('pointermove', e => { if (e.pointerId === sid) steer(e); });
+  const up = e => { if (e.pointerId === sid) { sid = null; knob.style.transform = ''; } };
+  stick.addEventListener('pointerup', up); stick.addEventListener('pointercancel', up);
+  setInterval(() => { const p = navigator.getGamepads && navigator.getGamepads()[0]; if (!p) return;
+    let dx = p.axes[0] || 0, dy = p.axes[1] || 0;
+    if (p.buttons[14] && p.buttons[14].pressed) dx = -1; if (p.buttons[15] && p.buttons[15].pressed) dx = 1; if (p.buttons[12] && p.buttons[12].pressed) dy = -1; if (p.buttons[13] && p.buttons[13].pressed) dy = 1;
+    if (Math.hypot(dx, dy) > .4) W = [dx / Math.hypot(dx, dy), dy / Math.hypot(dx, dy)];
+    if (p.buttons[0] && p.buttons[0].pressed) { hornT = 1.2; if ($('ov').style.display !== 'none') $('gob').click(); } }, 50);
+  // car picker
+  const box = $('cars');
+  CARS.forEach((c, i) => {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'car'; b.setAttribute('role', 'radio'); b.setAttribute('aria-checked', i === 0);
+    b.innerHTML = '<canvas width="64" height="30"></canvas><b>' + c[1] + '</b><small>' + c[2] + '</small><i style="--v:' + c[4] + '"></i><small>السرعة · Speed</small>';
+    const cc = b.querySelector('canvas').getContext('2d'); cc.translate(32, 15); carBody(cc, c[3], 46, 22, true);
+    b.dataset.k = c[0]; b.onclick = () => { car = c; try { localStorage.setItem('sr-traffic-car', c[0]); } catch (e) {} for (const o of box.children) o.setAttribute('aria-checked', o === b); showBest(); };
+    box.appendChild(b);
+  });
+  try { const sc = localStorage.getItem('sr-traffic-car'); const f = CARS.find(c => c[0] === sc); if (f) { car = f; for (const o of box.children) o.setAttribute('aria-checked', o.dataset.k === f[0]); } } catch (e) {}
+  showBest(); reset(); requestAnimationFrame(frame);
+  window.__rb = { go, ORBS, setFuel: v => { fuel = v; }, fuel: () => fuel, got: () => got.size, tp: n => { P.a = n; P.b = null; P.t = 0; pdecide(P); }, state: () => ({ running, over, tmr, P, EXIT, T: T.length, bumps }), setWant: w => { W = w; } };
+})();
+</script>
+<script src="../music.js" data-track="mood-city-neon-120"></script>
+</body></html>
