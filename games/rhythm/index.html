@@ -53,7 +53,7 @@ button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color
 (function(){
 "use strict";
 var TRACK="../audio/mood-city-neon-120-8D.mp3",BPM=120,BEAT=60/BPM,DUR=50;
-var LEAD=1.9,HIT_Y=.70,WIN_GOOD=.15,SLIDE=.12;
+var LEAD=1.9,HIT_Y=.70,WIN_GOOD=.15,EARLY=.42,SLIDE=.12;
 var cv=document.getElementById("c"),g=cv.getContext("2d"),W=0,H=0,DPR=1;
 function fit(){DPR=Math.min(window.devicePixelRatio||1,2);var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;g.setTransform(DPR,0,0,DPR,0,0)}
 addEventListener("resize",fit);fit();
@@ -115,9 +115,9 @@ function press(l){
   S.pr[l]=performance.now();
   if(!S.run)return;
   S.lane=l;var t=now(),best=null;
-  S.chart.notes.forEach(function(n){if(n.l===l&&!n.done&&Math.abs(t-n.t)<=WIN_GOOD&&(!best||Math.abs(t-n.t)<Math.abs(t-best.t)))best=n});
+  S.chart.notes.forEach(function(n){if(n.l===l&&!n.done&&t-n.t>=-EARLY&&t-n.t<=WIN_GOOD&&(!best||Math.abs(t-n.t)<Math.abs(t-best.t)))best=n});
   if(best){
-    var near=Math.abs(t-best.t)<.07;best.done=near?1:2;if(near)S.perf++;else S.good++;
+    var near=Math.abs(t-best.t)<.1;best.done=near?1:2;if(near)S.perf++;else S.good++;
     S.combo++;S.best=Math.max(S.best,S.combo);
     var mult=1+Math.min(3,Math.floor(S.combo/8));S.score+=(near?100:60)*mult;
     audio.volume=.8;duck=0;pluck(l);fx(l,near?"perfect":"good");
@@ -315,7 +315,7 @@ function frame(){
   drawCar();drawButtons();hud(t);if(S.run)drawFlash(t);
   g.restore();
 }
-window.srRhythm=S;frame();
+S.now=now;window.srRhythm=S;frame();
 })();
 </script>
 </body>
