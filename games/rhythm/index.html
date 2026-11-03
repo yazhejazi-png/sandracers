@@ -61,18 +61,15 @@ addEventListener("resize",fit);fit();
 /* ---- chart: deterministic, on the beat grid, always reachable ---- */
 function rng(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 function makeChart(){
-  var R=rng(2026),notes=[],lane=1,rep=0,t0=4*BEAT*2; /* 4 bars of intro */
-  for(var b=t0/BEAT;b*BEAT<DUR-3;b+=1){
-    var t=b*BEAT,bar=Math.floor(b/4),dense=bar>=12&&bar<20||bar>=22; /* two busier sections */
-    var steps=dense?[0,.5]:[0];
-    for(var k=0;k<steps.length;k++){
-      var tt=t+steps[k]*BEAT;if(tt>=DUR-3)break;
-      if(R()<(dense?.8:.7)){
-        var nl=Math.floor(R()*3);if(nl===lane){if(++rep>1)nl=(nl+1+Math.floor(R()*2))%3}else rep=0;
-        notes.push({t:tt,l:nl,done:0});lane=nl;
-        if(dense&&steps[k]===0&&R()<.18){var l2=(nl+1+Math.floor(R()*2))%3;notes.push({t:tt,l:l2,done:0})} /* a chord: two lanes at once */
-      }
+  /* at most one note per second for most of the song; in the last stretch a note every half second */
+  var R=rng(2026),notes=[],lane=1,rep=0,t0=4*BEAT*2,FINAL=32; /* 4 bars of intro; the finale starts at 32 s */
+  for(var t=t0;t<DUR-3;){
+    var fin=t>=FINAL;
+    if(R()<(fin?.85:.8)){
+      var nl=Math.floor(R()*3);if(nl===lane){if(++rep>1)nl=(nl+1+Math.floor(R()*2))%3}else rep=0;
+      notes.push({t:t,l:nl,done:0});lane=nl;
     }
+    t+=fin?BEAT:2*BEAT;
   }
   return {notes:notes,rocks:[]};
 }
