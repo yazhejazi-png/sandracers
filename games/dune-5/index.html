@@ -2216,7 +2216,7 @@ body{touch-action:manipulation}
     const lvl = live ? 0.3 * (0.15 + 0.07 * load + 0.06 * rr) * (state === 'count' ? 0.85 : 1) * fade : 0;
     eng.g.gain.setTargetAtTime(E.limiting ? lvl * 0.6 : lvl, t, 0.03);
     eng.bG.gain.setTargetAtTime(E.limiting ? lvl * 0.4 : 0, t, 0.03);
-    eng.ng.gain.setTargetAtTime(on ? Math.min(0.09, sp * 0.0018 + c.slide * 0.008 + (c.stuck && inp.gas ? 0.05 : 0)) * (c.ground ? 1 : 0.35) : 0, t, 0.1);
+    eng.ng.gain.setTargetAtTime(on ? Math.min(0.02, sp * 0.0004 + c.slide * 0.0015 + (c.stuck && inp.gas ? 0.02 : 0)) * (c.ground ? 1 : 0.35) : 0, t, 0.1);
     eng.wh.frequency.setTargetAtTime(Math.max(20, E.rpm / 60 * (e.whine || 1)), t, 0.03);
     eng.whG.gain.setTargetAtTime(live && e.whine ? e.whineVol * (0.25 + 0.75 * load) * rr * fade : 0, t, 0.05);
     const k = z ? 'z_bed' : 'i_bed', m = SND[k];

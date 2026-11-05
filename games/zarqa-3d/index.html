@@ -1031,7 +1031,7 @@ window.JedWorld = function (opt) {
     const w = engWave(ENG); o1.setPeriodicWave(w); o2.setPeriodicWave(w);
     [o1, o2, beat, sub, bounce].forEach(o => { o.frequency.value = 20; o.start(); }); bounce.frequency.value = 15; ns.start();
     const hs = AC.createBufferSource(), hf = AC.createBiquadFilter(), hg = AC.createGain();   // the tyre hiss on the road
-    hs.buffer = noiseBuf; hs.loop = true; hf.type = 'bandpass'; hf.frequency.value = 900; hf.Q.value = 0.6; hg.gain.value = 0; hs.connect(hf); hf.connect(hg); hg.connect(out); hs.start();
+    hs.buffer = noiseBuf; hs.loop = true; hf.type = 'bandpass'; hf.frequency.value = 480; hf.Q.value = 0.6; hg.gain.value = 0; hs.connect(hf); hf.connect(hg); hg.connect(out); hs.start();
     popBus = AC.createGain(); const pc = AC.createWaveShaper(); pc.curve = drive(3.5); popBus.connect(pc); pc.connect(out);
     eng = { o1, o2, beat, sub, pre, nb, nLvl, tone: tone_, g, bG, hg };
     for (const k in SND) {
@@ -1092,7 +1092,7 @@ window.JedWorld = function (opt) {
     eng.pre.gain.setTargetAtTime(0.5 + 0.45 * load, t, 0.05); eng.nLvl.gain.setTargetAtTime(0.1 + 0.32 * load * rr, t, 0.05);
     const lvl = live ? (0.15 + 0.07 * load + 0.06 * rr) * (state === 'count' ? 0.85 : 1) : 0;   // loud all the time (his note)
     eng.g.gain.setTargetAtTime(E.limiting ? lvl * 0.6 : lvl, t, 0.03); eng.bG.gain.setTargetAtTime(E.limiting ? lvl * 0.4 : 0, t, 0.03);
-    eng.hg.gain.setTargetAtTime(live && state === 'play' ? Math.min(0.07, sp * 0.0012 + (V.slip || 0) * 0.04) : 0, t, 0.1);
+    eng.hg.gain.setTargetAtTime(live && state === 'play' ? (V.slip || 0) > 0.3 ? Math.min(0.018, ((V.slip || 0) - 0.3) * 0.03) : 0 : 0, t, 0.1);
     const m = SND.z_bed;
     if (BUF.z_bed && m) {
       if (!bed) { const s = AC.createBufferSource(), g = AC.createGain(); s.buffer = BUF.z_bed; s.loop = true; s.loopStart = m.ls; s.loopEnd = m.le; g.gain.value = 0; s.connect(g); g.connect(out); s.start(t, m.ls + rnd() * (m.le - m.ls)); bed = { s, g }; }
