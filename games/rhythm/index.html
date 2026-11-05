@@ -76,6 +76,14 @@ var MAPS=[
  {id:"taif",ar:"الطايف",en:"Taif",hor:"mountains",ground:["#8aa06a","#1f2c1f"],road:["#45423e","#1d1c1a"],sky:[["#8ec6ea","#e8f0d8"],["#0c1630","#2a3a50"]],kinds:["pine","rock","pine","lamp","pine","rock","pine","lamp"]},
  {id:"tafheet",ar:"التفحيط",en:"Drift Lot",hor:"lot",ground:["#7a7d85","#2a2c32"],road:["#4a4d55","#22242a"],sky:[SKYD,SKYN],kinds:["tyres","cone","tyres","lamp","cone","tyres","lamp","cone"]},
  {id:"mawagif",ar:"المواقف",en:"Parking Lot",hor:"lot",ground:["#8a8d96","#2e3036"],road:["#50535b","#25272d"],sky:[SKYD,SKYN],kinds:["pcar","lamp","pcar","cone","pcar","lamp","pcar","cone"]},
+ {id:"dubai",ar:"دبي",en:"Dubai",hor:"dubai",ground:["#e6cf9e","#2e3040"],road:["#3a3b40","#1a1b20"],sky:[["#86c4ea","#fde8c4"],["#0a1236","#2e2a60"]],kinds:["bld","palm","lamp","bld","palm","sign","lamp","bld"]},
+ {id:"london",ar:"لندن",en:"London",hor:"london",ground:["#6f9a62","#1d2c22"],road:["#3e3f44","#1a1b1f"],sky:[["#a9b8c6","#e4e0d6"],["#0e1330","#2a2f50"]],kinds:["bld","tree","lamp","bld","tree","lamp","tree","bld"]},
+ {id:"alula",ar:"العلا",en:"AlUla",hor:"alula",ground:["#d4a368","#3a2a1c"],road:["#4a3c30","#201a15"],sky:[["#7fbfe6","#fbd9a8"],["#0b1230","#3a2a50"]],kinds:["rock","palm","rock","palm","dune","rock","palm","rock"]},
+ {id:"saida",ar:"صيدا",en:"Saida",hor:"saida",ground:["#d8c49a","#33302c"],road:["#3d3b39","#1c1b1a"],sky:[["#86c2e6","#fde6c4"],["#0e1a3c","#34305a"]],kinds:["bld","palm","lamp","bld","palm","lamp","bld","palm"]},
+ {id:"nottingham",ar:"نوتنغهام",en:"Nottingham",hor:"nottingham",ground:["#7aa46a","#1e2e22"],road:["#3f4044","#1a1b1e"],sky:[["#a6b6c4","#e6e2d8"],["#0e1432","#2c3050"]],kinds:["bld","tree","lamp","tree","bld","lamp","tree","bld"]},
+ {id:"hail",ar:"حايل",en:"Ha'il",hor:"hail",ground:["#d9a86c","#3a2a1c"],road:["#493c32","#1f1914"],sky:[["#80c0e6","#fbd8a6"],["#0c1230","#3a2c50"]],kinds:["rock","palm","dune","palm","rock","palm","dune","rock"]},
+ {id:"emptyq",ar:"الربع الخالي",en:"Empty Quarter",hor:"redsand",ground:["#c0602e","#3a1d12"],road:["#4a3226","#1f140f"],sky:[["#6fb0dc","#f6c08a"],["#0a0f2c","#3a2448"]],kinds:["dune","dune","camel","dune","dune","camel","dune","dune"]},
+ {id:"baha",ar:"الباحة",en:"Al Baha",hor:"baha",ground:["#7fa468","#1e2e1e"],road:["#45423e","#1d1c1a"],sky:[["#86c4ea","#eaf0d6"],["#0c1630","#2a3a50"]],kinds:["pine","tree","pine","rock","tree","pine","lamp","pine"]},
  {id:"track",ar:"الحلبة",en:"Race Track",hor:"track",ground:["#6f8f5a","#1f3020"],road:["#34343a","#17171b"],sky:[["#73B2D5","#f6dcb0"],["#0d1535","#33305a"]],kinds:["flag","tyres","stand","flag","tyres","stand","flag","tyres"]}
 ];
 var MAP=MAPS[0],NIGHT=false,mapOrder=[],nightFlag=[];
@@ -253,13 +261,29 @@ function horizonCanvas(){ /* the far skyline of the map, drawn once per stage an
   else if(k==="track"){q.fillStyle=NIGHT?"#1a1d3c":"#9aa7b8";q.fillRect(0,y0-H*.045,W,H*.045);
     for(var i=0;i<60;i++){q.fillStyle=["#E9794A","#73B2D5","#FDBF6A","#FFFAF2"][i%4];q.fillRect(R()*W,y0-H*.04+R()*H*.03,2,2)}
     for(var i=0;i<5;i++){var fx=W*(.1+i*.2);q.fillStyle="#8a8a8a";q.fillRect(fx,y0-H*.09,1.5,H*.05);q.fillStyle=["#E9794A","#73B2D5"][i%2];q.fillRect(fx+1.5,y0-H*.09,9,5)}}
-  else{ /* skylines: tokyo, beirut, riyadh, jeddah */
+  else if(k==="redsand"){for(var i=0;i<5;i++){q.fillStyle=NIGHT?["#3a1c12","#2a140e"][i%2]:["#b5532a","#c9663a"][i%2];q.beginPath();q.moveTo(i*W/4-W*.2,y0);q.quadraticCurveTo(i*W/4,y0-H*(.07+.04*R()),i*W/4+W*.35,y0);q.fill()}}
+  else if(k==="baha"){for(var i=0;i<5;i++)tri(i*W/4-W*.15,W*.5,H*(.07+.05*R()),NIGHT?"#16301e":"#5f8a5a");for(var i=0;i<6;i++)tri(i*W/5-W*.1,W*.4,H*(.04+.04*R()),NIGHT?"#10241a":"#4a7448")}
+  else if(k==="alula"||k==="hail"){var mc=NIGHT?"#3a2418":(k==="hail"?"#a86a38":"#c98b4f");
+    for(var i=0;i<6;i++){var mx=i*W/5-W*.05,mw=W*(.12+.08*R()),mh=H*(.04+.05*R());q.fillStyle=mc;q.fillRect(mx,y0-mh,mw,mh);q.fillRect(mx-4,y0-mh,mw+8,4)}
+    if(k==="alula"){q.fillStyle=mc;q.fillRect(W*.62,y0-H*.1,W*.16,H*.1);q.fillStyle=NIGHT?"#0b1230":"#bfe0f0";q.beginPath();q.arc(W*.7,y0,W*.03,Math.PI,0);q.fill();q.fillStyle=mc;q.fillRect(W*.67,y0-H*.02,W*.06,H*.02)}
+    else{var fx=W*.6;q.fillStyle=NIGHT?"#4a3220":"#c9935c";q.fillRect(fx,y0-H*.06,W*.2,H*.06);[0,1,2].forEach(function(j){q.fillRect(fx+j*W*.085,y0-H*.1,W*.03,H*.04)})}}
+  else{ /* skylines: tokyo, beirut, riyadh, jeddah, dubai, london, saida, nottingham */
+    if(k==="saida"||k==="dubai"){q.fillStyle=NIGHT?"#0f2a4a":"#4aa3d0";q.fillRect(0,y0-H*.012,W,H*.012)}
+    if(k==="nottingham"){q.fillStyle=NIGHT?"#1a2a1e":"#6a9460";q.beginPath();q.ellipse(W*.32,y0,W*.3,H*.07,0,Math.PI,0);q.fill();q.fillStyle=NIGHT?"#3a3550":"#b89a7c";q.fillRect(W*.27,y0-H*.1,W*.1,H*.04);q.fillRect(W*.27,y0-H*.12,W*.02,H*.03);q.fillRect(W*.35,y0-H*.12,W*.02,H*.03)}
     if(k==="beirut"){for(var i=0;i<5;i++)tri(i*W/4-W*.12,W*.5,H*(.09+.04*R()),far);}
     if(k==="jeddah"){q.fillStyle=NIGHT?"#0f2a4a":"#4aa3d0";q.fillRect(0,y0-H*.012,W,H*.012)}
-    for(var x=-4;x<W;){var w=10+R()*18,h=H*(.025+.07*R());bl(x,w,h,k==="tokyo"?mid:far,1);x+=w+1+R()*3}
+    var low=(k==="london"||k==="nottingham"||k==="saida")?.55:1;
+    for(var x=-4;x<W;){var w=10+R()*18,h=H*(.025+.07*R())*low;bl(x,w,h,k==="tokyo"?mid:far,1);x+=w+1+R()*3}
     for(var x=-4;x<W;){var w=8+R()*14,h=H*(.015+.04*R());bl(x,w,h,near,1);x+=w+2+R()*4}
     if(k==="tokyo"){var tx=W*.7;q.fillStyle="#E0462E";q.beginPath();q.moveTo(tx-12,y0);q.lineTo(tx,y0-H*.2);q.lineTo(tx+12,y0);q.fill();
       q.fillStyle="#FFFAF2";q.fillRect(tx-7,y0-H*.08,14,3);q.fillRect(tx-4,y0-H*.14,8,3);q.fillStyle="#E0462E";q.fillRect(tx-.8,y0-H*.24,1.6,H*.05)}
+    if(k==="dubai"){var bx=W*.55;q.fillStyle=NIGHT?"#2a3a66":"#a8c0dc";q.beginPath();q.moveTo(bx-11,y0);q.lineTo(bx-3,y0-H*.2);q.lineTo(bx,y0-H*.33);q.lineTo(bx+3,y0-H*.2);q.lineTo(bx+11,y0);q.fill();
+      var ax=W*.22;q.fillStyle=NIGHT?"#3a4a80":"#e8eef6";q.beginPath();q.moveTo(ax,y0);q.quadraticCurveTo(ax+W*.07,y0-H*.1,ax+W*.01,y0-H*.17);q.lineTo(ax+W*.015,y0);q.fill()}
+    if(k==="london"){var lx=W*.72;q.fillStyle=NIGHT?"#3a3550":"#b89a6a";q.fillRect(lx,y0-H*.17,W*.035,H*.17);q.beginPath();q.moveTo(lx-2,y0-H*.17);q.lineTo(lx+W*.0175,y0-H*.22);q.lineTo(lx+W*.037,y0-H*.17);q.fill();
+      q.fillStyle=NIGHT?"#FFE9A8":"#fff8e0";q.beginPath();q.arc(lx+W*.0175,y0-H*.14,W*.011,0,7);q.fill();
+      var ex=W*.28,er=H*.075;q.strokeStyle=NIGHT?"#bcd0ff":"#e8f0fa";q.lineWidth=2;q.beginPath();q.arc(ex,y0-er-2,er,0,7);q.stroke();
+      for(var a=0;a<8;a++){q.beginPath();q.moveTo(ex,y0-er-2);q.lineTo(ex+Math.cos(a*Math.PI/4)*er,y0-er-2+Math.sin(a*Math.PI/4)*er);q.stroke()}}
+    if(k==="saida"){var sx2=W*.28;q.fillStyle=NIGHT?"#3a3550":"#c8b08a";q.fillRect(sx2,y0-H*.045,W*.09,H*.045);q.fillRect(sx2,y0-H*.075,W*.025,H*.03);q.fillRect(sx2+W*.065,y0-H*.075,W*.025,H*.03)}
     if(k==="riyadh"){var rx=W*.3;q.fillStyle=NIGHT?"#2a3560":"#7b90b3";q.fillRect(rx,y0-H*.2,26,H*.2);q.clearRect(rx+8,y0-H*.2,10,H*.045);
       q.fillStyle=NIGHT?"#3a4a80":"#9ab0d0";q.fillRect(W*.62,y0-H*.12,12,H*.12);q.beginPath();q.moveTo(W*.62,y0-H*.12);q.lineTo(W*.62+6,y0-H*.17);q.lineTo(W*.62+12,y0-H*.12);q.fill()}
     if(k==="jeddah"){var jx=W*.62;q.fillStyle=NIGHT?"#2a3a66":"#9ab4d4";q.beginPath();q.moveTo(jx-9,y0);q.lineTo(jx-1.5,y0-H*.22);q.lineTo(jx+1.5,y0-H*.22);q.lineTo(jx+9,y0);q.fill();
@@ -342,6 +366,7 @@ function drawPcar(x,y,s,o){var cols=["#c0392b","#2d5b8a","#d8d8d8","#2a2a2a","#e
   g.fillStyle="#E34A33";g.fillRect(x-w*.46,y-h*.78,w*.16,h*.12);g.fillRect(x+w*.3,y-h*.78,w*.16,h*.12);
   if(NIGHT)glow(x,y-h*.7,s*.5,"rgba(255,60,40,.35)");
   g.fillStyle="#111";g.fillRect(x-w*.5,y-h*.12,w*.16,h*.14);g.fillRect(x+w*.34,y-h*.12,w*.16,h*.14)}
+function drawTree(x,y,s){g.fillStyle="#5a4632";g.fillRect(x-s*.05,y-s*.5,s*.1,s*.5);g.fillStyle=NIGHT?"#1c4a2a":"#3f8f4a";g.beginPath();g.arc(x,y-s*.75,s*.42,0,7);g.arc(x-s*.25,y-s*.6,s*.3,0,7);g.arc(x+s*.25,y-s*.6,s*.3,0,7);g.fill()}
 function drawPine(x,y,s){g.fillStyle="#5a4632";g.fillRect(x-s*.04,y-s*.3,s*.08,s*.3);g.fillStyle=NIGHT?"#173a22":"#2d7a3e";
   for(var j=0;j<3;j++){var w=s*(.55-j*.12),yy=y-s*.25-j*s*.3;g.beginPath();g.moveTo(x-w/2,yy);g.lineTo(x,yy-s*.5);g.lineTo(x+w/2,yy);g.fill()}}
 function drawRock(x,y,s){g.fillStyle=NIGHT?"#3a3a46":"#8a8478";g.beginPath();g.moveTo(x-s*.5,y);g.lineTo(x-s*.3,y-s*.45);g.lineTo(x+s*.1,y-s*.6);g.lineTo(x+s*.5,y);g.fill()}
@@ -363,6 +388,7 @@ function drawScenery(t){
       case"tyres":drawTyres(x,y,s);break;
       case"cone":drawCone(x,y,s);break;
       case"pcar":drawPcar(x,y,s,o);break;
+      case"tree":drawTree(x,y,s*1.1);break;
       case"pine":drawPine(x,y,s*1.2);break;
       case"rock":drawRock(x,y,s);break;
       case"flag":drawFlag(x,y,s,o);break;
@@ -442,7 +468,7 @@ function hud(t){
 }
 function frame(){
   requestAnimationFrame(frame);
-  var t=S.run?now():0;
+  var t=S.run?now():(S.prev?(performance.now()-S.clock0)/1000:0);
   if(S.run){
     if(t>=DUR)return end();
     S.x+=(S.lane-S.x)*Math.min(1,(1/60)/SLIDE*1.0*(S.x===S.lane?1:1));
@@ -465,7 +491,7 @@ function frame(){
   drawCar();drawButtons();hud(t);if(S.run)drawFlash(t);
   g.restore();
 }
-S.now=now;S.dbg=function(i,n){MAP=MAPS[i];NIGHT=n;buildScenery()};window.srRhythm=S;frame();
+S.now=now;S.dbg=function(i,n){MAP=MAPS[i];NIGHT=n;buildScenery()};S.MAPS=MAPS;window.srRhythm=S;frame();
 })();
 </script>
 </body>
