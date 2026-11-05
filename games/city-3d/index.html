@@ -51,6 +51,7 @@ html.jg-on,html.jg-on body{overflow:hidden;overscroll-behavior:none}
 #jg-go{position:absolute;left:50%;top:48%;transform:translate(-50%,-50%);pointer-events:auto;min-height:64px;padding:0 40px;border-radius:999px;border:0;background:#AE512A;color:#fff;font:800 1.5rem var(--ar-body,sans-serif);box-shadow:0 6px 18px rgba(0,0,0,.35)}
 .hint{position:absolute;left:50%;top:41%;transform:translateX(-50%);width:min(88vw,360px);text-align:center;font:700 14px/1.7 var(--ar-body,sans-serif);padding:8px 12px;border-radius:14px;background:rgba(41,28,19,.55);color:#FFFAF2}
 
+#jg-ask{pointer-events:auto;position:absolute;inset:0;z-index:30;display:flex;align-items:center;justify-content:center;background:rgba(5,8,20,.45)}#jg-ask[hidden]{display:none}.ask{background:rgba(14,20,48,.95);color:#fff;border:3px solid #fff;border-radius:18px;padding:18px 22px;text-align:center;max-width:86vw;font:700 20px/1.5 Tahoma,Arial,sans-serif}.askb{display:flex;gap:12px;margin-top:14px;justify-content:center;flex-wrap:wrap}.askb button{font:700 18px Tahoma,Arial,sans-serif;padding:12px 20px;border-radius:999px;border:0;cursor:pointer}#jg-ask-yes{background:#43C463;color:#0B2A14}#jg-ask-no{background:#E8E2D6;color:#222}
 </style>
 </head>
 <body>
@@ -85,6 +86,7 @@ html.jg-on,html.jg-on body{overflow:hidden;overscroll-behavior:none}
  <div class="msg" id="jg-msg" hidden></div>
  <div class="hint" id="jg-hint" hidden>حرّك العصا يمين أو شمال عشان تلفّ، وتحت عشان ترجع. وإذا ما قلت لها شي تكمّل مستقيم.</div>
  <div class="next glass" id="jg-next" aria-hidden="true"></div>
+ <div id="jg-ask" hidden><div class="ask"><b>ندخل <span id="jg-ask-name"></span>؟</b><div class="askb"><button type="button" id="jg-ask-yes">إيه، ندخل</button><button type="button" id="jg-ask-no">لا، أكمّل سواقة</button></div></div></div>
  <button type="button" id="jg-go" hidden>ابدأ</button>
  <div class="ctl">
   <div id="jg-stick" role="slider" aria-label="العصا: يمين وشمال عشان تلفّ، تحت عشان ترجع"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 3 L26 10 L14 10Z M20 37 L26 30 L14 30Z M3 20 L10 14 L10 26Z M37 20 L30 14 L30 26Z"/></svg><i class="knob"></i></div>
@@ -1182,7 +1184,22 @@ window.JedWorld = function (opt) {
 
   // ---------- the city: drive into a gate and the game opens; coming back puts her at the same gate ----------
   const GO = new URLSearchParams(location.search).get('from');
+  try { sessionStorage.removeItem('sr-from-city'); } catch (e) { /* ok */ }
   let leaving = false, nearName = '', skip = GO;
+
+  function askGate(p) {                                            // at a gate: «ندخل؟» إيه / لا
+    state = 'ask'; p.armed = false; c.v = 0; c.moving = false;
+    const box = $('jg-ask'); $('jg-ask-name').textContent = p.name; box.hidden = false;
+    const done = yes => {
+      box.hidden = true; $('jg-ask-yes').onclick = $('jg-ask-no').onclick = null;
+      if (yes) {
+        leaving = true; chime();
+        try { sessionStorage.setItem('sr-city-last', p.slug); } catch (e) { /* ok */ }
+        location.href = '../' + p.slug + '/?city=1';
+      } else { state = 'play'; say('', 0); }
+    };
+    $('jg-ask-yes').onclick = () => done(true); $('jg-ask-no').onclick = () => done(false);
+  }
   function cityTick(dt) {
     let near = null, nd = 99;
     for (const p of world.portals) {
@@ -1191,9 +1208,7 @@ window.JedWorld = function (opt) {
       if (p.slug === skip) continue;
       if (d < nd) { nd = d; near = p; }
       if (p.armed && d < 0.75 && !leaving) {
-        leaving = true; say('ندخل: ' + p.name, 0); chime();
-        try { sessionStorage.setItem('sr-city-last', p.slug); } catch (e) { /* ok */ }
-        setTimeout(() => { location.href = '../' + p.slug + '/?city=1'; }, 450);
+        askGate(p);
       }
     }
     const nm = near && nd < 6 ? near.name : '';
