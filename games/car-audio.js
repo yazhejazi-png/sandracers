@@ -21,8 +21,8 @@
       var br=loop('brake');
       if(br)br.g.gain.setTargetAtTime(st.live&&st.brake>0&&st.speed>6?0.45*Math.min(1,st.speed/20):0,t,0.06);
       var sq=loop('squeal');
-      if(sq){var sk=st.live?clamp(((st.slide||0)-2.2)/5.5,0,1)*clamp(st.speed/9,0,1):0;
-        sq.g.gain.setTargetAtTime(0.5*sk*sk,t,0.04);sq.s.playbackRate.setTargetAtTime(0.9+0.3*sk,t,0.05);}},
+      if(sq){var sk=st.live?clamp(((st.slide||0)-3.2)/5.5,0,1)*clamp(st.speed/9,0,1):0;
+        sq.g.gain.setTargetAtTime(0.09*sk*sk,t,0.06);sq.s.playbackRate.setTargetAtTime(0.62+0.18*sk,t,0.08);}},
     pop:function(big){if(!AC||!big||!B.exh)return;var s2=AC.createBufferSource(),g=AC.createGain();s2.buffer=B.exh;g.gain.value=0.38;s2.connect(g);g.connect(out);s2.start();}
   };
 })();
