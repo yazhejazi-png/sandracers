@@ -1245,7 +1245,7 @@ window.JedWorld = function (opt) {
     if (!GO) return;
     const p = window.PORTALS.find(q => q.slug === GO); if (!p) return;
         const dirs = [R, L, D, U], vecs = [[1, 0], [-1, 0], [0, 1], [0, -1]], k = vecs.findIndex(([a, b]) => street(p.x + a, p.y + b));
-    Object.assign(c, { x: p.x, y: p.y, dir: k < 0 ? L : dirs[k], want: -1, moving: false, v: 0 });
+    Object.assign(c, { x: k < 0 ? p.x : p.x + vecs[k][0], y: k < 0 ? p.y : p.y + vecs[k][1], dir: k < 0 ? L : dirs[k], want: -1, moving: false, v: 0 });
     const q = world.portals.find(z => z.slug === GO); if (q) q.armed = false;
   }
 
@@ -1297,6 +1297,7 @@ window.JedWorld = function (opt) {
     $('jg-sound').querySelector('.zg-bl').textContent = muted ? 'بدون صوت' : 'الصوت'; $('jg-sound').querySelector('.zg-bi').textContent = muted ? '🔇' : '🔊';
   }
   bindButtons(); bindInput();
+  if (GO && !TEST) { open(); $('jg-go').hidden = true; go(); document.addEventListener('pointerdown', () => { try { audioOn(); } catch (e) { /* ok */ } }, { once: true }); }
   document.addEventListener('sr-skin', () => requestAnimationFrame(themeWorld));
   try { new MutationObserver(themeWorld).observe(document.documentElement, { attributes: true, attributeFilter: ['data-skin', 'data-theme'] }); } catch (e) { /* old browser */ }
   if (TEST) window.__jed = { c, ask, sim, open, go, get state() { return state; }, set state(v) { state = v; }, get world() { return world; }, get ate() { return ate; }, get cans() { return cans; }, F, E, V, draw, get popN() { return E.pops; } };
