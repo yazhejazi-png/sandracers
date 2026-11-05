@@ -124,7 +124,7 @@ function now(){ /* song time in seconds */
 var order=[],si=0,TOT={notes:0,perf:0,good:0},b0=null,nextTimer=0,stageBanner=0;
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
 function start(){ /* a new run: every song once, in a random order */
-  order=shuffle(SONGS);mapOrder=shuffle(MAPS);var ns=Math.random()<.5?0:1;nightFlag=order.map(function(_,i){return (i+ns)%2===1});si=0;S.score=0;S.best=0;S.perf=S.good=S.miss=S.hit=0;TOT={notes:0,perf:0,good:0};
+  order=shuffle(SONGS);mapOrder=shuffle(MAPS);var ns=0;nightFlag=order.map(function(_,i){return (i+ns)%2===1});si=0;S.score=0;S.best=0;S.perf=S.good=S.miss=S.hit=0;TOT={notes:0,perf:0,good:0};
   document.getElementById("start").classList.add("hide");document.getElementById("end").classList.add("hide");
   beginStage();
 }
