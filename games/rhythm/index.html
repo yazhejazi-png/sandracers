@@ -25,6 +25,7 @@ canvas{display:block;width:100%;height:100%;max-width:560px;background:#73B2D5}
 .card p{margin:6px 0;font-size:15px;line-height:1.5}
 .card p.en{font-size:13px;opacity:.75;margin-top:0}
 button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color:#FFFAF2;border:3px solid var(--road);border-radius:14px;padding:10px 26px;cursor:pointer}
+.lv{display:flex;gap:8px;justify-content:center;margin-top:10px}.lv .go{margin-top:0;padding:8px 12px;font-size:18px;line-height:1.1}.lv small{display:block;font:600 11px "Saira Condensed",sans-serif;opacity:.9}
 .row{display:flex;gap:8px;justify-content:center;align-items:center;margin-top:10px;font-size:13px}
 .row button{font:700 16px system-ui;width:34px;height:34px;border-radius:50%;border:2px solid var(--road);background:var(--panel);color:var(--fg)}
 .stars{font-size:34px;letter-spacing:6px;color:#D48741}
@@ -36,11 +37,12 @@ button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color
 <button id="mute" type="button" aria-label="Music">♪</button>
 <div class="ov" id="start"><div class="card">
   <h1>إيقاع الطريق</h1><h2>ROAD RHYTHM</h2>
-  <p>عندك ثلاث أزرار، زر لكل مسار. اضغط زر المسار لما توصل النوتة الذهبية للخط. إذا أخذتها تشتغل النوتة، وإذا فاتتك تروح.</p>
-  <p class="en">Hit the button of the lane when a golden note reaches the line. A hit plays the note; a miss drops the music.</p>
-  <p>اللمس: اضغط ثلث الشاشة (يسار · وسط · يمين) · الكيبورد: A S D أو ← ↓ →</p>
-  <p class="en">Touch: tap a third of the screen (left · middle · right) · Keys: A S D or ← ↓ →</p>
-  <button class="go" id="goBtn">يلا نبدأ · Start</button>
+  <p>عندك زر لكل مسار (٣ أو ٤ أو ٥ حسب المستوى). اضغط زر المسار لما توصل النوتة الذهبية للخط. إذا أخذتها يشتغل إيقاع طبل أو بيس مع الموسيقى، وإذا فاتتك تروح.</p>
+  <p class="en">Hit the button of the lane when a golden note reaches the line. A hit plays a drum or bass beat; a miss drops the music.</p>
+  <p>اللمس: اضغط على المسار · الكيبورد: A S D F G</p>
+  <p class="en">Touch: tap the lane · Keys: A S D F G</p>
+  <div class="lv"><button class="go" data-n="3" type="button">سهل<small>Easy · 3</small></button><button class="go" data-n="4" type="button">متوسط<small>Medium · 4</small></button><button class="go" data-n="5" type="button">صعب<small>Hard · 5</small></button></div>
+  <p class="en">Pick a level: 3, 4 or 5 lanes</p>
   <div class="row"><span>مزامنة الصوت · Audio sync</span><button id="offM" type="button">−</button><b id="offV">0</b><button id="offP" type="button">+</button></div>
 </div></div>
 <div class="ov hide" id="end"><div class="card">
@@ -86,7 +88,7 @@ var MAPS=[
  {id:"baha",ar:"الباحة",en:"Al Baha",hor:"baha",ground:["#7fa468","#1e2e1e"],road:["#45423e","#1d1c1a"],sky:[["#86c4ea","#eaf0d6"],["#0c1630","#2a3a50"]],kinds:["pine","tree","pine","rock","tree","pine","lamp","pine"]},
  {id:"track",ar:"الحلبة",en:"Race Track",hor:"track",ground:["#6f8f5a","#1f3020"],road:["#34343a","#17171b"],sky:[["#73B2D5","#f6dcb0"],["#0d1535","#33305a"]],kinds:["flag","tyres","stand","flag","tyres","stand","flag","tyres"]}
 ];
-var MAP=MAPS[0],NIGHT=false,mapOrder=[],nightFlag=[];
+var NL=3,MAP=MAPS[0],NIGHT=false,mapOrder=[],nightFlag=[];
 
 var LEAD=1.9,HIT_Y=.70,WIN_GOOD=.15,EARLY=.42,SLIDE=.12;
 var cv=document.getElementById("c"),g=cv.getContext("2d"),W=0,H=0,DPR=1;
@@ -97,13 +99,13 @@ addEventListener("resize",fit);fit();
 function rng(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
 function makeChart(seed){
   /* at most one note per second for most of the song; in the last stretch a note every half second (all on the beat grid) */
-  var R=rng(seed),notes=[],lane=1,rep=0,t0=OFF+Math.ceil(8/BEAT)*BEAT,FINAL=DUR*.62,
+  var R=rng(seed),notes=[],lane=Math.floor(NL/2),rep=0,t0=OFF+Math.ceil(8/BEAT)*BEAT,FINAL=DUR*.62,
       slow=Math.ceil(1/BEAT-1e-6),fast=Math.max(1,Math.round(.5/BEAT));
   for(var t=t0;t<DUR-3;){
     var fin=t>=FINAL;
     if(R()<(fin?.85:.8)){
-      var nl=Math.floor(R()*3);if(nl===lane){if(++rep>1)nl=(nl+1+Math.floor(R()*2))%3}else rep=0;
-      notes.push({t:t,l:nl,done:0});lane=nl;
+      var nl=Math.floor(R()*NL);if(nl===lane){if(++rep>1)nl=(nl+1+Math.floor(R()*(NL-1)))%NL}else rep=0;
+      notes.push({t:t,l:nl,done:0,it:Math.floor(R()*8)});lane=nl;
     }
     t+=(fin?fast:slow)*BEAT;
   }
@@ -114,7 +116,7 @@ function makeChart(seed){
 var audio=new Audio();audio.preload="auto";
 var off=0;try{off=parseInt(localStorage.getItem("sr-rhythm-off")||"0",10)||0}catch(e){}
 var muted=false;try{muted=localStorage.getItem("sr-music")==="off"}catch(e){}
-var S={pr:[0,0,0],run:0,chart:null,lane:1,x:1,score:0,combo:0,best:0,perf:0,good:0,miss:0,hit:0,fx:[],clock0:0,usingAudio:0,flash:0,shake:0};
+var S={pr:[0,0,0,0,0],run:0,chart:null,lane:1,x:1,score:0,combo:0,best:0,perf:0,good:0,miss:0,hit:0,fx:[],clock0:0,usingAudio:0,flash:0,shake:0};
 function now(){ /* song time in seconds */
   if(S.usingAudio&&!audio.paused)return audio.currentTime+off/1000;
   return (performance.now()-S.clock0)/1000+off/1000;
@@ -130,7 +132,7 @@ function beginStage(){
   clearTimeout(nextTimer);
   MAP=mapOrder[si%mapOrder.length];NIGHT=nightFlag[si];buildScenery();
   SONG=order[si];BPM=SONG.bpm;BEAT=60/BPM;OFF=SONG.off%BEAT;DUR=SONG.dur-1;
-  S.chart=makeChart(2026+si*31+BPM);S.lane=1;S.x=1;S.combo=0;S.fx=[];S.run=1;
+  S.chart=makeChart(2026+si*31+BPM+NL);S.lane=Math.floor((NL-1)/2);S.x=(NL-1)/2;S.combo=0;S.fx=[];S.run=1;
   b0={perf:S.perf,good:S.good,miss:S.miss};
   document.getElementById("end").classList.add("hide");
   duck=0;audio.src="../audio/mood-"+SONG.id+"-8D.mp3";audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;
@@ -167,14 +169,23 @@ function end(abandon){ /* the song is over: next song, or the final results */
 }
 
 /* ---- input: one button per lane ---- */
-var KEYS={ArrowLeft:0,a:0,A:0,j:0,J:0,ArrowDown:1,s:1,S:1,k:1,K:1,ArrowRight:2,d:2,D:2,l:2,L:2};
+var KEYSET="asdfg";
 var AC=null,duck=0;
-function pluck(l){ /* a short oud-like note when you hit */
-  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();
-    var f=[293.66,349.23,440][l],t=AC.currentTime,o=AC.createOscillator(),o2=AC.createOscillator(),gn=AC.createGain();
-    o.type="triangle";o2.type="sine";o.frequency.value=f;o2.frequency.value=f*2;
-    gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(.35,t+.01);gn.gain.exponentialRampToValueAtTime(.0001,t+.45);
-    o.connect(gn);o2.connect(gn);gn.connect(AC.destination);o.start(t);o2.start(t);o.stop(t+.5);o2.stop(t+.5);}catch(e){}
+var NB=null;
+function noise(){if(!NB){NB=AC.createBuffer(1,AC.sampleRate*.5,AC.sampleRate);var d=NB.getChannelData(0);for(var i=0;i<d.length;i++)d[i]=Math.random()*2-1}return NB}
+function nz(t,dur,type,freq,q,vol){var sr=AC.createBufferSource();sr.buffer=noise();var f=AC.createBiquadFilter();f.type=type;f.frequency.value=freq;f.Q.value=q;
+  var gn=AC.createGain();gn.gain.setValueAtTime(vol,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);sr.connect(f);f.connect(gn);gn.connect(AC.destination);sr.start(t);sr.stop(t+dur+.02)}
+function tone(t,type,f0,f1,dur,vol){var o=AC.createOscillator(),gn=AC.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
+  gn.gain.setValueAtTime(vol,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(gn);gn.connect(AC.destination);o.start(t);o.stop(t+dur+.02)}
+/* every lane is a drum or bass voice that sits on top of the song: doum, tek, clap, shaker, sub bass */
+function pluck(l){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();var t=AC.currentTime;
+    if(l===0){tone(t,"sine",170,48,.32,.95);nz(t,.03,"lowpass",900,1,.4)}                       /* doum: deep darbuka / kick */
+    else if(l===1){tone(t,"triangle",1500,700,.07,.45);nz(t,.07,"highpass",2500,1,.45)}          /* tek: high darbuka */
+    else if(l===2){nz(t,.05,"bandpass",1500,1.2,.8);nz(t+.022,.05,"bandpass",1700,1.2,.6);nz(t+.05,.12,"bandpass",1400,1,.55)} /* clap */
+    else if(l===3){nz(t,.09,"highpass",6500,.7,.5);nz(t+.045,.05,"highpass",7500,.7,.35)}        /* shaker / riqq */
+    else{tone(t,"sine",64,52,.42,.95);tone(t,"triangle",128,104,.3,.28)}                          /* sub bass */
+  }catch(e){}
 }
 function dip(){duck=performance.now()+450;audio.volume=.25} /* a missed note drops the music for a moment */
 function press(l){
@@ -190,10 +201,11 @@ function press(l){
   }else{S.combo=0;fx(l,"stray");dip()}
 }
 addEventListener("keydown",function(e){if(e.repeat)return;var k=e.key;
-  if(k in KEYS){press(KEYS[k]);e.preventDefault()}
+  var li=KEYSET.indexOf(String(k).toLowerCase());if(k==="ArrowLeft")li=0;else if(k==="ArrowRight")li=NL-1;else if(k==="ArrowDown")li=Math.floor(NL/2);
+  if(li>=0&&li<NL&&String(k).length<=10&&(k.length===1||k.indexOf("Arrow")===0)){press(li);e.preventDefault()}
   else if((k==="Enter"||k===" ")&&!S.run){start()}});
-cv.addEventListener("pointerdown",function(e){var r=cv.getBoundingClientRect();press(Math.min(2,Math.max(0,Math.floor((e.clientX-r.left)/r.width*3))));e.preventDefault()});
-document.getElementById("goBtn").onclick=start;document.getElementById("again").onclick=start;
+cv.addEventListener("pointerdown",function(e){var r=cv.getBoundingClientRect();press(Math.min(NL-1,Math.max(0,Math.floor((e.clientX-r.left)/r.width*NL))));e.preventDefault()});
+Array.prototype.forEach.call(document.querySelectorAll(".lv .go"),function(b){b.onclick=function(){NL=+b.getAttribute("data-n");start()}});document.getElementById("again").onclick=start;
 function paintOff(){document.getElementById("offV").textContent=off+" ms"}
 document.getElementById("offM").onclick=function(){off-=20;sv()};document.getElementById("offP").onclick=function(){off+=20;sv()};
 function sv(){try{localStorage.setItem("sr-rhythm-off",String(off))}catch(e){}paintOff()}paintOff();
@@ -207,7 +219,7 @@ document.addEventListener("visibilitychange",function(){if(document.hidden&&S.ru
 var HZ=.30; /* horizon y fraction */
 function ry(p){ /* p 0 (horizon) .. 1 (bottom) perspective depth -> y */ return (HZ+(1-HZ)*p)*H}
 function roadHalf(p){return W*(.07+.40*p)}           /* road half width at depth p */
-function laneX(l,p){var hw=roadHalf(p);return W/2+(l-1)*(2*hw/3)}
+function laneX(l,p){var hw=roadHalf(p);return W/2+(l-(NL-1)/2)*(2*hw/NL)}
 function depth(dt){ /* dt = seconds until the note reaches the hit line -> p */
   var u=1-dt/LEAD*1; /* 0 far .. 1 at hit */
   var pHit=(HIT_Y-HZ)/(1-HZ);
@@ -299,12 +311,12 @@ function drawRoad(t){
   [-1,1].forEach(function(s){g.beginPath();g.moveTo(W/2+s*roadHalf(0),ry(0));g.lineTo(W/2+s*roadHalf(1),H);g.stroke()});
   var ph=((t-OFF)/BEAT%1+1)%1;
   g.strokeStyle=NIGHT?"#FFE08A":"#FDBF6A";
-  [-1,1].forEach(function(s){
+  for(var d=1;d<NL;d++){var fr=-1+2*d/NL;
     for(var k=0;k<14;k++){var a=(k+ph)/14,b=(k+ph+.45)/14;if(b>1)b=1;if(a>1)continue;
       var p0=a*a,p1=b*b;g.lineWidth=1+3*p1;
-      var x0=W/2+s*roadHalf(p0)/3,x1=W/2+s*roadHalf(p1)/3;
+      var x0=W/2+fr*roadHalf(p0),x1=W/2+fr*roadHalf(p1);
       g.beginPath();g.moveTo(x0,ry(p0));g.lineTo(x1,ry(p1));g.stroke();}
-  });
+  }
   var pH=(HIT_Y-HZ)/(1-HZ);
   g.strokeStyle="rgba(253,191,106,.9)";g.lineWidth=3;g.beginPath();g.moveTo(W/2-roadHalf(pH),ry(pH));g.lineTo(W/2+roadHalf(pH),ry(pH));g.stroke();
   if(MAP.sign){ /* highway gantry sign passing on the right */
@@ -413,16 +425,62 @@ function drawFlash(t){
   SAHER.forEach(function(T){var d=t-T;if(d>=0&&d<.55){var a=1-d/.55;g.fillStyle="rgba(255,255,255,"+(.85*a)+")";g.fillRect(0,0,W,H);
     if(d<.45){g.globalAlpha=a;g.fillStyle="#291C13";g.font="800 "+Math.round(W*.12)+"px Tajawal,system-ui";g.textAlign="center";g.textBaseline="alphabetic";g.fillText("ساهر! فلاش",W/2,H*.4);g.globalAlpha=1}}});
 }
-function drawNote(l,p,kind,a){
-  var x=laneX(l,p),y=ry(p),r=Math.max(4,W*.055*(.25+.9*p));
+var LANECOL=["#73B2D5","#FDBF6A","#E9794A","#9bd68a","#c79bf0"];
+/* the notes are small oriental items; each note shows a different one */
+function drawItem(k,x,y,r){
+  g.save();g.translate(x,y);var u=r;
+  if(k===0){ /* coffee cup (finjan) on a saucer */
+    g.fillStyle="#E9E2D0";g.beginPath();g.ellipse(0,u*.55,u*.8,u*.2,0,0,7);g.fill();
+    g.fillStyle="#FFFAF2";g.beginPath();g.moveTo(-u*.5,-u*.3);g.lineTo(u*.5,-u*.3);g.quadraticCurveTo(u*.45,u*.55,0,u*.55);g.quadraticCurveTo(-u*.45,u*.55,-u*.5,-u*.3);g.fill();
+    g.strokeStyle="#FFFAF2";g.lineWidth=u*.14;g.beginPath();g.arc(u*.56,u*.08,u*.22,-1.2,1.3);g.stroke();
+    g.fillStyle="#4a2a14";g.beginPath();g.ellipse(0,-u*.3,u*.5,u*.14,0,0,7);g.fill();
+    g.strokeStyle="#D4A23A";g.lineWidth=u*.07;g.beginPath();g.ellipse(0,-u*.3,u*.5,u*.14,0,0,7);g.stroke();
+    g.strokeStyle="rgba(255,255,255,.7)";g.lineWidth=u*.07;g.beginPath();g.moveTo(-u*.15,-u*.55);g.quadraticCurveTo(-u*.3,-u*.75,-u*.1,-u*.95);g.stroke()}
+  else if(k===1){ /* tea glass (istikana) */
+    g.fillStyle="#E9E2D0";g.beginPath();g.ellipse(0,u*.62,u*.7,u*.16,0,0,7);g.fill();
+    g.fillStyle="rgba(230,240,250,.9)";g.beginPath();g.moveTo(-u*.5,-u*.6);g.lineTo(u*.5,-u*.6);g.quadraticCurveTo(u*.3,-u*.05,u*.34,u*.1);g.quadraticCurveTo(u*.4,u*.55,u*.28,u*.6);g.lineTo(-u*.28,u*.6);g.quadraticCurveTo(-u*.4,u*.55,-u*.34,u*.1);g.quadraticCurveTo(-u*.3,-u*.05,-u*.5,-u*.6);g.fill();
+    g.fillStyle="#C8741E";g.beginPath();g.moveTo(-u*.43,-u*.4);g.lineTo(u*.43,-u*.4);g.quadraticCurveTo(u*.3,-u*.05,u*.32,u*.12);g.quadraticCurveTo(u*.36,u*.5,u*.26,u*.56);g.lineTo(-u*.26,u*.56);g.quadraticCurveTo(-u*.36,u*.5,-u*.32,u*.12);g.quadraticCurveTo(-u*.3,-u*.05,-u*.43,-u*.4);g.fill();
+    g.strokeStyle="#D4A23A";g.lineWidth=u*.08;g.beginPath();g.moveTo(-u*.5,-u*.6);g.lineTo(u*.5,-u*.6);g.stroke()}
+  else if(k===2){ /* date */
+    g.fillStyle="#6b3a1a";g.beginPath();g.ellipse(0,0,u*.38,u*.62,.5,0,7);g.fill();
+    g.fillStyle="#8a5026";g.beginPath();g.ellipse(-u*.08,-u*.1,u*.16,u*.38,.5,0,7);g.fill();
+    g.strokeStyle="#3d2010";g.lineWidth=u*.05;for(var q=-2;q<=2;q++){g.beginPath();g.arc(q*u*.12,q*u*.1,u*.1,.3,2.4);g.stroke()}
+    g.strokeStyle="#4a7a2a";g.lineWidth=u*.07;g.beginPath();g.moveTo(u*.2,-u*.55);g.lineTo(u*.34,-u*.78);g.stroke()}
+  else if(k===3){ /* maamoul */
+    g.fillStyle="#D8A55A";g.beginPath();g.arc(0,0,u*.72,0,7);g.fill();g.fillStyle="#E8BC74";g.beginPath();g.arc(0,-u*.05,u*.62,0,7);g.fill();
+    g.strokeStyle="#9a6a2a";g.lineWidth=u*.06;for(var q=0;q<8;q++){var an=q*Math.PI/4;g.beginPath();g.moveTo(Math.cos(an)*u*.15,Math.sin(an)*u*.15);g.lineTo(Math.cos(an)*u*.52,Math.sin(an)*u*.52);g.stroke()}
+    g.beginPath();g.arc(0,0,u*.3,0,7);g.stroke();g.fillStyle="rgba(255,255,255,.85)";for(var q=0;q<6;q++)g.fillRect(Math.cos(q*1.1)*u*.45-1,Math.sin(q*1.1)*u*.45-1,2.5,2.5)}
+  else if(k===4){ /* tameez bread */
+    g.fillStyle="#C98B3C";g.beginPath();g.ellipse(0,0,u*.78,u*.55,0,0,7);g.fill();g.fillStyle="#E0A850";g.beginPath();g.ellipse(0,-u*.04,u*.68,u*.46,0,0,7);g.fill();
+    g.fillStyle="#9a5f22";for(var q=0;q<7;q++)g.beginPath(),g.arc(Math.cos(q*2.2)*u*.4,Math.sin(q*1.7)*u*.25,u*.07,0,7),g.fill();
+    g.fillStyle="#FFF4D8";for(var q=0;q<10;q++)g.fillRect(Math.cos(q*1.3)*u*.5,Math.sin(q*2.1)*u*.3,2,2)}
+  else if(k===5){ /* helmet */
+    g.fillStyle="#E9794A";g.beginPath();g.arc(0,u*.05,u*.7,Math.PI,0);g.lineTo(u*.7,u*.45);g.lineTo(-u*.7,u*.45);g.fill();
+    g.fillStyle="#73B2D5";g.fillRect(-u*.08,-u*.65,u*.16,u*.7);
+    g.fillStyle="#1d2a3a";rr(-u*.55,-u*.05,u*1.1,u*.34,u*.14);g.fill();g.fillStyle="rgba(156,199,240,.6)";rr(-u*.45,.0,u*.5,u*.12,u*.06);g.fill();
+    g.strokeStyle="#291C13";g.lineWidth=u*.07;g.beginPath();g.arc(0,u*.05,u*.7,Math.PI,0);g.lineTo(u*.7,u*.45);g.lineTo(-u*.7,u*.45);g.closePath();g.stroke()}
+  else if(k===6){ /* subha, prayer beads */
+    var n=12;for(var q=0;q<n;q++){var an=q/n*Math.PI*2;g.fillStyle=q%4===0?"#D4A23A":"#2a6a5a";g.beginPath();g.arc(Math.cos(an)*u*.55,Math.sin(an)*u*.55-u*.1,u*.14,0,7);g.fill();g.fillStyle="rgba(255,255,255,.5)";g.fillRect(Math.cos(an)*u*.55-u*.05,Math.sin(an)*u*.55-u*.17,u*.05,u*.05)}
+    g.strokeStyle="#D4A23A";g.lineWidth=u*.08;g.beginPath();g.moveTo(0,u*.45);g.lineTo(0,u*.75);g.stroke();g.fillStyle="#C8341E";g.beginPath();g.moveTo(-u*.12,u*.72);g.lineTo(u*.12,u*.72);g.lineTo(u*.18,u*1.0);g.lineTo(-u*.18,u*1.0);g.fill()}
+  else{ /* dallah, coffee pot */
+    g.fillStyle="#D4A23A";g.beginPath();g.moveTo(-u*.5,u*.55);g.quadraticCurveTo(-u*.55,-u*.05,-u*.15,-u*.25);g.lineTo(u*.1,-u*.25);g.quadraticCurveTo(u*.45,-u*.05,u*.5,u*.55);g.closePath();g.fill();
+    g.fillRect(-u*.16,-u*.5,u*.26,u*.28);g.beginPath();g.arc(-u*.03,-u*.55,u*.1,0,7);g.fill();
+    g.strokeStyle="#D4A23A";g.lineWidth=u*.1;g.beginPath();g.moveTo(-u*.15,-u*.28);g.quadraticCurveTo(-u*.75,-u*.55,-u*.8,-u*.15);g.stroke();
+    g.beginPath();g.moveTo(u*.38,u*.2);g.quadraticCurveTo(u*.7,u*.15,u*.7,-u*.35);g.stroke();
+    g.fillStyle="#8a5a18";g.fillRect(-u*.38,u*.2,u*.76,u*.06)}
+  g.restore();
+}
+function drawNote(l,p,kind,a,item){
+  var x=laneX(l,p),y=ry(p),r=Math.max(5,W*.06*(.25+.9*p));
   g.globalAlpha=a==null?1:a;
   if(kind==="rock"){
     g.fillStyle="#6E5644";g.beginPath();g.moveTo(x-r,y);g.lineTo(x-r*.6,y-r*.9);g.lineTo(x+r*.5,y-r);g.lineTo(x+r,y);g.closePath();g.fill();
     g.strokeStyle="#291C13";g.lineWidth=2;g.stroke();
   }else{
-    g.fillStyle="#FDBF6A";g.beginPath();g.arc(x,y-r*.6,r,0,7);g.fill();
-    g.strokeStyle="#291C13";g.lineWidth=Math.max(1.5,r*.18);g.stroke();
-    g.fillStyle="#291C13";g.font="800 "+(r*1.3)+"px system-ui";g.textAlign="center";g.textBaseline="middle";g.fillText("♪",x,y-r*.55);
+    var cy=y-r*.6;
+    g.fillStyle="rgba(41,28,19,.55)";g.beginPath();g.arc(x,cy,r*1.12,0,7);g.fill();
+    g.strokeStyle=LANECOL[l];g.lineWidth=Math.max(2,r*.16);g.beginPath();g.arc(x,cy,r*1.12,0,7);g.stroke();
+    drawItem(item||0,x,cy,r*.82);
   }
   g.globalAlpha=1;
 }
@@ -444,8 +502,8 @@ function drawCar(){
 function rr(x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath()}
 
 function drawButtons(){
-  var T=performance.now(),cols=["#73B2D5","#FDBF6A","#E9794A"],lab=["A","S","D"],bw=W/3,y=H*.865,h=H*.115;
-  for(var i=0;i<3;i++){var on=T-S.pr[i]<130;
+  var T=performance.now(),cols=["#73B2D5","#FDBF6A","#E9794A","#9bd68a","#c79bf0"],lab=["A","S","D","F","G"],bw=W/NL,y=H*.865,h=H*.115;
+  for(var i=0;i<NL;i++){var on=T-S.pr[i]<130;
     g.fillStyle=on?cols[i]:"rgba(41,28,19,.72)";rr(i*bw+6,y,bw-12,h,14);g.fill();
     g.strokeStyle=cols[i];g.lineWidth=3;rr(i*bw+6,y,bw-12,h,14);g.stroke();
     g.fillStyle=on?"#291C13":cols[i];g.font="800 "+Math.round(h*.45)+"px Saira Condensed,sans-serif";g.textAlign="center";g.textBaseline="middle";g.fillText(lab[i],i*bw+bw/2,y+h/2);}
@@ -486,12 +544,12 @@ function frame(){
     items.forEach(function(it){var dt=it[0]-t;if(dt>LEAD||dt<-.5)return;
       if(it[2]==="rock"&&it[1].done===1)return;
       var p=depth(dt);if(dt<0){p=(HIT_Y-HZ)/(1-HZ)+(-dt)*.5}
-      drawNote(it[1].l,p,it[2],it[1].done===3?Math.max(0,1-(t-it[1].gone)/.35):1)});
+      drawNote(it[1].l,p,it[2],it[1].done===3?Math.max(0,1-(t-it[1].gone)/.35):1,it[1].it)});
   }
   drawCar();drawButtons();hud(t);if(S.run)drawFlash(t);
   g.restore();
 }
-S.now=now;S.dbg=function(i,n){MAP=MAPS[i];NIGHT=n;buildScenery()};S.MAPS=MAPS;window.srRhythm=S;frame();
+S.drawItem=drawItem;S.g=g;S.now=now;Object.defineProperty(S,"NLq",{get:function(){return NL}});S.dbg=function(i,n){MAP=MAPS[i];NIGHT=n;buildScenery()};S.MAPS=MAPS;window.srRhythm=S;frame();
 })();
 </script>
 </body>
