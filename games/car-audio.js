@@ -26,3 +26,30 @@
     pop:function(big){if(!AC||!big||!B.exh)return;var s2=AC.createBufferSource(),g=AC.createGain();s2.buffer=B.exh;g.gain.value=0.38;s2.connect(g);g.connect(out);s2.start();}
   };
 })();
+
+/* Grid games (traffic pages): CarAudio.grid() makes its own AudioContext on the first tap and gives event hooks:
+   start(), drive(moving, speed01), orb(), bump(), lose(), win(), honk(). Same sample files, same loudness. */
+(function(){
+  var s=document.currentScript,base=s&&s.src?s.src.replace(/car-audio\.js[^/]*$/,'')+'audio/sfx/':'audio/sfx/';
+  window.CarAudio.grid=function(){
+    var AC,out,B={},loopSrc=null,loopG=null,on=true,ready=false,t0=0;
+    try{on=localStorage.getItem('sr-music')!=='off';}catch(e){}
+    function boot(){if(AC){if(AC.state==='suspended')AC.resume();return;}
+      var C=window.AudioContext||window.webkitAudioContext;if(!C)return;try{AC=new C();}catch(e){AC=null;return;}
+      out=AC.createGain();out.gain.value=1.1;out.connect(AC.destination);
+      ['m2loop','exh','brake','start','stall','oud'].forEach(function(k){try{fetch(base+k+'.mp3').then(function(r){return r.arrayBuffer();}).then(function(a){return AC.decodeAudioData(a);}).then(function(b){B[k]=b;}).catch(function(){});}catch(e){}});}
+    ['pointerdown','keydown','touchstart'].forEach(function(ev){addEventListener(ev,boot,{passive:true});});
+    function one(k,v,rate){if(!AC||!on||!B[k])return;var x=AC.createBufferSource(),g=AC.createGain();x.buffer=B[k];if(rate)x.playbackRate.value=rate;g.gain.value=v;x.connect(g);g.connect(out);x.start();}
+    function hush(){if(loopG)loopG.gain.setTargetAtTime(0,AC.currentTime,0.08);}
+    return{
+      start:function(){boot();one('start',0.7);},
+      drive:function(moving,sp){if(!AC||!B.m2loop)return;
+        if(!loopSrc){loopSrc=AC.createBufferSource();loopG=AC.createGain();loopG.gain.value=0;loopSrc.buffer=B.m2loop;loopSrc.loop=true;loopSrc.connect(loopG);loopG.connect(out);loopSrc.start();}
+        var t=AC.currentTime;loopSrc.playbackRate.setTargetAtTime(0.6+0.7*sp,t,0.1);loopG.gain.setTargetAtTime(on&&moving?0.12+0.2*sp:0,t,0.1);},
+      orb:function(){one('exh',0.3);},
+      bump:function(){one('brake',0.45,1.2);},
+      lose:function(){hush();one('stall',0.6);},
+      win:function(){hush();one('oud',0.6);},
+      stop:hush
+    };};
+})();
