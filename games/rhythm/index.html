@@ -52,7 +52,19 @@ button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color
 <script>
 (function(){
 "use strict";
-var TRACK="../audio/mood-city-neon-120-8D.mp3",BPM=120,BEAT=60/BPM,DUR=50;
+/* the songs picked from the audio library (8D mixes with a clear beat); beat grid measured per track */
+var SONGS=[
+ {id:"city-neon-120",bpm:120,off:.01,dur:51.0,ar:"ليل المدينة",en:"City Neon"},
+ {id:"souq-bounce-112",bpm:112,off:.02,dur:54.4,ar:"السوق",en:"Souq Bounce"},
+ {id:"oud-132",bpm:132,off:.37,dur:46.0,ar:"العود",en:"Oud"},
+ {id:"night-108",bpm:108,off:.01,dur:56.3,ar:"سهرة الليل",en:"Night Drive"},
+ {id:"victory-116",bpm:116,off:.01,dur:52.6,ar:"النصر",en:"Victory"},
+ {id:"warm-96",bpm:96,off:.62,dur:53.0,ar:"دفا",en:"Warm"},
+ {id:"race-140",bpm:140,off:.40,dur:43.1,ar:"سباق",en:"Race"},
+ {id:"chase-hard-150",bpm:150,off:.39,dur:41.4,ar:"مطاردة",en:"Chase"},
+ {id:"final-lap-160",bpm:160,off:.36,dur:39.0,ar:"اللفة الأخيرة",en:"Final Lap"}
+];
+var BPM=120,BEAT=.5,DUR=50,OFF=0,SONG=SONGS[0];
 var LEAD=1.9,HIT_Y=.70,WIN_GOOD=.15,EARLY=.42,SLIDE=.12;
 var cv=document.getElementById("c"),g=cv.getContext("2d"),W=0,H=0,DPR=1;
 function fit(){DPR=Math.min(window.devicePixelRatio||1,2);var r=cv.getBoundingClientRect();W=r.width;H=r.height;cv.width=W*DPR;cv.height=H*DPR;g.setTransform(DPR,0,0,DPR,0,0)}
@@ -60,22 +72,23 @@ addEventListener("resize",fit);fit();
 
 /* ---- chart: deterministic, on the beat grid, always reachable ---- */
 function rng(s){return function(){s=(s*1664525+1013904223)>>>0;return s/4294967296}}
-function makeChart(){
-  /* at most one note per second for most of the song; in the last stretch a note every half second */
-  var R=rng(2026),notes=[],lane=1,rep=0,t0=4*BEAT*2,FINAL=32; /* 4 bars of intro; the finale starts at 32 s */
+function makeChart(seed){
+  /* at most one note per second for most of the song; in the last stretch a note every half second (all on the beat grid) */
+  var R=rng(seed),notes=[],lane=1,rep=0,t0=OFF+Math.ceil(8/BEAT)*BEAT,FINAL=DUR*.62,
+      slow=Math.ceil(1/BEAT-1e-6),fast=Math.max(1,Math.round(.5/BEAT));
   for(var t=t0;t<DUR-3;){
     var fin=t>=FINAL;
     if(R()<(fin?.85:.8)){
       var nl=Math.floor(R()*3);if(nl===lane){if(++rep>1)nl=(nl+1+Math.floor(R()*2))%3}else rep=0;
       notes.push({t:t,l:nl,done:0});lane=nl;
     }
-    t+=fin?BEAT:2*BEAT;
+    t+=(fin?fast:slow)*BEAT;
   }
   return {notes:notes,rocks:[]};
 }
 
 /* ---- state ---- */
-var audio=new Audio(TRACK);audio.preload="auto";
+var audio=new Audio();audio.preload="auto";
 var off=0;try{off=parseInt(localStorage.getItem("sr-rhythm-off")||"0",10)||0}catch(e){}
 var muted=false;try{muted=localStorage.getItem("sr-music")==="off"}catch(e){}
 var S={pr:[0,0,0],run:0,chart:null,lane:1,x:1,score:0,combo:0,best:0,perf:0,good:0,miss:0,hit:0,fx:[],clock0:0,usingAudio:0,flash:0,shake:0};
@@ -83,21 +96,50 @@ function now(){ /* song time in seconds */
   if(S.usingAudio&&!audio.paused)return audio.currentTime+off/1000;
   return (performance.now()-S.clock0)/1000+off/1000;
 }
-function start(){
-  S.chart=makeChart();S.lane=1;S.x=1;S.score=0;S.combo=0;S.best=0;S.perf=S.good=S.miss=S.hit=0;S.fx=[];S.run=1;
+var order=[],si=0,TOT={notes:0,perf:0,good:0},b0=null,nextTimer=0,stageBanner=0;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(){ /* a new run: every song once, in a random order */
+  order=shuffle(SONGS);si=0;S.score=0;S.best=0;S.perf=S.good=S.miss=S.hit=0;TOT={notes:0,perf:0,good:0};
   document.getElementById("start").classList.add("hide");document.getElementById("end").classList.add("hide");
-  duck=0;audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;
+  beginStage();
+}
+function beginStage(){
+  clearTimeout(nextTimer);
+  SONG=order[si];BPM=SONG.bpm;BEAT=60/BPM;OFF=SONG.off%BEAT;DUR=SONG.dur-1;
+  S.chart=makeChart(2026+si*31+BPM);S.lane=1;S.x=1;S.combo=0;S.fx=[];S.run=1;
+  b0={perf:S.perf,good:S.good,miss:S.miss};
+  document.getElementById("end").classList.add("hide");
+  duck=0;audio.src="../audio/mood-"+SONG.id+"-8D.mp3";audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;
   S.clock0=performance.now();
   if(!muted){var p=audio.play();if(p&&p.then)p.then(function(){S.usingAudio=1}).catch(function(){S.usingAudio=0});else S.usingAudio=1}
 }
-function end(){
+function stars(pct){return pct>.85?3:pct>.6?2:pct>.3?1:0}
+function end(abandon){ /* the song is over: next song, or the final results */
   S.run=0;audio.pause();
-  var tot=S.chart.notes.length,pct=tot?(S.perf*1+S.good*.6)/tot:0,st=pct>.85?3:pct>.6?2:pct>.3?1:0;
-  document.getElementById("stars").textContent=("★".repeat(st)+"☆".repeat(3-st));
-  document.getElementById("endS").textContent="النقاط: "+S.score+" · أفضل كومبو: "+S.best+" · أصلي "+S.perf+" · زين "+S.good+" · وأفا "+S.miss;
-  document.getElementById("endE").textContent="Score "+S.score+" · Best combo "+S.best+" · Perfect "+S.perf+" · Good "+S.good+" · Missed "+S.miss;
-  document.getElementById("endT").textContent=st>=3?"أسطورة الخط!":st>=1?"حلو!":"جرّب مرة ثانية";
-  document.getElementById("end").classList.remove("hide");
+  var n=S.chart.notes.length,p=S.perf-b0.perf,gd=S.good-b0.good;
+  TOT.notes+=n;TOT.perf+=p;TOT.good+=gd;
+  var last=abandon||si>=order.length-1,card=document.getElementById("end");
+  var stp=stars(n?(p+gd*.6)/n:0);
+  if(!last){
+    document.getElementById("endT").textContent="خلصت المرحلة "+(si+1);
+    document.getElementById("stars").textContent="★".repeat(stp)+"☆".repeat(3-stp);
+    var nx=order[si+1];
+    document.getElementById("endS").textContent="الأغنية الجاية: "+nx.ar+" · المرحلة "+(si+2)+" من "+order.length;
+    document.getElementById("endE").textContent="Next song: "+nx.en+" · Stage "+(si+2)+" of "+order.length;
+    document.getElementById("again").textContent="التالية · Next";
+    document.getElementById("again").onclick=function(){si++;beginStage()};
+    card.classList.remove("hide");
+    nextTimer=setTimeout(function(){si++;beginStage()},4500);
+  }else{
+    var st=stars(TOT.notes?(TOT.perf+TOT.good*.6)/TOT.notes:0);
+    document.getElementById("stars").textContent="★".repeat(st)+"☆".repeat(3-st);
+    document.getElementById("endS").textContent="النقاط: "+S.score+" · أفضل كومبو: "+S.best+" · أصلي "+S.perf+" · زين "+S.good+" · وأفا "+S.miss+" · "+(si+1)+" مراحل";
+    document.getElementById("endE").textContent="Score "+S.score+" · Best combo "+S.best+" · Perfect "+S.perf+" · Good "+S.good+" · Missed "+S.miss+" · "+(si+1)+" stages";
+    document.getElementById("endT").textContent=abandon?"وقفت هنا":st>=3?"أسطورة الخط!":st>=1?"حلو!":"جرّب مرة ثانية";
+    document.getElementById("again").textContent="مرة ثانية · Again";
+    document.getElementById("again").onclick=start;
+    card.classList.remove("hide");
+  }
 }
 
 /* ---- input: one button per lane ---- */
@@ -135,7 +177,7 @@ var mb=document.getElementById("mute");
 function paintM(){mb.textContent=muted?"♪̸":"♪"}paintM();
 mb.onclick=function(e){e.stopPropagation();muted=!muted;try{localStorage.setItem("sr-music",muted?"off":"on")}catch(x){}
   paintM();if(S.run){if(muted)audio.pause();else{audio.currentTime=Math.max(0,now()-off/1000);audio.play().then(function(){S.usingAudio=1}).catch(function(){})}}};
-document.addEventListener("visibilitychange",function(){if(document.hidden&&S.run)end()});
+document.addEventListener("visibilitychange",function(){if(document.hidden&&S.run)end(true)});
 
 /* ---- geometry: 3 lanes in perspective ---- */
 var HZ=.30; /* horizon y fraction */
@@ -159,7 +201,7 @@ function fx(l,kind){S.fx.push({l:l,k:kind,t:performance.now()})}
 function drawSky(t){
   var gr=g.createLinearGradient(0,0,0,ry(0));gr.addColorStop(0,"#73B2D5");gr.addColorStop(1,"#F3BC81");
   g.fillStyle=gr;g.fillRect(0,0,W,ry(0)+2);
-  var pulse=.5+.5*Math.cos(2*Math.PI*(t/BEAT));
+  var pulse=.5+.5*Math.cos(2*Math.PI*((t-OFF)/BEAT));
   g.fillStyle="#FDBF6A";g.beginPath();g.arc(W*.5,ry(0)-2,W*(.11+.012*pulse),Math.PI,0);g.fill();
   /* dunes */
   g.fillStyle="#D48741";g.beginPath();g.moveTo(0,ry(0));
@@ -175,7 +217,7 @@ function drawRoad(t){
   g.strokeStyle="#FFFAF2";g.lineWidth=3;
   [-1,1].forEach(function(s){g.beginPath();g.moveTo(W/2+s*roadHalf(0),ry(0));g.lineTo(W/2+s*roadHalf(1),H);g.stroke()});
   /* dashed lane lines scrolling with the beat */
-  var ph=(t/BEAT)%1;
+  var ph=((t-OFF)/BEAT%1+1)%1;
   g.strokeStyle="#FDBF6A";
   [-1,1].forEach(function(s){
     for(var k=0;k<14;k++){var a=(k+ph)/14,b=(k+ph+.45)/14;if(b>1)b=1;if(a>1)continue;
@@ -282,6 +324,8 @@ function hud(t){
   g.fillText(String(S.score),W/2,H*.06);
   if(S.combo>=3){g.font="800 "+Math.round(W*.05)+"px Saira Condensed,sans-serif";g.fillText("COMBO "+S.combo+"  x"+(1+Math.min(3,Math.floor(S.combo/8))),W/2,H*.10)}
   g.fillStyle="rgba(41,28,19,.35)";g.fillRect(W*.1,H*.115,W*.8,4);g.fillStyle="#FDBF6A";g.fillRect(W*.1,H*.115,W*.8*Math.min(1,Math.max(0,t/DUR)),4);
+  g.fillStyle="rgba(255,250,242,.85)";g.font="700 "+Math.round(W*.04)+"px Tajawal,system-ui";g.textAlign="center";
+  g.fillText("المرحلة "+(si+1)+" من "+order.length+" · "+SONG.ar,W/2,H*.15);
   var T=performance.now();
   S.fx=S.fx.filter(function(f){return T-f.t<600});
   S.fx.forEach(function(f){var k=(T-f.t)/600,pH=(HIT_Y-HZ)/(1-HZ);
