@@ -41,6 +41,8 @@ button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color
   <p class="en">Hit the button of the lane when a golden note reaches the line. A hit plays a drum or bass beat; a miss drops the music.</p>
   <p>اللمس: اضغط على المسار · الكيبورد: A S D F G</p>
   <p class="en">Touch: tap the lane · Keys: A S D F G</p>
+  <div class="lv" id="snd"><button class="go" data-s="0" type="button">كورد<small>Chord</small></button><button class="go" data-s="1" type="button">ثانية من الأغنية<small>1 s of the song</small></button></div>
+  <p class="en">Hit sound</p>
   <div class="lv"><button class="go" data-n="3" type="button">سهل<small>Easy · 3</small></button><button class="go" data-n="4" type="button">متوسط<small>Medium · 4</small></button><button class="go" data-n="5" type="button">صعب<small>Hard · 5</small></button></div>
   <p class="en">Pick a level: 3, 4 or 5 lanes</p>
   <div class="row"><span>مزامنة الصوت · Audio sync</span><button id="offM" type="button">−</button><b id="offV">0</b><button id="offP" type="button">+</button></div>
@@ -56,20 +58,20 @@ button.go{margin-top:12px;font:800 20px "Tajawal";background:var(--accent);color
 "use strict";
 /* the songs picked from the audio library (8D mixes with a clear beat); beat grid measured per track */
 var SONGS=[
- {id:"city-neon-120",bpm:120,off:.01,dur:51.0,ar:"ليل المدينة",en:"City Neon"},
- {id:"souq-bounce-112",bpm:112,off:.02,dur:54.4,ar:"السوق",en:"Souq Bounce"},
- {id:"oud-132",bpm:132,off:.37,dur:46.0,ar:"العود",en:"Oud"},
- {id:"night-108",bpm:108,off:.01,dur:56.3,ar:"سهرة الليل",en:"Night Drive"},
- {id:"victory-116",bpm:116,off:.01,dur:52.6,ar:"النصر",en:"Victory"},
- {id:"warm-96",bpm:96,off:.62,dur:53.0,ar:"دفا",en:"Warm"},
- {id:"race-140",bpm:140,off:.40,dur:43.1,ar:"سباق",en:"Race"},
- {id:"chase-hard-150",bpm:150,off:.39,dur:41.4,ar:"مطاردة",en:"Chase"},
- {id:"final-lap-160",bpm:160,off:.36,dur:39.0,ar:"اللفة الأخيرة",en:"Final Lap"},
- {id:"calm-sea-72",bpm:72,off:.39,dur:70,ar:"هدوء البحر",en:"Calm Sea"},
- {id:"campfire-80",bpm:80,off:.72,dur:70,ar:"سهرة النار",en:"Campfire"},
- {id:"desert-dawn-84",bpm:84,off:.33,dur:70,ar:"فجر الصحراء",en:"Desert Dawn"},
- {id:"mountain-taif-92",bpm:92,off:.62,dur:65,ar:"جبال الطايف",en:"Taif Mountain"},
- {id:"sunset-drive-100",bpm:100,off:.57,dur:60,ar:"غروب الطريق",en:"Sunset Drive"}
+ {id:"city-neon-120",key:2,mode:0,bpm:120,off:.01,dur:51.0,ar:"ليل المدينة",en:"City Neon"},
+ {id:"souq-bounce-112",key:2,mode:0,bpm:112,off:.02,dur:54.4,ar:"السوق",en:"Souq Bounce"},
+ {id:"oud-132",key:7,mode:1,bpm:132,off:.37,dur:46.0,ar:"العود",en:"Oud"},
+ {id:"night-108",key:0,mode:0,bpm:108,off:.01,dur:56.3,ar:"سهرة الليل",en:"Night Drive"},
+ {id:"victory-116",key:7,mode:0,bpm:116,off:.01,dur:52.6,ar:"النصر",en:"Victory"},
+ {id:"warm-96",key:2,mode:1,bpm:96,off:.62,dur:53.0,ar:"دفا",en:"Warm"},
+ {id:"race-140",key:4,mode:1,bpm:140,off:.40,dur:43.1,ar:"سباق",en:"Race"},
+ {id:"chase-hard-150",key:7,mode:1,bpm:150,off:.39,dur:41.4,ar:"مطاردة",en:"Chase"},
+ {id:"final-lap-160",key:9,mode:0,bpm:160,off:.36,dur:39.0,ar:"اللفة الأخيرة",en:"Final Lap"},
+ {id:"calm-sea-72",key:3,mode:0,bpm:72,off:.39,dur:70,ar:"هدوء البحر",en:"Calm Sea"},
+ {id:"campfire-80",key:0,mode:0,bpm:80,off:.72,dur:70,ar:"سهرة النار",en:"Campfire"},
+ {id:"desert-dawn-84",key:9,mode:0,bpm:84,off:.33,dur:70,ar:"فجر الصحراء",en:"Desert Dawn"},
+ {id:"mountain-taif-92",key:7,mode:0,bpm:92,off:.62,dur:65,ar:"جبال الطايف",en:"Taif Mountain"},
+ {id:"sunset-drive-100",key:5,mode:0,bpm:100,off:.57,dur:60,ar:"غروب الطريق",en:"Sunset Drive"}
 ];
 var BPM=120,BEAT=.5,DUR=50,OFF=0,SONG=SONGS[0];
 /* the maps (straight roads) from the games; each song stage gets one, day or night */
@@ -140,7 +142,7 @@ function beginStage(){
   S.chart=makeChart(2026+si*31+BPM+NL);S.lane=Math.floor((NL-1)/2);S.x=(NL-1)/2;S.combo=0;S.fx=[];S.run=1;
   b0={perf:S.perf,good:S.good,miss:S.miss};
   document.getElementById("end").classList.add("hide");
-  duck=0;audio.src="../audio/mood-"+SONG.id+"-8D.mp3";audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;
+  duck=0;audio.src="../audio/mood-"+SONG.id+"-8D.mp3";audio.currentTime=0;audio.loop=false;audio.volume=.8;S.usingAudio=0;if(SNDMODE===1)loadSlice();
   S.clock0=performance.now();
   if(!muted){var p=audio.play();if(p&&p.then)p.then(function(){S.usingAudio=1}).catch(function(){S.usingAudio=0});else S.usingAudio=1}
 }
@@ -168,7 +170,7 @@ function end(abandon){ /* the song is over: next song, or the final results */
     document.getElementById("endE").textContent="Score "+S.score+" · Best combo "+S.best+" · Perfect "+S.perf+" · Good "+S.good+" · Missed "+S.miss+" · "+(si+1)+" stages";
     document.getElementById("endT").textContent=abandon?"وقفت هنا":st>=3?"أسطورة الخط!":st>=1?"حلو!":"جرّب مرة ثانية";
     document.getElementById("again").textContent="مرة ثانية · Again";
-    document.getElementById("again").onclick=start;
+    Array.prototype.forEach.call(document.querySelectorAll("#snd .go"),function(b){b.onclick=function(){SNDMODE=+b.getAttribute("data-s");Array.prototype.forEach.call(document.querySelectorAll("#snd .go"),function(o){o.style.opacity=o===b?1:.55})}});document.getElementById("again").onclick=start;
     card.classList.remove("hide");
   }
 }
@@ -183,13 +185,38 @@ function nz(t,dur,type,freq,q,vol){var sr=AC.createBufferSource();sr.buffer=nois
 function tone(t,type,f0,f1,dur,vol){var o=AC.createOscillator(),gn=AC.createGain();o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(Math.max(20,f1),t+dur);
   gn.gain.setValueAtTime(vol,t);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(gn);gn.connect(AC.destination);o.start(t);o.stop(t+dur+.02)}
 /* every lane is a drum or bass voice that sits on top of the song: doum, tek, clap, shaker, sub bass */
-function pluck(l){
+var SNDMODE=0,SBUF=null,SLOAD="";
+/* chord mode: every lane plays a chord of the song's own key (diatonic triads), with a soft drum under it */
+var DEG_MAJ=[0,5,7,9,2],DEG_MIN=[0,5,10,8,3]; /* semitones above the key: I IV V vi ii / i iv VII VI III */
+var TRI_MAJ={0:[0,4,7],5:[0,4,7],7:[0,4,7],9:[0,3,7],2:[0,3,7]},TRI_MIN={0:[0,3,7],5:[0,3,7],10:[0,4,7],8:[0,4,7],3:[0,4,7]};
+function chord(t,l){
+  var d=(SONG.mode?DEG_MIN:DEG_MAJ)[l%5],tri=(SONG.mode?TRI_MIN:TRI_MAJ)[d],root=48+SONG.key+d;if(root>56)root-=12;
+  tri.concat([12]).forEach(function(iv,i){var f=440*Math.pow(2,(root+iv+(i===3?0:12)-69)/12);
+    [-6,6].forEach(function(det){var o=AC.createOscillator(),gn=AC.createGain(),fl=AC.createBiquadFilter();o.type="sawtooth";o.frequency.value=f;o.detune.value=det;
+      fl.type="lowpass";fl.frequency.setValueAtTime(3200,t);fl.frequency.exponentialRampToValueAtTime(700,t+.7);
+      gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(.11,t+.012);gn.gain.exponentialRampToValueAtTime(.0001,t+.85);
+      o.connect(fl);fl.connect(gn);gn.connect(AC.destination);o.start(t);o.stop(t+.9)})});
+  tone(t,"sine",440*Math.pow(2,(root-12-69)/12),440*Math.pow(2,(root-12-69)/12),.7,.3);
+}
+/* slice mode: a one-second piece of the song itself, taken at the moment of the note */
+function loadSlice(){
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(SLOAD===SONG.id)return;SLOAD=SONG.id;SBUF=null;var id=SONG.id;
+    fetch(audio.src).then(function(r){return r.arrayBuffer()}).then(function(b){return AC.decodeAudioData(b)}).then(function(buf){if(SONG.id===id)SBUF=buf}).catch(function(){SLOAD=""})}catch(e){}
+}
+function slice(t,at){
+  if(!SBUF)return false;var o=AC.createBufferSource(),gn=AC.createGain();o.buffer=SBUF;at=Math.max(0,Math.min(SBUF.duration-1.05,at));
+  gn.gain.setValueAtTime(.0001,t);gn.gain.exponentialRampToValueAtTime(.9,t+.02);gn.gain.setValueAtTime(.9,t+.8);gn.gain.exponentialRampToValueAtTime(.0001,t+1);
+  o.connect(gn);gn.connect(AC.destination);o.start(t,at,1.02);return true;
+}
+function pluck(l,at){
   try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==="suspended")AC.resume();var t=AC.currentTime;
-    if(l===0){tone(t,"sine",170,48,.32,.95);nz(t,.03,"lowpass",900,1,.4)}                       /* doum: deep darbuka / kick */
-    else if(l===1){tone(t,"triangle",1500,700,.07,.45);nz(t,.07,"highpass",2500,1,.45)}          /* tek: high darbuka */
-    else if(l===2){nz(t,.05,"bandpass",1500,1.2,.8);nz(t+.022,.05,"bandpass",1700,1.2,.6);nz(t+.05,.12,"bandpass",1400,1,.55)} /* clap */
-    else if(l===3){nz(t,.09,"highpass",6500,.7,.5);nz(t+.045,.05,"highpass",7500,.7,.35)}        /* shaker / riqq */
-    else{tone(t,"sine",64,52,.42,.95);tone(t,"triangle",128,104,.3,.28)}                          /* sub bass */
+    if(SNDMODE===1&&slice(t,at))return;
+    chord(t,l);
+    if(l===0)tone(t,"sine",170,48,.25,.45);
+    else if(l===1)nz(t,.05,"highpass",2500,1,.25);
+    else if(l===2)nz(t,.06,"bandpass",1500,1.2,.35);
+    else if(l===3)nz(t,.07,"highpass",6500,.7,.25);
+    else tone(t,"sine",64,52,.35,.5);
   }catch(e){}
 }
 function dip(){duck=performance.now()+450;audio.volume=.25} /* a missed note drops the music for a moment */
@@ -202,7 +229,7 @@ function press(l){
     var near=Math.abs(t-best.t)<.1;best.done=near?1:2;if(near)S.perf++;else S.good++;
     S.combo++;S.best=Math.max(S.best,S.combo);
     var mult=1+Math.min(3,Math.floor(S.combo/8));S.score+=(near?100:60)*mult;
-    audio.volume=.8;duck=0;pluck(l);fx(l,near?"perfect":"good");
+    audio.volume=.8;duck=0;pluck(l,best.t);fx(l,near?"perfect":"good");
   }else{S.combo=0;fx(l,"stray");dip()}
 }
 addEventListener("keydown",function(e){if(e.repeat)return;var k=e.key;
@@ -210,7 +237,7 @@ addEventListener("keydown",function(e){if(e.repeat)return;var k=e.key;
   if(li>=0&&li<NL&&String(k).length<=10&&(k.length===1||k.indexOf("Arrow")===0)){press(li);e.preventDefault()}
   else if((k==="Enter"||k===" ")&&!S.run){start()}});
 cv.addEventListener("pointerdown",function(e){var r=cv.getBoundingClientRect();press(Math.min(NL-1,Math.max(0,Math.floor((e.clientX-r.left)/r.width*NL))));e.preventDefault()});
-Array.prototype.forEach.call(document.querySelectorAll(".lv .go"),function(b){b.onclick=function(){NL=+b.getAttribute("data-n");start()}});document.getElementById("again").onclick=start;
+Array.prototype.forEach.call(document.querySelectorAll(".lv .go[data-n]"),function(b){b.onclick=function(){NL=+b.getAttribute("data-n");start()}});document.getElementById("again").onclick=start;
 function paintOff(){document.getElementById("offV").textContent=off+" ms"}
 document.getElementById("offM").onclick=function(){off-=20;sv()};document.getElementById("offP").onclick=function(){off+=20;sv()};
 function sv(){try{localStorage.setItem("sr-rhythm-off",String(off))}catch(e){}paintOff()}paintOff();
