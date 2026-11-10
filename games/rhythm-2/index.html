@@ -17,7 +17,7 @@
 html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:"Tajawal",system-ui,sans-serif;overflow:hidden;touch-action:none;overscroll-behavior:none;-webkit-user-select:none;user-select:none}
 #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 canvas{display:block;width:100%;height:100%;max-width:560px;background:#73B2D5}
-.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(30,20,13,.55);z-index:5;padding:16px;overflow:auto}
+.ov{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(30,20,13,.55);z-index:5;padding:calc(16px + env(safe-area-inset-top,0px)) 16px calc(16px + env(safe-area-inset-bottom,0px));overflow:auto}
 .ov.hide{display:none}
 .card{background:var(--panel);color:var(--fg);border:3px solid var(--road);border-radius:18px;padding:18px 20px;max-width:390px;width:100%;text-align:center;margin:auto}
 .card h1{margin:0 0 2px;font:800 30px/1.1 "Tajawal"}
@@ -538,7 +538,7 @@ function drawNote(l,p,kind,a,item){
   g.globalAlpha=1;
 }
 function drawCar(){
-  var pH=(HIT_Y-HZ)/(1-HZ),x=laneX(0,pH)+(S.x)*(laneX(1,pH)-laneX(0,pH)),y=ry(pH)+H*.168;
+  var pH=(HIT_Y-HZ)/(1-HZ),x=laneX(0,pH)+(S.x)*(laneX(1,pH)-laneX(0,pH)),y=ry(pH)+H*.16;
   var w=W*.15,h=w*1.5; /* big 4x4 SUV, rear view, green and gold */
   g.save();g.translate(x,y);
   g.fillStyle="rgba(0,0,0,.28)";g.beginPath();g.ellipse(0,h*.08,w*.64,h*.1,0,0,7);g.fill();
