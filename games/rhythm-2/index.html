@@ -106,12 +106,12 @@ function makeNotes(){
 /* ---- state ---- */
 var off=0;try{off=parseInt(localStorage.getItem("sr-rhythm-off")||"0",10)||0}catch(e){}
 var muted=false;try{muted=localStorage.getItem("sr-music")==="off"}catch(e){}
-var S={pr:[0,0,0,0,0],down:[0,0,0,0,0],hold:[null,null,null,null,null],run:0,loading:0,audio:0,noSound:0,notes:[],lane:1,x:1,score:0,sf:0,combo:0,best:0,perf:0,good:0,miss:0,holds:0,fx:[],clock0:0,t0:0,lat:0,shake:0};
+var S={pr:[0,0,0,0,0],down:[0,0,0,0,0],hold:[null,null,null,null,null],run:0,loading:0,audio:0,noSound:0,notes:[],lane:1,x:1,score:0,sf:0,combo:0,best:0,perf:0,good:0,miss:0,holds:0,fx:[],clock0:0,t0:0,lat:0,stall:0,shake:0};
 var order=[],si=0,TOT={notes:0,perf:0,good:0},b0=null,nextTimer=0;
 function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),x=a[i];a[i]=a[j];a[j]=x}return a}
 
 /* ---- sound: Web Audio, two layers per song ---- */
-var AC=null,master=null,leadG=null,backG=null,srcs=[],BUF={};
+var AC=null,master=null,leadG=null,backG=null,srcs=[],BUF={},CUR=null;
 function ac(){
   if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=muted?0:1;master.connect(AC.destination)}catch(e){AC=null}}
   if(AC&&AC.state==="suspended")AC.resume();return AC;
@@ -127,12 +127,18 @@ function load(s){
   BUF[s.id]=p;p.catch(function(){delete BUF[s.id]});return p;
 }
 function stopAudio(){srcs.forEach(function(s){try{s.stop()}catch(e){}});srcs=[];leadG=backG=null}
-function play(bufs){
-  stopAudio();var t0=AC.currentTime+LEADIN;
+function play(bufs,songT){ /* songT: where the song is right now (below zero = still rolling in) */
+  stopAudio();var c=AC.currentTime,t0=c-songT,late=t0<=c+.02;
   leadG=AC.createGain();leadG.gain.value=1;leadG.connect(master);
   backG=AC.createGain();backG.gain.value=1;backG.connect(master);
-  bufs.forEach(function(b,i){var s=AC.createBufferSource();s.buffer=b;s.connect(i===0?leadG:backG);s.start(t0);srcs.push(s)});
-  S.t0=t0;S.lat=outLat();S.audio=1;
+  bufs.forEach(function(b,i){var s=AC.createBufferSource();s.buffer=b;s.connect(i===0?leadG:backG);
+    if(late)s.start(c+.06,Math.min(Math.max(0,songT+.06),Math.max(0,b.duration-.05)));else s.start(t0);srcs.push(s)});
+  S.t0=t0;S.audio=1;S.noSound=0;S.stall=0;
+}
+function rejoin(){ /* the sound engine came back while the game ran on the clock: pick the song up where the game is */
+  if(!CUR||!AC||AC.state!=="running"||!S.run||S.audio)return;
+  var tt=now();if(tt>DUR-1.5)return;S.lat=outLat();
+  try{play(CUR,tt+S.lat-off/1000)}catch(e){S.audio=0;S.noSound=1}
 }
 function outLat(){var l=AC?(AC.outputLatency||AC.baseLatency||0):0;return l>0&&l<.3?l:0} /* delay between the clock and what you hear */
 function now(){ /* song time in seconds; starts below zero while the first notes roll in */
@@ -179,18 +185,18 @@ function start(){
 S.testStart=function(nl,id){ /* test hook: start a run with this song first */
   NL=nl;start();var k=-1;order.forEach(function(s,i){if(s.id===id)k=i});if(k>0){var x=order[0];order[0]=order[k];order[k]=x;BUF={};beginStage()}};
 function beginStage(){
-  clearTimeout(nextTimer);stopAudio();
+  clearTimeout(nextTimer);stopAudio();CUR=null;
   MAP=mapOrder[si%mapOrder.length];NIGHT=nightFlag[si];buildScenery();
   SONG=order[si];BPM=SONG.bpm;BEAT=60/BPM;OFF=SONG.bar0;DUR=SONG.dur-.4;
   var L=LVL[NL];SPD=L.spd;EARLY=L.early;LATE=L.late;VIS=1.8/SPD;
   S.notes=makeNotes();S.lane=Math.floor((NL-1)/2);S.x=S.lane;S.combo=0;S.fx=[];S.hold=[null,null,null,null,null];
-  S.run=0;S.audio=0;S.noSound=0;S.loading=1;S.clock0=performance.now();
+  S.run=0;S.audio=0;S.noSound=0;S.stall=0;S.loading=1;S.clock0=performance.now();
   b0={perf:S.perf,good:S.good,miss:S.miss};
   document.getElementById("end").classList.add("hide");
   var my=si,song=SONG;
   load(song).then(function(bufs){
     if(my!==si||SONG!==song||!S.loading)return;
-    S.loading=0;play(bufs);S.run=1;var nx=order[si+1];if(nx)load(nx);
+    S.loading=0;CUR=bufs;S.lat=outLat();play(bufs,-LEADIN);S.run=1;var nx=order[si+1];if(nx)load(nx);
   }).catch(function(){
     if(my!==si||SONG!==song)return;
     S.loading=0;S.audio=0;S.noSound=1;S.clock0=performance.now();S.run=1;   /* no sound file: play on the clock */
@@ -198,7 +204,7 @@ function beginStage(){
 }
 function stars(pct){return pct>.85?3:pct>.6?2:pct>.3?1:0}
 function end(abandon){ /* the song is over: next song, or the final results */
-  S.run=0;S.loading=0;stopAudio();S.hold=[null,null,null,null,null];
+  S.run=0;S.loading=0;stopAudio();CUR=null;S.hold=[null,null,null,null,null];
   var n=S.notes.length,p=S.perf-b0.perf,gd=S.good-b0.good;
   TOT.notes+=n;TOT.perf+=p;TOT.good+=gd;delete BUF[SONG.id];
   var last=abandon||si>=order.length-1,card=document.getElementById("end");
@@ -231,6 +237,7 @@ var KEYSET="asdfg";
 function mult(){return 1+Math.min(3,Math.floor(S.combo/10))}
 function press(l){
   S.pr[l]=performance.now();S.down[l]=1;
+  if(AC&&AC.state!=="running"){try{AC.resume()}catch(e){}}
   if(!S.run)return;
   S.lane=l;var t=now(),best=null;
   for(var i=0;i<S.notes.length;i++){var n=S.notes[i];if(n.l!==l||n.done)continue;var dt=t-n.t;
@@ -617,7 +624,11 @@ function frame(){
   requestAnimationFrame(frame);
   var t=S.run?now():(S.loading?-LEADIN:(S.prev?(performance.now()-S.clock0)/1000:0));
   if(S.run){
-    if(S.audio)S.lat+=(outLat()-S.lat)*.02;
+    if(S.audio){S.lat+=(outLat()-S.lat)*.02;
+      /* the sound engine is not running (blocked or interrupted): after a moment carry on silently on the clock, never freeze */
+      if(AC.state!=="running"){if(!S.stall)S.stall=performance.now();else if(performance.now()-S.stall>1500){stopAudio();S.audio=0;S.noSound=1;S.stall=0;S.clock0=performance.now()-(t+LEADIN-off/1000)*1000}}
+      else S.stall=0}
+    else if(CUR)rejoin();
     if(t>=DUR)return end();
     S.x+=(S.lane-S.x)*Math.min(1,(1/60)/SLIDE);if(Math.abs(S.lane-S.x)<.001)S.x=S.lane;
     judge(t);tickHolds(t);
